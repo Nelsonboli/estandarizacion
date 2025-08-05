@@ -1,0 +1,26 @@
+<div class="flex flex-col min-h-screen">
+  <!-- HEADER FIJO -->
+  <header class="fixed top-0 left-0 w-full z-40 bg-white shadow-md">
+    <app-header></app-header>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL CON SIDEBAR -->
+  <div class="flex flex-1 pt-30 sm:flex-wrap">
+    <!-- MENU LATERAL -->
+    <aside class="bg-azul-fondo w-52 hidden md:block fixed left-0 top-16 h-[calc(100vh-8rem)] z-30 overflow-y-auto shadow">
+      <app-menulateral></app-menulateral>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 ml-0 md:ml-52 py-4 bg-gray-200 min-h-[calc(100vh-4rem)]">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="w-full bg-white border-t border-gray-200 p-4 text-center">
+    <app-footer></app-footer>
+  </footer>
+</div>
+
+

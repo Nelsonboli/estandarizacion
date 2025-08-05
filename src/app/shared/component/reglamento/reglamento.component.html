@@ -1,0 +1,112 @@
+ <div>
+    <h3 class="text-lg font-semibold text-gray-800 mb-2">🧭 Pasos para que el
+        proceso sea reglamentado</h3>
+    <ul class="space-y-2">
+        @for (paso of pasos; track paso.titulo) {
+        <li
+            class="bg-gray-100 p-3 rounded-lg border-l-4 border-blue-600">
+            <strong>{{paso.id}} {{ paso.titulo }}</strong> → <span
+                class="text-gray-700">{{ paso.responsable
+                }}</span>{{ paso.completado }}
+        </li>
+        }
+    </ul>
+</div>
+<div
+    class="grid grid-cols-2 md:flex-row justify-center items-center gap-4 m-4">
+
+    <!-- Descargar Documento DAAC -->
+    <div class="col-span-1 flex flex-col items-center gap-4">
+        @if (seccionActiva !== 'descargar') {
+        <button
+            class="px-4 py-2 bg-azul-oscuro text-white rounded"
+            (click)="seccionActiva = 'descargar'">
+            Descargar Documento DAAC
+        </button>
+        }
+        @if (seccionActiva === 'descargar') {
+        <ng-container>
+            <div
+                class="flex flex-col items-center text-justify flex-wrap md:flex-nowrap space-y-4 p-4 border rounded-lg bg-gray-50 w-full max-w-md">
+                <label class> Descargar el formato de procedimiento
+                    para la DAAC </label>
+                <button
+                    class="bg-gray-400 hover:bg-gray-400/50 transition-all text-black border-gray-600 px-4 py-2 rounded">
+                    Descargar Procedimiento DAAC
+                </button>
+                <strong class="text-med m-2 pt-2">
+                    Para completar el procedimiento debe enviar el
+                    documento descargado a la
+                    División de Autoevaluación, Acreditación y
+                    Certificación (DAAC) de la Universidad de
+                    Nariño, al siguiente correo electrónico:
+                    <span class="text-med text-blue-600">
+                        acreditacioninstitucional&#64;udenar.edu.co
+                    </span>
+                </strong>
+                <strong class="text-med m-2 pt-2 text-red-500">
+                    Recuerde que el procedimiento debe ser
+                    aprobado por la DAAC antes de ser presentado
+                    al Consejo de Facultad.
+                </strong>
+                <strong class="text-med m-2 pt-2">
+                    Una vez aprobado por la DAAC, el procedimiento
+                    debe ser presentado al Consejo de Facultad
+                    para su aprobación final.
+                </strong>
+            </div>
+        </ng-container>
+        }
+    </div>
+    <!-- Validar Documento -->
+    <div class="col-span-1 flex flex-col items-center gap-4">
+        @if (seccionActiva !== 'validar') {
+        <button
+            class="px-4 py-2 bg-azul-oscuro text-white rounded"
+            (click)="seccionActiva = 'validar'">
+            Validar Documento
+        </button>
+        }
+
+        @if (seccionActiva === 'validar') {
+        <ng-container>
+            <div
+                class="flex flex-col items-center mt-4 gap-4 p-4 border rounded-lg bg-gray-50 w-full max-w-md">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()"
+                    class="space-y-4 w-full">
+                    <div class=" items-center justify-center">
+                        <label
+                            class="text-med block font-bold mb-3 ml-4">
+                            ¿el documento ya esta validado por la
+                            DAAC?
+                        </label>
+                        <div>
+                            <label class="ml-10 ">
+                                <input type="radio"
+                                    formControlName="respuesta1"
+                                    value="si" /> Sí
+                            </label>
+                            <label class="ml-10">
+                                <input type="radio"
+                                    formControlName="respuesta1"
+                                    value="no" /> No
+                            </label>
+                        </div>
+                        @if (form.get('respuesta1')?.value === 'si')
+                        {
+                        <div>
+                            <strong class="text-med m-2 pt-2">Debe enviar el documento al consejo de Facultad para su aprobación.al siguiente correo electronico: 
+                                <span
+                                    class="text-med text-blue-600">
+                                    acreditacioninstitucional&#64;udenar.edu.co
+                                </span>
+                            </strong>
+                        </div>
+                        }
+                    </div>
+                </form>
+            </div>
+        </ng-container>
+        }
+    </div>
+</div>

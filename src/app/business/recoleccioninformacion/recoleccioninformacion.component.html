@@ -1,0 +1,110 @@
+<body class="font-sans text-gray-800 bg-gray-100 p-2">
+    <div class="bg-azul-oscuro text-white p-2 border-2 mb-2 rounded text-justify">
+        Estandarización de procedimientos </div>
+    <div class="bg-white/90 text-grande px-4 py-2 rounded-xl shadow-md max-w-screen mx-auto">
+        <h1 class="text-2xl font-bold text-gray-800 mb-2">Revisión Documental
+        </h1>
+        <p class="mb-4 ">
+            La Universidad cuenta con documentos oficiales, en los cuales encontramos información de referencia sobre las funciones, actividades, planes y estrategias de las dependencias. Estos documentos son:
+        </p>
+        <section>
+            <ul class="list-[square] list-inside space-y-1 mb-6 ml-4">
+                <li><a href="https://electronica.udenar.edu.co/wp-content/uploads/2020/10/Estatuto-General.pdf" target="_blank" class="text-blue-600 hover:underline">Estatuto
+                        General</a></li>
+                <li><a href="https://secretariageneral.udenar.edu.co/wp-content/uploads/2011/09/Proyecto-educativo-institucional-2009.pdf" target="_blank" class="text-blue-600 hover:underline">Proyecto Educativo
+                        Institucional</a></li>
+                <li><a href="https://www.udenar.edu.co/recursos/wp-content/uploads/2017/08/Estatutoposgrados.pdf" target="_blank" class="text-blue-600 hover:underline">Estatuto de
+                        Posgrados</a></li>
+                <li><a href="https://www.udenar.edu.co/documentos/PDI-UDENAR-2020.pdf" target="_blank" class="text-blue-600 hover:underline">Plan
+                        de Desarrollo Institucional</a></li>
+                <li><a href="https://www.udenar.edu.co/recursos/wp-content/uploads/2017/11/estatuto-estudiantil-udenar.pdf" target="_blank" class="text-blue-600 hover:underline">Estatuto
+                        Estudiantil</a></li>
+                <li><a href="https://secretariageneral.udenar.edu.co/wp-content/uploads/2024/05/ESTATUTO-DE-PERSONAL-DOCENTE-a-febrero-2024.pdf" target="_blank" class="text-blue-600 hover:underline">Estatuto Personal
+                        Docente</a></li>
+            </ul>
+        </section>
+        <section>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Entrevista</h2>
+            <p class="mb-2">
+                De ser necesario, se recomienda realizar entrevistas a las personas que participan en la ejecución del procedimiento, a fin de identificar la forma en que se lleva a cabo y los soportes con que se cuenta en el momento.
+            </p>
+            <p> Se adjunta el formato de entrevista:
+                <a href="enlace-para-formato-de-entrevista" target="_blank" class="text-blue-600 hover:underline">Formato de Entrevista</a>
+            </p>
+        </section>
+        <!--Tabla Descripcion de criterios -->
+        <section class="mt-4 text-grande">
+            <h2 class="text-2xl font-bold text-gray-800900 mb-2">3. Observación directa</h2>
+            <p class="mb-2">Es posible tambien, hacer una Observación directa de la manera en que se realiza el procedimiento dentro de la facultad
+                para una mayor obtencion de la información
+            </p>
+            <h2 class="text-grande font-bold text-gray-800 mb-2">Tabla: Descripcion de criterios para definir e estado de un procedimiento</h2>
+            <p class="mb-2"> Con el fin de garantizar la coherencia y calidad en la gestion de los procesos Institucionales.
+                se definen los siguientes criterios con su respectiva descripcion que definen el estado en el que se encuentra cada procedimiento.
+            a continuacion se presenta la tabla que define el estado de un procedimiento</p>
+            <div class="p-2">
+|            
+            <app-documentacion>   
+                <table class="border border-gray-300 text-peq w-full max-w-[400px] mx-auto">
+                    <thead class="bg-encabezado-tabla text-white">
+                        <tr>
+                            <th class="px-2 py-1 text-left uppercase tracking-wider">Criterios</th>
+                            <th class="px-2 py-1 text-left uppercase tracking-wider">Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (fila of tablaestandarizacionService.filas; track fila) {
+                        <tr class="hover:bg-gray-100">
+                            <td class="px-2 py-1 border border-gray-300 uppercase font-semibold">{{fila.col1 }}
+                            </td>
+                            <td class="px-2 py-1 border border-gray-300">{{fila.col2 }}
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </app-documentacion> 
+            </div>
+        </section>
+        <!-- tabla Clasificación de estado de procedimientos. -->
+        <section class="mt-4 text-grande">
+                        <h2 class="text-grande font-bold text-gray-800 mb-2">Tabla: Clasificación de estado de procedimientos</h2>
+            <p class="mb-2"> A continuación, se presenta la tabla de clasificación de estado de procedimientos, 
+                la cual permite identificar el estado en el que se encuentra cada procedimiento donde se observa que criterios cumple cada uno de los estados.</p>
+            <div class="p-2 overflow-x-auto mx-auto">
+                <h1> </h1>
+                <table class="w-full max-w-[400px] mx-auto border border-gray-300 text-small border-collapse">
+                    <thead class="bg-encabezado-tabla text-white">
+                        <tr>
+                            <th colspan="6" class="px-1 py-0.5 uppercase tracking-wider text-center font-semibold"> Criterios </th>
+                        </tr>
+                        <tr>
+                            @for (encabezado of tablaestandarizacionService.encabezados; track encabezado) {
+                            <th class="px-1 py-0.5 text-left uppercase tracking-wider border border-gray-300 font-medium">{{ encabezado }}</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (tabla of tablaestandarizacionService.tablaclasificacion; track tabla) {
+                        <tr class="hover:bg-gray-100">
+                            <td class="px-1 py-0.5 border border-gray-300 uppercase font-semibold">{{tabla.col1 }}</td>
+                            <td class="px-1 py-0.5 border border-gray-300 uppercase font-semibold">{{tabla.col2 }}</td>
+                            <td class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col3 }}</td>
+                            <td class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col4 }}</td>
+                            <td class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col5 }}</td>
+                            <td class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col6 }}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div>
+            <p class="p-1"> Para estandarizar un procedimiento puede hacerlo en el siguiente Boton</p>
+            <div class="flex justify-center">
+                <button routerLink='/procedimiento' class=" bg-verde-btn hover:bg-verde-btn transition-110 text-white px-4 py-2 rounded justify-center items-center mb-3">
+                    Mis procedimientos</button>
+            </div>
+        </div>
+    </div>
+</body>

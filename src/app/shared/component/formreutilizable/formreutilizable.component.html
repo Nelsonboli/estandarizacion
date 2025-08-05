@@ -1,0 +1,69 @@
+<h2 modal-header class="text-xl font-semibold p-2 m-2 ">{{titulo}}</h2>
+
+<form [formGroup]="form" class="space-y-4">
+
+    @for (col of campos; track col) {
+    <div
+        class="bg-white/80 border border-gray-400 rounded-lg p-3 m-2 flex flex-row gap-3 items-start">
+        <!-- Input y validación -->
+        <div class="flex flex-col w-1/4">
+            <label class="text-sm font-medium text-gray-700 py-1">
+                {{ col.label }}
+            </label>
+            
+            @if (form.get(col.key)?.invalid && form.get(col.key)?.touched) {
+            <p class="text-sm text-red-600">Este campo es obligatorio.</p>
+            }
+            <input
+                type="text"
+                [formControlName]="col.key"
+                class="w-full p-2 border rounded placeholder-gray-400"
+                [placeholder]="'Ingrese ' + col.label.toLowerCase()" />
+        </div>
+        <!-- Botón -->
+        <div class="flex items-end mb-2 mr-5">
+            <button
+                type="button"
+                (click)="agregarCampo(col.key)"
+                class="bg-verde-btn hover:bg-verde-btn/90 text-white px-4 py-2 rounded">
+                Agregar 
+            </button>
+        </div>
+
+        <!-- Tabla -->
+        <div class="flex-1 overflow-x-auto">
+            <app-tablaprocedimiento
+                [data]="listaDatosFiltradas(col.key)"
+                [columns]="[{ key: col.key, header: col.label }]"
+                [accionesTemplate]="accionesPersonalizadas"
+                (eliminar)="eliminarDato($event)">
+            </app-tablaprocedimiento>
+        </div>
+
+    </div>
+    }
+    <!-- Acciones -->
+    <ng-template #accionesPersonalizadas let-dato>
+        <div class="flex items-center justify-center space-x-1">
+            <button
+                (click)="eliminarDato(dato)"
+                class="px-1 w-7 h-7"
+                title="Eliminar">
+                <img
+                    class="icono_titulos btntables hover:brightness-110"
+                    src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg" />
+            </button>
+        </div>
+    </ng-template>
+    <!-- Botones globales -->
+    <div class="flex justify-end gap-3 pt-3 m-4">
+        <button type="button" (click)="Cancelar()"
+            class="bg-rojo-btn hover:bg-rojo-btn/90 transition-110 text-white px-4 py-2  rounded justify-center items-center">
+            Cancelar
+        </button>
+        <button type="submit" (click)="enviarFormulario()"
+            class="bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
+            Guardar
+        </button>
+    </div>
+</form>

@@ -1,0 +1,51 @@
+<!-- MENÚ LATERAL -->
+<aside
+  class="bg-azul-fondo fixed top- md:top-[8rem] left-0 h-[calc(100vh-8rem)] w-52 z-30 hidden md:block overflow-y-auto shadow-lg transition-all"
+>
+  <div class="text-peq flex justify-center items-center p-2 bg-azul-oscuro text-white font-bold border-b border-white/20">
+    <a routerLink='/' class="text-white no-underline">Menú principal</a>
+  </div>
+
+  <ul class="flex flex-col p-1 space-y-0.5 text-med">
+    <li class="list-none">
+      <a routerLink="/acercadeestandarizacion"
+         routerLinkActive="bg-verde-btn text-white"
+         class="block py-2 px-2 text-left principal-button no-underline">
+        <span class="font-medium">Acerca de estandarización de procedimientos</span>
+      </a>
+    </li>
+
+    <li class="list-none">
+      <a routerLink="/recoleccioninformacion"
+         routerLinkActive="bg-verde-btn text-white"
+         class="block py-2 px-2 text-left principal-button no-underline">
+        <span class="font-medium">Recolección de información</span>
+      </a>
+    </li>
+
+    <li class="list-none">
+      <a routerLink="/identificacionrequerimientos"
+         routerLinkActive="bg-verde-btn text-white"
+         class="block py-2 px-2 text-left principal-button no-underline">
+        <span class="font-medium">Identificación de procedimientos</span>
+      </a>
+    </li>
+
+    <li class="list-none">
+      <a routerLink="/socializacionprocedimientos"
+         routerLinkActive="bg-verde-btn text-white"
+         class="block py-2 px-2 text-left principal-button no-underline">
+        <span class="font-medium">Socialización de procedimientos</span>
+      </a>
+    </li>
+
+    <li class="list-none">
+      <a routerLink="/manualusuario"
+         routerLinkActive="bg-verde-btn text-white"
+         class="block py-2 px-2 text-left principal-button no-underline">
+        <span class="font-medium">Manual de usuario</span>
+      </a>
+    </li>
+  </ul>
+</aside>
+

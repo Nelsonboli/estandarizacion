@@ -1,0 +1,35 @@
+<div class="font-sans text-gray-800 bg-gray-100 p-2">
+    <div class="bg-azul-oscuro text-white p-2 border-2 text-right mb-2 uperlowercase">Soporte Computacional</div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
+  <!-- Primera pregunta -->
+  <div>
+    <label class=" text-med block font-bold mb-3 ml-4">¿Para Realizar el procedimiento usted cuenta con soporte computacional?</label>
+    <label class="ml-10" ><input type="radio" formControlName="respuesta1" value="si" /> Sí </label>
+    <label class="ml-10"><input type="radio" formControlName="respuesta1" value="no" /> No</label>
+  </div>
+
+  @if (form.get('respuesta1')?.value === 'si') {
+    <div>
+      <label class="text-med block mt-3 ml-4"> Usted Acabo de respoder si, cree usted que el soporte computacional requiere una actualizacion,
+        podria describir que atualizacion o mejora nesesita el soporte computacional :</label>
+      <textarea formControlName="detalle1" rows="3" class="border w-full p-2 ml-4 mr-4"></textarea>
+    </div>
+  }
+
+  @if (form.get('respuesta1')?.value === 'no') {
+    <div>
+      <label class="text-med block font-bold mb-1 mt-4 ml-4">¿Considera que para este procedimiento sea nesesario un soporte computacional?</label>
+      <label class="ml-10" ><input type="radio" formControlName="respuesta2" value="si" /> Sí</label>
+      <label class="ml-10"><input type="radio" formControlName="respuesta2" value="no" /> No</label>
+
+      @if (form.get('respuesta2')?.value === 'si') {
+        <div>
+          <label class="text-med block mt-3 ml-4 "> En este campo puede explicar que nesesita realizar el soporte computacional:</label>
+          <textarea formControlName="detalle2" rows="3" class="border w-full p-2 ml-4 mr-4"></textarea>
+        </div>
+      }
+    </div>
+  }
+  <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Enviar</button>
+</form>
+</div>

@@ -1,0 +1,47 @@
+<div class="font-sans text-gray-800 bg-gray-100 p-2 ">
+    <div class="bg-azul-oscuro text-white p-2 border-2 text-right mb-2 uperlowercase "> Estandarización de procedimientos </div>
+    <div class="mb-1 space-x-0.5 gap-2 h-screen bg-white/100 text-med py-2 px-3 rounded-xl shadow-md max-w-screen mx-auto ">
+        <div class=" bg-white/80 border-1 border-gray-400 rounded-lg p-2">
+            <div class=" bg-azul-oscuro grid grid-cols-5 items-center p-1 ">
+                <div class="col-span-3 px-1 text-left text-white text-peq capitalize font-semibold"> Procedimientos </div>
+                <div class=" col-span-2 p-1">
+                    <button (click)="abrirFormulario()"><a
+                            class="no-underline inline-flex items-center text-peq justify-center bg-verde-btn text-white text-xs px-3 py-1 rounded hover:bg-verde-btn/90 transition">
+                            Agregar procedimiento
+                        </a>
+                    </button>      
+                    <app-modal
+                        [visible]="mostrarModal"
+                        (guardar)="guardarDatos($event)"
+                        (cancelar)="cerrarFormulario()">
+                    </app-modal>
+
+                    <input
+                        class="w-full px-2 py-1 text-left text-black tracking-wider bg-amber-50 rounded-md text-small"
+                        type="search" name="Buscar"
+                        placeholder="Buscar">
+                </div>
+            </div>
+                <app-tablaprocedimiento
+                    [data]="procedimientos"
+                    [columns]="columnas"
+                    [accionesTemplate]="accionesPersonalizadas">
+            </app-tablaprocedimiento>
+            <ng-template #accionesPersonalizadas let-dato>
+                <div  class="flex items-center justify-center space-x-1" >
+                <button  routerLink='/estandarizar' (click)="estandarizar(dato)"
+                    class=" bg-verde-btn hover:bg-verde-btn transition-110 text-white py-1 px-2 rounded justify-center items-center">
+                    Estandarizar </button>
+                <button (click)="eliminar(dato)" class="px-1 h-7 w-7"
+                    title="Eliminar Proyecto"><img
+                    class="justify-center items-center icono_titulos btntables hover:brightness-110"
+                    src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg"> </button>
+                <button (click)="editar(dato)" class="px-1 h-7 w-7"
+                    title="Editar Proyecto"><img
+                    class="icono_titulos btntables hover:brightness-110"
+                    src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg"> </button>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

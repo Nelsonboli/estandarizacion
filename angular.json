@@ -27,6 +27,11 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.css",
+              "src/input.css",
+              "src/output.css",
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -85,12 +90,21 @@
               }
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.css",
+              "src/input.css",
+              "src/output.css",
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
               "src/styles.css"
+  
             ],
             "scripts": []
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

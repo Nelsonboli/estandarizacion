@@ -1,0 +1,26 @@
+<div class="bg-white/90 text-med px-2 py-2 rounded-xl shadow-md max-w-screen mx-auto">
+    <div class="bg-gray-300 text-black p-2 text-sm rounded-sm font-semibold m-2">{{titulo}}</div>
+    <form [formGroup]="formulario" (ngSubmit)="onSubmit()" class="space-y-4">
+        @for (campo of campos; track campo.key) {
+        <div class="border-gray-400 rounded-lg px-5 ">
+            <label [for]="campo.key" class="block text-sm font-medium text-gray-700 py-2 ">
+          {{ campo.label }}
+        </label>
+            <input [formControlName]="campo.key" [id]="campo.key" [placeholder]="campo.key" class="w-full px-1 py-2 border rounded placeholder-gray-400" [class.border-red-400]="
+            formulario.get(campo.key)?.invalid &&
+            formulario.get(campo.key)?.touched
+          " /> @if ( formulario.get(campo.key)?.invalid && formulario.get(campo.key)?.touched ) {
+            <p class="text-sm text-red-600">Este campo es obligatorio.</p>
+            }
+        </div>
+        }
+        <div class="flex justify-end gap-3 pt-3">
+            <button type="button" (click)="onCancel()" class="bg-rojo-btn hover:bg-rojo-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
+        Cancelar
+      </button>
+            <button type="submit" class="bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
+        Guardar
+      </button>
+        </div>
+    </form>
+</div>

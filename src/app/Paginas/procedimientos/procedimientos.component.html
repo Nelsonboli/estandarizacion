@@ -1,0 +1,117 @@
+<div class="font-sans text-gray-800 bg-gray-100 p-2">
+    <div class="bg-azul-oscuro text-white p-2 border-2 text-right mb-2 uperlowercase"> Estandarización de procedimientos</div>
+    <div
+        class="mb-1 space-x-0.5 grid grid-cols-2 gap-2 h-screen bg-white/100 text-semigrande px-1 py-1 rounded-xl shadow-md max-w-screen mx-auto">
+        <div
+            class="col-span-1 bg-white/80 border-1 border-gray-400 rounded-lg p-2">
+
+            <div class=" bg-azul-oscuro grid grid-cols-5 items-center p-1 ">
+                <!-- Procedimientos (ocupa 1 columnas) -->
+                <div
+                    class="col-span-1 px-1 text-left text-white text-peq capitalize font-semibold">Procedimientos</div>
+                <!-- Botón -->
+                <div class=" col-span-2 flex justify-end p-2">
+                    <button (click)="abrirFormulario()"><a
+                            class="no-underline inline-flex items-center text-peq justify-center bg-verde-btn text-white text-xs px-3 py-1 rounded hover:bg-verde-btn/90 transition">
+                            Agregar procedimiento
+                        </a>
+                    </button>      
+                    <app-modal
+                        [visible]="mostrarModal"
+                        (guardar)="guardarDatos($event)"
+                        (cancelar)="cerrarFormulario()">
+                    </app-modal>
+                </div>
+                <!-- Input -->
+                <div class=" col-span-2 p-1">
+                    <input
+                        class="w-full px-2 py-1 text-left text-black tracking-wider bg-amber-50 rounded-md text-small"
+                        type="search" name="Buscar" placeholder="Buscar">
+                </div>
+            </div>
+            <app-tablaprocedimiento [data]="procedimientos" [columns]="columnas"
+                (eliminar)="eliminar($event)"
+                (editar)="editarRegistro($event)">
+            </app-tablaprocedimiento> 
+        </div>
+        <div
+            class="col-span-1 bg-white p-1 border-1 border-gray-400 rounded-lg">
+            <h2 class="text-semigrande font-semibold text-black-500 mb-2">Tabla: descripción criterios para definir el estado de un procedimiento</h2>
+            <p class="mb-2"> para poder clasificar el estado de los procedimientos existe la siguiente tabla </p>
+            <div class="overflow-x-auto p-4 mx-auto">
+                <table
+                    class="min-w-full border-0.5 border-gray-300 rounded-lx text-peq">
+                    <thead class="bg-encabezado-tabla text-white">
+                        <tr>
+                            <th
+                                class="px-2 py-1 text-left text-white uppercase tracking-wider">
+                                Criterios </th>
+                            <th
+                                class="px-2 py-1 text-left text-white uppercase tracking-wider">
+                                Descripcion </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (fila of tablaestandarizacionService.filas;
+                        track fila) {
+                        <tr class="hover:bg-gray-100">
+                            <td
+                                class="px-2 py-1 border text-gray-800 border-gray-300 uppercase font-bold text-small">
+                                {{fila.col1}}</td>
+                            <td
+                                class="px-2 py-1 text-gray-800 border-gray-300">{{fila.col2}}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- tabla de clasificacion -->
+            <div class="p-2 overflow-x-auto mx-auto">
+            <h2 class="text-semigrande font-semibold text-black-500 mb-2">Tabla: Clasificación de estado de procedimientos</h2>
+            <p class="mb-2"> para poder clasificar el estado de los procedimientos existe la siguiente tabla </p>
+
+                <table
+                    class="w-full max-w-[400px] mx-auto border border-gray-300 text-small border-collapse">
+                    <thead class="bg-encabezado-tabla text-white">
+                        <tr>
+                            <th colspan="6"
+                                class="px-1 py-0.5 uppercase tracking-wider text-center font-semibold">
+                                Criterios </th>
+                        </tr>
+                        <tr>
+                            @for (encabezado of
+                            tablaestandarizacionService.encabezados; track
+                            encabezado) {
+                            <th
+                                class="px-1 py-0.5 text-left uppercase tracking-wider border border-gray-300 font-medium">
+                                {{encabezado
+                                }}</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @for (tabla of
+                        tablaestandarizacionService.tablaclasificacion;
+                        track
+                        tabla) {
+                        <tr class="hover:bg-gray-100">
+                            <td
+                                class="px-1 py-0.5 border border-gray-300 uppercase font-semibold">{{tabla.col1}}</td>
+                            <td
+                                class="px-1 py-0.5 border border-gray-300 uppercase font-semibold">{{tabla.col2}}</td>
+                            <td
+                                class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col3}}</td>
+                            <td
+                                class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col4}}</td>
+                            <td
+                                class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col5}}</td>
+                            <td
+                                class="px-1 py-0.5 border border-gray-300 text-center">{{tabla.col6}}</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
