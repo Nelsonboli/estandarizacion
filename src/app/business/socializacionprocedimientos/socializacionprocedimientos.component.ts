@@ -1,15 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
+import { TablaestandarizacionService } from '../../shared/servicios/tablaestandarizacion.service';
 
 
 @Component({
   selector: 'app-socializacionprocedimientos',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule,TablaCriteriosComponent],
   templateUrl: './socializacionprocedimientos.component.html',
   styleUrl: './socializacionprocedimientos.component.css'
 })
 export class SocializacionprocedimientosComponent {
+
+  constructor(public tablaestandarizacionService : TablaestandarizacionService ){}
 
   procedimiento:any = {
     titulo: 'Gestion de Horarios',

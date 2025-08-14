@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {  RouterOutlet } from '@angular/router';
+import { ViewportScroller } from '@angular/common';
 
 
 @Component({
@@ -10,4 +11,9 @@ import {  RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'estandarizacion';
+
+  constructor(private viewport: ViewportScroller) {
+    // 100px de offset superior (ajusta a tu header)
+    this.viewport.setOffset([0, 130]);
+  }
 }

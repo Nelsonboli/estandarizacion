@@ -30,7 +30,7 @@
             </button>
         </div>
 
-        <!-- Tabla -->
+        <!-- Tabla para cada Input -->
         <div class="flex-1 overflow-x-auto">
             <app-tablaprocedimiento
                 [data]="listaDatosFiltradas(col.key)"
@@ -39,7 +39,7 @@
                 (eliminar)="eliminarDato($event)">
             </app-tablaprocedimiento>
         </div>
-
+        
     </div>
     }
     <!-- Acciones -->
@@ -55,9 +55,10 @@
             </button>
         </div>
     </ng-template>
-    <!-- Botones globales -->
+
+    <!-- Botones Cancelar y Guardar -->
     <div class="flex justify-end gap-3 pt-3 m-4">
-        <button type="button" (click)="Cancelar()"
+        <button type="button" (click)="onCancel()"
             class="bg-rojo-btn hover:bg-rojo-btn/90 transition-110 text-white px-4 py-2  rounded justify-center items-center">
             Cancelar
         </button>

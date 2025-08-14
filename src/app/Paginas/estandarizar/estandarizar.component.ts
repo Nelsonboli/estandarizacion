@@ -1,9 +1,9 @@
-import { Component, Input, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CardComponent } from '../../shared/component/card/card.component';
 import { CommonModule } from '@angular/common';
 import { SoporteComputacionalComponent } from '../../shared/component/soporte-computacional/soporte-computacional.component';
 import { TablaprocedimientoComponent } from "../../shared/component/tablaprocedimiento/tablaprocedimiento.component";
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { FormreutilizableComponent } from '../../shared/component/formreutilizable/formreutilizable.component';
 import { ReglamentoComponent } from '../../shared/component/reglamento/reglamento.component';
 
@@ -98,6 +98,6 @@ onEstadoCompleto(event: { index: number; completo: boolean }) {
 }
 
   onSubmit() {
-    // Procesar formulario aquí
+    
   }
 }

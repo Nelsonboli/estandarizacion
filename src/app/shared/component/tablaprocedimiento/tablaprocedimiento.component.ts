@@ -16,12 +16,13 @@ import { CommonModule, NgTemplateOutlet } from '@angular/common';
 })
 export class TablaprocedimientoComponent  {
 
-  @Input() data: any[] = [];
-  @Input() columns: { key: string; header: string }[] = [];
-  @Input() accionesTemplate?: TemplateRef<any>;
+@Input() encabezadoGeneral?: string;
+@Input() columns: { key: string, header: string }[] = [];
+@Input() data: any[] = [];
+@Input() accionesTemplate?: TemplateRef<any>;
 
-  @Output() editar = new EventEmitter<any>();
-  @Output() eliminar = new EventEmitter<any>();
+@Output() eliminar = new EventEmitter<any>();
+@Output() editar = new EventEmitter<any>();
   
 }
 

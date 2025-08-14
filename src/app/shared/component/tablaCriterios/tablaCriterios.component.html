@@ -1,0 +1,41 @@
+
+<div class="p-2">           
+  <table class="border border-gray-300 text-peq w-full max-w-[400px] mx-auto">
+    <thead class="bg-encabezado-tabla text-white">
+      <tr>
+        @for (col of columnas; track col) {
+        @if(columnas.length > 1) {
+          <th class="px-2 py-1 text-left col span-2 uppercase tracking-wider border border-gray-300">
+            {{ col }}
+            
+          </th>
+          }
+        @if(columnas.length === 1) {
+            <th class="px-1 py-0.5 uppercase tracking-wider text-center text-small font-semibold"></th>
+            {{ col }}
+            }
+        }
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      @for (fila of filas; track fila) {
+        <tr class="hover:bg-gray-100">
+          <td class="px-2 py-1 border border-gray-300 font-semibold uppercase relative group cursor-pointer">
+            {{fila.Criterio}}
+            
+            <!-- Tooltip -->
+             @if(fila.Tooltip){
+            <div
+              class="absolute left-full ml-2 top-1/2 -translate-y-1/2 
+                     hidden group-hover:block bg-gray-50 text-gray-700 text-small border-1 lowercase first-letter:uppercase border-gray-200 rounded px-1 py-1 shadow-lg z-10 w-70">
+              {{fila.Tooltip}}
+            </div>
+          }
+          </td>
+          <td class="px-2 py-1 border border-gray-300">{{fila.Descripcion}}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+

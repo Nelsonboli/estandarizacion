@@ -9,6 +9,7 @@ import { TablaprocedimientoComponent } from '../tablaprocedimiento/tablaprocedim
   styleUrl: './formreutilizable.component.css'
 })
 export class FormreutilizableComponent implements OnInit {
+// Inputs y inicializacion de datos
   @Input() titulo: string | undefined; 
   @Input() campos: { key: string; label: string }[] = [];
   @Output() guardar = new EventEmitter<any>();
@@ -18,6 +19,7 @@ export class FormreutilizableComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {}
 
+//ngOnInit
 ngOnInit(): void {
   const group: any = {};
   for (const campo of this.campos) {
@@ -25,7 +27,7 @@ ngOnInit(): void {
   }
   this.form = this.fb.group(group);
 }
-  // 🔹 Agrega solo el campo específico a el formulario
+// metodo que agrega solo el campo específico a el formulario
   agregarCampo(campo: string) {
     const control = this.form.get(campo);
     if (control && control.valid) {
@@ -38,21 +40,25 @@ ngOnInit(): void {
     }
   }
 
-  // 🔹 Filtra solo datos que contengan ese campo
+  // Filtra solo datos que contengan ese campo
   listaDatosFiltradas(campo: string) {
     return this.listaDatos.filter(d => d[campo] !== undefined);
   }
-
+  
+  //Metodo para elimnar el dato selecionado de la tabla
   eliminarDato(item: any) {
     this.listaDatos = this.listaDatos.filter(p => p !== item);
   }
 
-  Cancelar() {
+  //Metodo para cerrar el formulario
+  onCancel() {
     console.log('Formulario cancelado');
+    this.cerrar.emit()
     this.form.reset();
     this.listaDatos = [];
   }
 
+  //Metodo para enviar los datos del formulario 
   enviarFormulario() {
     if (this.form.valid) {
       console.log('Datos completos:', this.form.value);

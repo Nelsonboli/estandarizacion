@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { ExtraOptions,Routes,  } from '@angular/router';
+
 
 export const routes: Routes = [
 {
@@ -7,7 +8,7 @@ export const routes: Routes = [
     children: [
         {
             path: '',
-            loadComponent: () => import('./business/inicio/inicio.component').then(m => m.InicioComponent)
+            loadComponent: () => import('./business/menuprincipal/menuprincipal.component').then(m => m.menuprincipalComponent)
         },
                 {
             path: 'acercadeestandarizacion',
@@ -47,3 +48,10 @@ export const routes: Routes = [
         ]
     }
 ]
+
+const routerOptions: ExtraOptions = {
+  scrollPositionRestoration: 'enabled',
+  anchorScrolling: 'enabled', // 👈 Habilita el scroll hacia fragmentos
+  scrollOffset: [0, 100] // (opcional) para ajustar el desplazamiento
+};
+

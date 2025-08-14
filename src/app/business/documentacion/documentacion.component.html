@@ -1,30 +1,60 @@
 <div class="flex flex-col md:flex-row min-h-screen bg-gray-200 font-sans">
-  <!-- MENÚ LATERAL -->
-  <aside
-    class="md:w-50 w-full text-gray-700 p-2 mt-2 mb-2 ml-1 sticky top-0 md:h-screen shadow-md z-1 border-round rounded-lg border-gray-500 bg-white">
-    <h2 class="text-xl font-bold mb-6 mt-6 text-center">📘 Contenido</h2>
-    <nav class="space-y-3 text-sm text.gray-700">
-      <a href="#definiciones"
-        class="no-underline text-gray-700 block px-3 py-2 rounded-md hover:bg-verde-btn hover:text-white transition">Definiciones</a>
-      <a href="#mapa"
-        class=" no-underline text-gray-700 block px-3 py-2 rounded-md hover:bg-verde-btn hover:text-white transition">
-        Mapa de procesos</a>
-      <a href="#metodologia"
-        class=" no-underline text-gray-700 block px-3 py-2 rounded-md hover:bg-verde-btn hover:text-white transition">
-        Metodología</a>
-    </nav>
-  </aside>
+
+<!-- MENÚ LATERAL -->
+<aside
+  class="md:w-50 w-full text-gray-700 p-2 mt-2 mb-2 ml-1 sticky top-32 md:h-screen shadow-md z-1 rounded-lg bg-white">
+  <h2 class="text-xl font-bold mb-6 mt-6 text-center">📘 Contenido</h2>
+  <nav class="space-y-3 text-sm">
+    
+    <a
+      [routerLink]="[]"
+      fragment="definiciones"
+      routerLinkActive="border-l-2 border-green-600 text-green-600 font-semibold"
+      class="no-underline text-gray-700 block px-3 py-2 rounded-l-md hover:text-green-600 transition">
+      Definiciones
+    </a>
+
+    <a
+      [routerLink]="[]"
+      fragment="mapa"
+      routerLinkActive="border-l-2 border-green-600 text-green-600 font-semibold"
+      class="no-underline text-gray-700 block px-3 py-2 rounded-l-md hover:text-green-600 transition">
+      Mapa de procesos
+    </a>
+
+    <a
+      [routerLink]="[]"
+      fragment="metodologia"
+      routerLinkActive="border-l-2 border-green-500 text-green-600 font-semibold"
+      class="no-underline text-gray-700 block px-3 py-2 rounded-l-md hover:text-green-600 transition">
+      Metodología
+    </a>
+
+  <div class="mt-6">
+    <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+            class="no-underline flex items-center gap-2 px-4 py-2 rounded-full text-gray-700 hover:text-gray-900 transition-colors">
+      <span class="material-symbols-outlined">arrow_upward_alt</span>
+      Volver arriba
+  </a>
+  </div>
+  </nav>
+</aside>
+
+
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="flex-1 p-6 m-2 md:p-10 space-y-14 overflow-auto bg-white
-    md:rounded-lg shadow-md border border-gray-200">
+  <main class="flex-1 px-4 py-2 m-2 md:p-10 space-y-2 overflow-auto bg-white
+    md:rounded-lg shadow-md border border-gray-200 text-med">
 
+    <div
+      class="bg-azul-oscuro text-white p-2 border-2 rounded uperlowercase">
+      1. Acerca de la Estandarización de Procedimientos
+    </div>
     <!-- TÍTULO -->
-    <header class>
-      <h1 class="text-3xl  text-center font-extrabold text-gray-800 mb-2">Acerca
-        de la
-        Estandarización de Procedimientos</h1>
-      <p class="text-lg text-center text-gray-600">Universidad de Nariño</p>
+    <header class="px-4">
+
+      <h1
+        class="text-2xl sfont-extrabold text-gray-800 mb-2">Introduccion </h1>
 
       <p class="Text-justify"> En este apartado se presenta una propuesta de
         guía metodológica para
@@ -48,9 +78,9 @@
     </header>
 
     <!-- SECCIÓN: DEFINICIONES -->
-    <section id="definiciones" class="scroll-mt-28">
+    <section id="definiciones" class="scroll-mt-28 px-4 py-2">
       <div
-        class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-3 border-azul-btn text-justify">
+        class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-3 border-azul-btn/70 text-justify">
         <h2 class="text-2xl font-ssemibold text-gray-700 *:mb-4">
           Definiciones</h2>
         <ul class="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed">
@@ -107,7 +137,7 @@
           <li><strong>Gestión Financiera:</strong> Administrar los recursos
             financieros brindando información oportuna que permita una adecuada
             toma de decisiones.</li>
-          <li><strong>Gestión Jurídica:</strong> Asesorar a la Universidad< de
+          <li><strong>Gestión Jurídica:</strong> Asesorar a la Universidad de
             Nariño en
             los asuntos jurídicos de interés para la entidad.</li>
           <li><strong>Soporte a Procesos Misionales:</strong> Garantizar el
@@ -130,9 +160,9 @@
     </section>
 
     <!-- SECCIÓN: MAPA DE PROCESOS -->
-    <section id="mapa" class="scroll-mt-28">
+    <section id="mapa" class="scroll-mt-28 px-4 py-2">
       <div
-        class="bg-gray-100/50 rounded-lg shadow-md p-4 border-l-3 border-azul-btn text-justify">
+        class="bg-gray-100/50 rounded-lg shadow-md p-4 border-l-3 border-azul-btn/70 text-justify">
         <h2 class="text-2xl font-semibold text-gray-700 mb-4"> Mapa de proceso
           de la Universidad de Nariño</h2>
         <p class="text-gray-700 mb-4">
@@ -147,17 +177,17 @@
           de Formación Académica de acuerdo con el siguiente mapa de procesos:
         </p>
         <div class="flex justify-center">
-          <img src="assets/mapa-procesos.jpg"
+          <img src="assets/images/mapa-procesos.jpg"
             alt="Mapa de procesos Universidad de Nariño"
-            class="rounded-xl border shadow-lg max-w-4xl" />
+            class="rounded-xl border shadow-md max-w-2xl" />
         </div>
       </div>
     </section>
 
     <!-- SECCIÓN: METODOLOGÍA -->
-    <section id="metodologia" class="scroll-mt-28">
+    <section id="metodologia" class="scroll-mt-28 px-4 py-2">
       <div
-        class="bg-gray-100/50 rounded-lg shadow-md p-4 border-l-3 border-azul-btn text-justify">
+        class="bg-gray-100/50 rounded-lg shadow-md p-4 border-l-3 border-azul-btn/70 text-justify">
         <h2 class="text-2xl font-semibold text-gray-700 mb-4"> Metodología para
           la estandarización de procedimientos</h2>
         <p class="text-gray-700 mb-4">
@@ -179,70 +209,22 @@
             Facultad de Ingeniería de la Universidad de Nariño </a>
         </li>
         <div class="flex justify-center my-6">
-          <img src="assets/metodologia-flujo.png"
+          <img src="assets/images/metodologia-flujo.png"
             alt="Flujo metodológico para la estandarización de procedimientos"
-            class="rounded-xl border shadow-lg max-w-4xl"
+            class="rounded-xl border shadow-md max-w-xl"
             onerror="this.onerror=null;this.src='assets/placeholder.png';" />
         </div>
 
-        <h3 class="text-xl font-medium text-gray-800 mt-6 mb-2"> Recolección y
-          organización de la información</h3>
-        <p> Como primer paso, es importante recolectar la información pertinente
-          para diligenciar
-          la siguiente ficha técnica que describe los elementos constitutivos
-          del procedimiento: </p>
-        <strong> Tabla: Ficha técnica de procedimiento</strong>
-              <div class="p-2">
-            <table
-              class="border border-gray-300 text-peq w-full max-w-[400px] mx-auto">
-              <thead class="bg-encabezado-tabla tracking-wider text-white text-ceter">  
-                <tr > 
-                  <th colspan="2" class="text-center  uppercase  tracking-wider" >Ficha técnica de procedimiento </th>
-                  </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                @for (ficha of tablaestandarizacionService.fichaTecnica; track ficha) {
-                <tr class="hover:bg-gray-100">
-                  <td
-                    class="px-2 py-1 border border-gray-300 uppercase font-semibold">{{ficha.col1}}
-                  </td>
-                  <td 
-                    class="px-2 py-1 border border-gray-300 w-80">{{ficha.col2 }}
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-          </div>
-          
-        <ul class="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed">
-          <li><strong>Procedimiento:</strong> Se debe identificar el
-            procedimiento a estandarizar,
-            es necesario hacer un análisis de la situación actual del
-            procedimiento, dentro de la Dependencia. </li>
-          <li><strong>categoría:</strong> De acuerdo con el mapa de procesos de
-            la Universidad de Nariño, los
-            procedimientos propios de la Facultad de Ingeniería pertenecen a la
-            categoría de
-            procesos misionales – Formación Académica.</li>
-          <li><strong>Rol:</strong> Funcionarios que participan en el desarrollo
-            del procedimiento</li>
-          <li><strong>estado: </strong> Situación actual del procedimiento
-            dentro de la
-            Facultad. Se pueden presentar
-            diferentes estados de acuerdo con las siguientes
-            descripciones: </li>
-
-          <ng-content > </ng-content>
-
-          <li><strong>estado: </strong> Situación actual del procedimiento
-            dentro de la
-            Facultad. Se pueden presentar
-            diferentes estados de acuerdo con las siguientes
-            descripciones: </li>
-
-        </ul>
       </div>
     </section>
+    <p class="py-1 text-gray-700 text-center justify-center">
+      <strong>Para la recoleccion de la informacion se
+        le recomienda seguir a el siguiente apartado </strong>
+    </p>
+    <div class="flex justify-center">
+      <app-boton-cambiar
+        [rutaSiguiente]="'/recoleccioninformacion'">
+      </app-boton-cambiar>
+    </div>
   </main>
 </div>

@@ -1,5 +1,23 @@
-
 <div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
+  <!-- tabla de procedimiento  -->
+  
+        <app-tabla-criterios
+          [columnas]="tablaestandarizacionService.encabezadoFichaTecnica"
+          [filas]="tablaestandarizacionService.tablaFichaTecnica"></app-tabla-criterios>
+
+  <!-- tabla clasificacion de estados -->
+
+  <!-- Sorporte documental -->
+  <!-- Mostrar el formulario DAAC -->
+
+  <!-- Documento base -->
+
+  <!-- Mostrar Diagrama de Flujo -->
+
+  <!-- Mostrar informacion de Soporte computacional -->
+
+
+
   <!-- Encabezado del procedimiento -->
   <h3 class="text-lg font-semibold text-gray-800 mb-2">✍️ Descripcion procedimiento</h3>
   <div class="text-center">
@@ -9,6 +27,7 @@
     <p class="mt-2 text-gray-700"> <strong> Estado incial:</strong> {{ procedimiento.estadoInicial }}</p>
     <p class="mt-2 text-gray-700"> <strong> Estado actual: </strong> {{ procedimiento.estadoActual }}</p>
   </div>
+
 <!-- Roles involucrados -->
   <div>
     <h3 class="text-lg font-semibold text-gray-800 mb-2">👥 Roles involucrados</h3>
@@ -21,6 +40,7 @@
       }
     </div>
   </div>
+
 <!-- Paso a paso -->
   <div>
     <h3 class="text-lg font-semibold text-gray-800 mb-2">🧭 Paso a paso</h3>
@@ -56,16 +76,4 @@
     }
   </div>
 
-  <!-- FAQ
-  <div>
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">❓ Preguntas frecuentes</h3>
-    <details class="mb-2">
-      <summary class="cursor-pointer font-medium text-blue-700">¿Quién evalúa el proyecto?</summary>
-      <p class="ml-4 text-gray-600">El comité evaluador de la facultad.</p>
-    </details>
-    <details>
-      <summary class="cursor-pointer font-medium text-blue-700">¿Qué hacer si no aprueban el proyecto?</summary>
-      <p class="ml-4 text-gray-600">Se debe ajustar según las recomendaciones y reenviar.</p>
-    </details>
-  </div> -->
 </div>

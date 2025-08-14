@@ -40,9 +40,13 @@
   @apply text-gris-oscuro
 }
 
-.principal-button {
+.menu-button {
   @apply text-white transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none p-1 
-  rounded-md hover:bg-verde-btn hover:w-full
+ hover:w-full hover:bg-gradient-to-r from-green-700 to-green-900
+}
+.principal-button {
+  @apply text-white rounded transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none p-1 
+  hover:bg-verde-btn hover:w-full 
 }
 
 html, body { height: 100%; }

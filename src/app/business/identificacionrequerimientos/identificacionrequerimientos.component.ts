@@ -3,11 +3,12 @@ import { TablaprocedimientoComponent } from '../../shared/component/tablaprocedi
 import { TablaService } from '../../shared/servicios/tabla.service';
 import { RouterLink } from '@angular/router';
 import { ModalComponent } from '../../shared/component/modal/modal.component';
+import { BotonCambiarComponent } from '../../shared/component/boton-cambiar/boton-cambiar.component';
 
 
 @Component({
   selector: 'app-identificacionrequerimientos',
-  imports: [TablaprocedimientoComponent, RouterLink, ModalComponent],
+  imports: [TablaprocedimientoComponent, RouterLink, ModalComponent, BotonCambiarComponent],
   templateUrl: './identificacionrequerimientos.component.html',
   styleUrl: './identificacionrequerimientos.component.css'
 })

@@ -1,47 +1,103 @@
-<div class="font-sans text-gray-800 bg-gray-100 p-2 ">
-    <div class="bg-azul-oscuro text-white p-2 border-2 text-right mb-2 uperlowercase "> Estandarización de procedimientos </div>
-    <div class="mb-1 space-x-0.5 gap-2 h-screen bg-white/100 text-med py-2 px-3 rounded-xl shadow-md max-w-screen mx-auto ">
-        <div class=" bg-white/80 border-1 border-gray-400 rounded-lg p-2">
-            <div class=" bg-azul-oscuro grid grid-cols-5 items-center p-1 ">
-                <div class="col-span-3 px-1 text-left text-white text-peq capitalize font-semibold"> Procedimientos </div>
-                <div class=" col-span-2 p-1">
-                    <button (click)="abrirFormulario()"><a
-                            class="no-underline inline-flex items-center text-peq justify-center bg-verde-btn text-white text-xs px-3 py-1 rounded hover:bg-verde-btn/90 transition">
-                            Agregar procedimiento
-                        </a>
-                    </button>      
-                    <app-modal
-                        [visible]="mostrarModal"
-                        (guardar)="guardarDatos($event)"
-                        (cancelar)="cerrarFormulario()">
-                    </app-modal>
+<div class="font-sans text-gray-800 bg-gray-200 p-2">
+    <!-- Título superior -->
 
-                    <input
-                        class="w-full px-2 py-1 text-left text-black tracking-wider bg-amber-50 rounded-md text-small"
-                        type="search" name="Buscar"
-                        placeholder="Buscar">
+    <div
+        class="mb-1  bg-white text-med py-2 px-3 rounded-xl shadow-md max-w-screen mx-auto"
+        style="max-height: calc(100vh - 100px); overflow-y: auto;">
+
+        <div
+            class="bg-azul-oscuro text-white p-2 border-2 rounded mb-2 uperlowercase">
+            3. Identificación de requerimientos
+        </div>
+
+        <div class="bg-white/80 border border-gray-300 rounded-lg p-4">
+            <!-- Encabezado Procedimientos + Botón + Buscador -->
+            <div
+                class="bg-azul-oscuro flex flex-wrap items-center justify-between gap-3 p-2 rounded-t-md">
+                <!-- Texto Procedimientos -->
+                <div class="text-white text-med font-semibold capitalize">
+                    Procedimientos
+                </div>
+
+                <!-- Contenedor Botón + Buscador -->
+                <div class="flex items-center gap-2">
+                    <!-- Botón Agregar procedimiento -->
+                    <button
+                        (click)="abrirFormulario()"
+                        class="inline-flex items-center justify-center bg-verde-btn text-white text-xs px-3 py-1.5 rounded hover:bg-verde-btn/90 transition">
+                        Agregar procedimiento
+                    </button>
+
+                    <!-- Input con icono lupa -->
+                    <div class="relative w-70">
+                        <input
+                            type="search"
+                            name="Buscar "
+                            placeholder="Buscar procedimiento"
+                            class="pl-3 pr-8 py-1.5 text-black bg-white rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-verde-btn w-full" />
+                        <!-- Icono lupa -->
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
+                        </svg>
+                    </div>
                 </div>
             </div>
-                <app-tablaprocedimiento
-                    [data]="procedimientos"
-                    [columns]="columnas"
-                    [accionesTemplate]="accionesPersonalizadas">
+
+            <!-- Modal -->
+            <app-modal
+                [visible]="mostrarModal"
+                (guardar)="guardarDatos($event)"
+                (cerrar)="cerrarFormulario()">
+            </app-modal>
+
+            <!-- Tabla -->
+            <app-tablaprocedimiento
+                [data]="procedimientos"
+                [columns]="columnas"
+                encabezadoGeneral="Lista de procedimientos"
+                [accionesTemplate]="accionesPersonalizadas">
             </app-tablaprocedimiento>
+            <!-- Botones personalizados de la tabla -->
             <ng-template #accionesPersonalizadas let-dato>
-                <div  class="flex items-center justify-center space-x-1" >
-                <button  routerLink='/estandarizar' (click)="estandarizar(dato)"
-                    class=" bg-verde-btn hover:bg-verde-btn transition-110 text-white py-1 px-2 rounded justify-center items-center">
-                    Estandarizar </button>
-                <button (click)="eliminar(dato)" class="px-1 h-7 w-7"
-                    title="Eliminar Proyecto"><img
-                    class="justify-center items-center icono_titulos btntables hover:brightness-110"
-                    src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg"> </button>
-                <button (click)="editar(dato)" class="px-1 h-7 w-7"
-                    title="Editar Proyecto"><img
-                    class="icono_titulos btntables hover:brightness-110"
-                    src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg"> </button>
+                <div class="flex items-center justify-center space-x-1">
+                    <button
+                        routerLink="/estandarizar"
+                        (click)="estandarizar(dato)"
+                        class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 rounded">
+                        Estandarizar
+                    </button>
+                    <button
+                        (click)="eliminar(dato)"
+                        class="px-1 h-7 w-7"
+                        title="Eliminar Proyecto">
+                        <img
+                            class="icono_titulos btntables hover:brightness-110"
+                            src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg" />
+                    </button>
+                    <button
+                        (click)="editar(dato)"
+                        class="px-1 h-7 w-7"
+                        title="Editar Proyecto">
+                        <img
+                            class="icono_titulos btntables hover:brightness-110"
+                            src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg" />
+                    </button>
                 </div>
             </ng-template>
+        </div>
+        <div class="flex justify-center">
+            <app-boton-cambiar
+                [rutaAnterior]="'/recoleccioninformacion'">
+            </app-boton-cambiar>
         </div>
     </div>
 </div>

@@ -1,3 +1,23 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined');
+
 html {
   scroll-behavior: smooth;
+}
+
+@font-face {
+  font-family: 'HelveticaMedium';
+  src: url('/fonts/helvetica-medium.woff2') format('woff2'),
+       url('/fonts/helvetica-medium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --font-roboto: "Roboto", sans-serif; 
+}
+
+.transition-all {
+  transition: all 0.2s ease-in-out;
 }

@@ -1,51 +1,56 @@
 <!-- MENÚ LATERAL -->
 <aside
-  class="bg-azul-fondo fixed top- md:top-[8rem] left-0 h-[calc(100vh-8rem)] w-52 z-30 hidden md:block overflow-y-auto shadow-lg transition-all"
->
-  <div class="text-peq flex justify-center items-center p-2 bg-azul-oscuro text-white font-bold border-b border-white/20">
+  class="text-justify bg-azul-fondo fixed top- md:top-[8rem] left-0 h-[calc(100vh-8rem)] w-32 z-30 hidden md:block overflow-y-auto shadow-lg transition-all">
+  <div
+    class="text-small font-sans flex justify-center items-center p-2 bg-azul-oscuro text-white font-bold border-b border-white/20">
     <a routerLink='/' class="text-white no-underline">Menú principal</a>
   </div>
 
-  <ul class="flex flex-col p-1 space-y-0.5 text-med">
+  <ul class="flex flex-col p-0 space-y-0.5 space-x-0.2 text-small">
     <li class="list-none">
       <a routerLink="/acercadeestandarizacion"
-         routerLinkActive="bg-verde-btn text-white"
-         class="block py-2 px-2 text-left principal-button no-underline">
-        <span class="font-medium">Acerca de estandarización de procedimientos</span>
+        routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
+        class="flex items-center gap-2 py-2 px-1 text-left menu-button no-underline min-h-8">
+        <img src="assets/icons/acerca-de.svg" alt="acerca de estandarización de procedimientos" class="w-4 h-4" />
+        <span class="font-sans"><strong>1.</strong> Acerca de estandarización de
+          procedimientos</span>
       </a>
     </li>
 
     <li class="list-none">
       <a routerLink="/recoleccioninformacion"
-         routerLinkActive="bg-verde-btn text-white"
-         class="block py-2 px-2 text-left principal-button no-underline">
-        <span class="font-medium">Recolección de información</span>
+        routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
+        class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
+        <img src="assets/icons/informacion.svg" alt="Recolección de información" class="w-4 h-4" />
+        <span class="font-sans"><strong>2.</strong> Recolección de información</span>
       </a>
     </li>
 
     <li class="list-none">
       <a routerLink="/identificacionrequerimientos"
-         routerLinkActive="bg-verde-btn text-white"
-         class="block py-2 px-2 text-left principal-button no-underline">
-        <span class="font-medium">Identificación de procedimientos</span>
+        routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
+        class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
+        <img src="assets/icons/identificacion.svg" alt="Identificación de procedimientos" class="w-4 h-4" />
+        <span class="font-sans"><strong>3.</strong> Identificación de procedimientos</span>
       </a>
     </li>
 
     <li class="list-none">
       <a routerLink="/socializacionprocedimientos"
-         routerLinkActive="bg-verde-btn text-white"
-         class="block py-2 px-2 text-left principal-button no-underline">
-        <span class="font-medium">Socialización de procedimientos</span>
+        routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
+        class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
+        <img src="assets/icons/socializacion.svg" alt="Socializacion de procedimientos" class="w-4 h-4" />
+        <span class="font-sans"><strong>4.</strong> Socialización de procedimientos</span>
       </a>
     </li>
 
     <li class="list-none">
       <a routerLink="/manualusuario"
-         routerLinkActive="bg-verde-btn text-white"
-         class="block py-2 px-2 text-left principal-button no-underline">
-        <span class="font-medium">Manual de usuario</span>
+        routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
+        class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
+        <img src="assets/icons/manual.svg" alt="Manual de Usuario" class="w-4 h-4" />
+        <span class="font-sans"><strong>5.</strong> Manual de usuario</span>
       </a>
     </li>
   </ul>
 </aside>
-

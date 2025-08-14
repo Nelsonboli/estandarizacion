@@ -1,30 +1,19 @@
 @if (visible) {
 <div class="fixed inset-0 bg-black/50 z-50 overflow-y-auto" (click)="onBackdropClick($event)">
     <div class="min-h-screen flex flex-col items-center justify-start py-3">
-        <div #formulario class="bg-white p-6 rounded-lg shadow-md w-full max-w-xl transform transition-transform duration-300 ease-out" [ngClass]="{ 'scale-105': escalar, 'scale-100': !escalar }">
-            <h2 class="text-xl font-semibold mb-3">Formulario</h2>
-            <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
-                @for (campo of campos; track campo.key) {
-                <div class="border-gray-400 rounded-lg p-2">
-                    <label [for]="campo.key" class="block text-sm font-medium text-gray-700">
-                {{ campo.label }}
-              </label>
-                    <input [formControlName]="campo.key" [id]="campo.key" [placeholder]="campo.key" class="w-full px-1 py-2 border rounded placeholder-gray-400" [class.border-red-500]="form.get(campo.key)?.invalid && form.get(campo.key)?.touched" /> @if
-                    (form.get(campo.key)?.invalid && form.get(campo.key)?.touched) {
-                    <p class="text-sm text-red-600">Este campo es obligatorio.</p>
-                    }
-                </div>
-                }
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" (click)="onCancel()" class="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
-              Cancelar
-            </button>
-                    <button type="submit"  class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Guardar
-            </button>
-                </div>
-            </form>
-        </div>
+    <div
+      #formulario
+      class="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl transform transition-transform duration-300 ease-out"
+      [ngClass]="{ 'scale-105': escalar, 'scale-100': !escalar }"
+    >
+      <app-formreutilizable
+        [campos]="campos"
+        [titulo]="fichaTecnica"
+        (guardar)="onSubmit()"
+        (cerrar)="onCancel()"
+      >
+      </app-formreutilizable>
+    </div>
     </div>
 </div>
 }

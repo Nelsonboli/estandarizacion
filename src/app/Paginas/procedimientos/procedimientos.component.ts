@@ -1,13 +1,13 @@
 import { Component, EventEmitter, inject, Input, OnInit} from '@angular/core';
 import { TablaestandarizacionService } from '../../shared/servicios/tablaestandarizacion.service';
 import { TablaService } from '../../shared/servicios/tabla.service';
-import {  Procedimiento as any } from '../../shared/Models/procedimientos';
 import { TablaprocedimientoComponent } from '../../shared/component/tablaprocedimiento/tablaprocedimiento.component';
 import { ModalComponent } from '../../shared/component/modal/modal.component';
+import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
 
 @Component({
   selector: 'app-procedimientos',
-  imports: [TablaprocedimientoComponent, ModalComponent, ModalComponent ],
+  imports: [TablaprocedimientoComponent, ModalComponent, ModalComponent, TablaCriteriosComponent],
   templateUrl: './procedimientos.component.html',
   styleUrl: './procedimientos.component.css',
   providers:[
@@ -17,7 +17,8 @@ import { ModalComponent } from '../../shared/component/modal/modal.component';
 export class ProcedimientosComponent implements OnInit {
 mostrarModal = false;
 procedimientos: any[] = [];
- 
+
+
   columnas = [
     { key: 'Procedimiento', header: 'Procedimiento' },
     { key: 'Categoria', header: 'Categoría' },
