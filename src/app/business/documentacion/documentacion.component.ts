@@ -1,43 +1,42 @@
 
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { TablaestandarizacionService } from '../../shared/servicios/tablaestandarizacion.service';
-import { RouterLink } from '@angular/router';
-import { BotonCambiarComponent } from "../../shared/component/boton-cambiar/boton-cambiar.component";
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { NavegacionComponent } from "../../shared/component/navegacion/navegacion";
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-documentacion',
   standalone: true,
-  imports: [RouterLink, BotonCambiarComponent, CommonModule, RouterLink],
+  imports: [RouterLink, NavegacionComponent, CommonModule],
   templateUrl: './documentacion.component.html',
   styleUrl: './documentacion.component.css'
 })
 export class DocumentacionComponent {
-activeSection: string = '';
+  activeSection: string = '';
 
-  constructor(public tablaestandarizacionService: TablaestandarizacionService) {
+ constructor(public tablaestandarizacionService: TablaestandarizacionService, 
+  private router: Router) {
+
+  // Cuando se termina de navegar
+  this.router.events.pipe(
+    filter(e => e instanceof NavigationEnd)
+  ).subscribe(() => {
+    const tree = this.router.parseUrl(this.router.url);
+    if (tree.fragment) {
+      const element = document.getElementById(tree.fragment);
+      if (element) {
+        // Compensar el header fijo (80px aprox)
+        const yOffset = -80; 
+        const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+  });
+
 
   }
 
-  recoleccioniformacion(){
-
-  }
-
-    ngOnInit() {
-    const sections = document.querySelectorAll('section[id]');
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            this.activeSection = entry.target.id;
-          }
-        });
-      },
-      { threshold: 0.6 } // Visible el 60% para activar
-    );
-
-    sections.forEach(section => observer.observe(section));
-  }
 
 }

@@ -1,6 +1,6 @@
 <!-- MENÚ LATERAL -->
 <aside
-  class="text-justify bg-azul-fondo fixed top- md:top-[8rem] left-0 h-[calc(100vh-8rem)] w-32 z-30 hidden md:block overflow-y-auto shadow-lg transition-all">
+  class="text-justify bg-azul-fondo fixed top- md:top-[5rem] left-0 h-[calc(100vh-4rem)] w-32 z-20 hidden md:block overflow-y-auto shadow-lg transition-all">
   <div
     class="text-small font-sans flex justify-center items-center p-2 bg-azul-oscuro text-white font-bold border-b border-white/20">
     <a routerLink='/' class="text-white no-underline">Menú principal</a>
@@ -8,22 +8,22 @@
 
   <ul class="flex flex-col p-0 space-y-0.5 space-x-0.2 text-small">
     <li class="list-none">
-      <a routerLink="/acercadeestandarizacion"
+      <button routerLink="/acercadeestandarizacion"
         routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
         class="flex items-center gap-2 py-2 px-1 text-left menu-button no-underline min-h-8">
         <img src="assets/icons/acerca-de.svg" alt="acerca de estandarización de procedimientos" class="w-4 h-4" />
         <span class="font-sans"><strong>1.</strong> Acerca de estandarización de
           procedimientos</span>
-      </a>
+      </button>
     </li>
 
     <li class="list-none">
-      <a routerLink="/recoleccioninformacion"
+      <button routerLink="/recoleccioninformacion"
         routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
         class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
         <img src="assets/icons/informacion.svg" alt="Recolección de información" class="w-4 h-4" />
         <span class="font-sans"><strong>2.</strong> Recolección de información</span>
-      </a>
+      </button>
     </li>
 
     <li class="list-none">
@@ -36,21 +36,22 @@
     </li>
 
     <li class="list-none">
-      <a routerLink="/socializacionprocedimientos"
+      <button routerLink="/socializacionprocedimientos"
+        (click)="abrirLista()"
         routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
         class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
         <img src="assets/icons/socializacion.svg" alt="Socializacion de procedimientos" class="w-4 h-4" />
         <span class="font-sans"><strong>4.</strong> Socialización de procedimientos</span>
-      </a>
+      </button>
     </li>
 
     <li class="list-none">
-      <a routerLink="/manualusuario"
+      <button routerLink="/manualusuario"
         routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900"
         class="flex items-center gap-2 py-1 px-1 text-left menu-button no-underline min-h-8">
         <img src="assets/icons/manual.svg" alt="Manual de Usuario" class="w-4 h-4" />
         <span class="font-sans"><strong>5.</strong> Manual de usuario</span>
-      </a>
+      </button>
     </li>
   </ul>
 </aside>

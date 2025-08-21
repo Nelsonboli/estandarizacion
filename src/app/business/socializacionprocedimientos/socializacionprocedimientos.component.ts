@@ -1,19 +1,49 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
 import { TablaestandarizacionService } from '../../shared/servicios/tablaestandarizacion.service';
+import { NavegacionComponent } from '../../shared/component/navegacion/navegacion';
+import { TablaService } from '../../shared/servicios/tabla.service';
+import { EstadolistaService } from '../../shared/servicios/estadolista.service';
+import { ListaDesplegableComponent } from '../../shared/component/lista-desplegable/lista-desplegable.component';
 
 
 @Component({
   selector: 'app-socializacionprocedimientos',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule,TablaCriteriosComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule,TablaCriteriosComponent, NavegacionComponent, ListaDesplegableComponent],
   templateUrl: './socializacionprocedimientos.component.html',
   styleUrl: './socializacionprocedimientos.component.css'
 })
-export class SocializacionprocedimientosComponent {
+export class SocializacionprocedimientosComponent implements OnInit{
+   procedimientos: any[] = [];
 
-  constructor(public tablaestandarizacionService : TablaestandarizacionService ){}
+  constructor(public tablaestandarizacionService : TablaestandarizacionService,
+              private tablaService: TablaService,
+              private listaService: EstadolistaService
+   ){}
+
+  abrir = false;
+  cerrarModal() {
+    this.listaService.cerrar();
+  }
+
+   ngOnInit() {
+    this.tablaService.procedimientos$.subscribe(data => {
+      this.procedimientos = data;
+    });
+
+    this.listaService.visible$.subscribe(v => this.abrir = v);
+  }
+
+  columnas = [
+    'Procedimiento',
+    'Categoria',
+    'Rol',
+    'Estado',
+    'Actividades',
+    'Referentes'
+  ];
 
   procedimiento:any = {
     titulo: 'Gestion de Horarios',
@@ -46,5 +76,13 @@ export class SocializacionprocedimientosComponent {
       this.socializado = true;
     }
   }
+
+  procedimientoSeleccionado: any = null;
+
+onSocializar(procedimiento: any) {
+  this.procedimientoSeleccionado = procedimiento;
+  // Aquí puedes mostrar la información, abrir otro modal, etc.
+  console.log('Procedimiento a socializar:', procedimiento);
+}
 
 }

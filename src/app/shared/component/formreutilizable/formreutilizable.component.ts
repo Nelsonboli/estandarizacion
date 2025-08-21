@@ -9,32 +9,32 @@ import { TablaprocedimientoComponent } from '../tablaprocedimiento/tablaprocedim
   styleUrl: './formreutilizable.component.css'
 })
 export class FormreutilizableComponent implements OnInit {
-// Inputs y inicializacion de datos
-  @Input() titulo: string | undefined; 
+  // Inputs y inicializacion de datos
+  @Input() titulo: string | undefined;
   @Input() campos: { key: string; label: string }[] = [];
   @Output() guardar = new EventEmitter<any>();
   @Output() cerrar = new EventEmitter<void>();
   form!: FormGroup;
   listaDatos: any[] = [];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
-//ngOnInit
-ngOnInit(): void {
-  const group: any = {};
-  for (const campo of this.campos) {
-    group[campo.key] = ['', Validators.required];
+  //ngOnInit
+  ngOnInit(): void {
+    const group: any = {};
+    for (const campo of this.campos) {
+      group[campo.key] = ['', Validators.required];
+    }
+    this.form = this.fb.group(group);
   }
-  this.form = this.fb.group(group);
-}
-// metodo que agrega solo el campo específico a el formulario
+  // metodo que agrega solo el campo específico a el formulario
   agregarCampo(campo: string) {
     const control = this.form.get(campo);
     if (control && control.valid) {
       const nuevoRegistro = { [campo]: control.value };
       this.listaDatos.push(nuevoRegistro);
       console.log(this.listaDatos)
-      control.reset(); // Limpia solo ese campo
+      control.reset();
     } else {
       control?.markAsTouched();
     }
@@ -44,7 +44,7 @@ ngOnInit(): void {
   listaDatosFiltradas(campo: string) {
     return this.listaDatos.filter(d => d[campo] !== undefined);
   }
-  
+
   //Metodo para elimnar el dato selecionado de la tabla
   eliminarDato(item: any) {
     this.listaDatos = this.listaDatos.filter(p => p !== item);
@@ -58,15 +58,33 @@ ngOnInit(): void {
     this.listaDatos = [];
   }
 
-  //Metodo para enviar los datos del formulario 
+  //Metodo para enviar el formulario
   enviarFormulario() {
-    if (this.form.valid) {
-      console.log('Datos completos:', this.form.value);
+    if (this.listaDatos.length > 0) {
+      const registro: any = {};
+
+      // Campos que aceptan múltiples valores
+      const camposMultiples = ['Rol', 'Actividades', 'Referentes']; // Agregar datos del formulario de la DAAC
+
+      this.campos.forEach(campo => {
+        const datosCampo = this.listaDatos
+          .filter(d => d[campo.key] !== undefined)
+          .map(d => d[campo.key]);
+
+        if (camposMultiples.includes(campo.key)) {
+          // Guarda todos los valores como array
+          registro[campo.key] = datosCampo;
+        } else {
+          // Solo el primero (o vacío si no hay)
+          registro[campo.key] = datosCampo.length > 0 ? datosCampo[0] : '';
+        }
+      });
+
+      this.guardar.emit(registro);
+      this.listaDatos = [];
       this.form.reset();
-      console.log(this.form)
     } else {
       this.form.markAllAsTouched();
     }
   }
-
 }

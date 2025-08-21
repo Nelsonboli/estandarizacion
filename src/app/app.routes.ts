@@ -30,10 +30,6 @@ export const routes: Routes = [
             path: 'manualusuario',
             loadComponent: () => import('./business/manualusuario/manualusuario.component').then(m => m.ManualusuarioComponent)
         },
-        {
-            path: 'procedimiento',
-            loadComponent: () => import('./Paginas/procedimientos/procedimientos.component').then(m => m.ProcedimientosComponent),
-        },
 
         {
             path: 'estandarizar',
@@ -51,7 +47,5 @@ export const routes: Routes = [
 
 const routerOptions: ExtraOptions = {
   scrollPositionRestoration: 'enabled',
-  anchorScrolling: 'enabled', // 👈 Habilita el scroll hacia fragmentos
-  scrollOffset: [0, 100] // (opcional) para ajustar el desplazamiento
+  anchorScrolling: 'enabled'
 };
-

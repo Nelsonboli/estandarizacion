@@ -3,22 +3,20 @@ import { TablaprocedimientoComponent } from '../../shared/component/tablaprocedi
 import { TablaService } from '../../shared/servicios/tabla.service';
 import { RouterLink } from '@angular/router';
 import { ModalComponent } from '../../shared/component/modal/modal.component';
-import { BotonCambiarComponent } from '../../shared/component/boton-cambiar/boton-cambiar.component';
+import { NavegacionComponent } from '../../shared/component/navegacion/navegacion';
 
 
 @Component({
   selector: 'app-identificacionrequerimientos',
-  imports: [TablaprocedimientoComponent, RouterLink, ModalComponent, BotonCambiarComponent],
+  imports: [TablaprocedimientoComponent, RouterLink, ModalComponent, NavegacionComponent],
   templateUrl: './identificacionrequerimientos.component.html',
   styleUrl: './identificacionrequerimientos.component.css'
 })
 export class IdentificacionrequerimientosComponent implements OnInit {
- constructor(private tablaService: TablaService,
- 
- ) {}
   mostrarModal = false;
   procedimientos: any[] = [];
-  
+  constructor(private tablaService: TablaService,) { }
+
   columnas = [
     { key: 'Procedimiento', header: 'Procedimiento' },
     { key: 'Categoria', header: 'Categoría' },
@@ -27,15 +25,13 @@ export class IdentificacionrequerimientosComponent implements OnInit {
     { key: 'Actividades', header: 'Actividades' },
     { key: 'Referentes', header: 'Referentes' },
   ];
-  
 
-ngOnInit() {
-  this.tablaService.procedimientos$.subscribe(data => {
-    console.log('Procedimientos recibidos en identificación:', data);
-    this.procedimientos = data;
-  });
-}
-
+  ngOnInit() {
+    this.tablaService.procedimientos$.subscribe(data => {
+      console.log('Procedimientos recibidos en identificación:', data);
+      this.procedimientos = data;
+    });
+  }
 
   editar(dato: any) {
     console.log('Editar', dato);
@@ -45,24 +41,30 @@ ngOnInit() {
     console.log('Estandarizar', dato);
   }
 
-   abrirFormulario() {
+  // abrir Formulario modal
+  abrirFormulario() {
     this.mostrarModal = true;
     document.body.classList.add('overflow-hidden');
   }
 
+  // eliminar formulario modal
   cerrarFormulario() {
     this.mostrarModal = false;
     document.body.classList.remove('overflow-hidden');
   }
 
-  guardarDatos(procedimiento: any) {
-    this.tablaService.agregarProcedimiento(procedimiento);
-    this.cerrarFormulario();
-  } 
-
-    eliminar(item: any) {
+  eliminar(item: any) {
     this.procedimientos = this.procedimientos.filter(p => p !== item);
     this.tablaService.setProcedimientos(this.procedimientos);
+  }
+
+  guardarDatos(nuevoDato: any) {
+    this.procedimientos.push({
+      id: this.procedimientos.length + 1,
+      ...nuevoDato 
+    });
+
+    this.tablaService.setProcedimientos(this.procedimientos); 
   }
 
 }

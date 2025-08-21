@@ -21,3 +21,10 @@ html {
 .transition-all {
   transition: all 0.2s ease-in-out;
 }
+
+.active { 
+  border-left: 2px solid color-mix(in oklab, #006eff 70%, transparent);
+  color: #00232e  ;
+  font-weight: 600;
+}
+

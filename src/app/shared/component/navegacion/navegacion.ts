@@ -3,13 +3,13 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-boton-cambiar',
+  selector: 'app-navegacion',
   standalone:true,
   imports: [RouterLink,CommonModule],
-  templateUrl: './boton-cambiar.component.html',
-  styleUrl: './boton-cambiar.component.css'
+  templateUrl: './navegacion.component.html',
+  styleUrls: ['./navegacion.component.css']
 })
-export class BotonCambiarComponent {
+export class NavegacionComponent {
   @Input() rutaAnterior!: string;
   @Input() rutaSiguiente!: string;
   @Input() posicion!: 'primera' | 'ultima' | 'intermedia';
@@ -20,6 +20,8 @@ export class BotonCambiarComponent {
     '/acercadeestandarizacion',
     '/recoleccioninformacion',
     '/identificacionrequerimientos',
+    '/socializacionprocedimientos',
+    '/manualusuario'
   ];
 
   constructor(private router: Router) {}

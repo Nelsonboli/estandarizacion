@@ -1,29 +1,33 @@
 <div class="overflow-x-auto mx-auto">
     <!-- Encabezado general -->
     @if (encabezadoGeneral) {
-        <div class="p-1 px-2 w-full bg-encabezado-tabla text-white text-med font-semibold">
-            {{ encabezadoGeneral }}
-        </div>
+    <div
+        class="p-1 px-2 w-full bg-encabezado-tabla text-white text-med font-semibold">
+        {{ encabezadoGeneral }}
+    </div>
     }
 
     <!-- Encabezado por columnas -->
     @else if (columns && columns.length > 0) {
-        @for (col of columns; track col.header) {
-            <div class="p-1 px-2 w-full bg-encabezado-tabla text-white text-med font-semibold">
-                Lista de {{ col.header }}
-            </div>
-        }
+    @for (col of columns; track col.header) {
+    <div
+        class="p-1 px-2 w-full bg-encabezado-tabla text-white text-med font-semibold">
+        Lista de {{ col.header }}
+    </div>
     }
-
-    <table class="w-full mx-auto border border-gray-300 text-center text-peq border-collapse">
+    }
+    <table
+        class="w-full table-fixed mx-auto border border-gray-300 text-center text-peq border-collapse">
         <thead>
             <tr>
                 @for (col of columns; track col.key) {
-                    <th class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black">
-                        {{ col.header }}
-                    </th>
+                <th
+                    class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
+                    {{ col.header }}
+                </th>
                 }
-                <th class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black">
+                <th
+                    class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
                     Opciones
                 </th>
             </tr>
@@ -31,29 +35,37 @@
 
         <tbody class="bg-white divide-y divide-gray-200">
             @for (dato of data; track dato.id) {
-                <tr class="hover:bg-gray-100">
-                    @for (nombre of columns; track nombre.key) {
-                        <td class="px-1 py-0.5 border border-gray-300 text-center">
-                            {{ dato[nombre.key] }}
-                        </td>
+            <tr class="hover:bg-gray-100">
+                @for (nombre of columns; track nombre.key) {
+                <td
+                    class="px-1 py-2 border border-gray-300 text-center align-top whitespace-normal break-words">
+                    {{ dato[nombre.key] }}
+                </td>
+                }
+                <td
+                    class="border border-gray-300 p-2 m-2 text-center align-middle">
+                    @if (accionesTemplate; as template) {
+                    <ng-container
+                        *ngTemplateOutlet="template; context: { $implicit: dato }"></ng-container>
                     }
-                    <td class="border border-gray-300 p-2 m-2 text-center align-middle">
-                        @if (accionesTemplate; as template) {
-                            <ng-container *ngTemplateOutlet="template; context: { $implicit: dato }"></ng-container>
-                        }
-                        @else {
-                            <button (click)="eliminar.emit(dato)" class="px-1 w-7 h-7" title="Eliminar Proyecto">
-                                <img class="icono_titulos btntables hover:brightness-110"
-                                    src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg">
-                            </button>
-                            <button (click)="editar.emit(dato)" class="px-1 w-7 h-7" title="Editar Proyecto">
-                                <img class="icono_titulos btntables hover:brightness-110"
-                                    src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg">
-                            </button>
-                        }
-                    </td>
-                </tr>
+                    @else {
+                    <button (click)="eliminar.emit(dato)" class="px-1 w-7 h-7"
+                        title="Eliminar Proyecto">
+                        <img
+                            class="icono_titulos btntables hover:brightness-110"
+                            src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg">
+                    </button>
+                    <button (click)="editar.emit(dato)" class="px-1 w-7 h-7"
+                        title="Editar Proyecto">
+                        <img
+                            class="icono_titulos btntables hover:brightness-110"
+                            src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg">
+                    </button>
+                    }
+                </td>
+            </tr>
             }
         </tbody>
     </table>
+
 </div>

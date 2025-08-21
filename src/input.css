@@ -19,7 +19,6 @@
   --color-rojo-btn: #ff4242;
   --color-amarillo-btn:  #EBF92F;
   --color-azul-btn:  #006FFF;
-  --color-verde-btn:  #068038;
    --text-small : 8px;
   --text-peq: 10px;
   --text-med: 12px;
@@ -60,7 +59,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .mat-form-field-small .mat-form-field-wrapper {
   padding-bottom: 0;
   padding-top: 0;
-  height: 32px;
+  height: 20px;
 }
 
 .mat-form-field-small .mat-form-field-infix {

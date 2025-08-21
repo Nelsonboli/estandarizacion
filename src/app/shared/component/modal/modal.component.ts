@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TablaService } from '../../servicios/tabla.service';
 import { FormreutilizableComponent } from '../formreutilizable/formreutilizable.component';
 
 @Component({
@@ -30,12 +29,11 @@ onBackdropClick(event: MouseEvent): void {
     }
   }
 
-  
 fb = inject(FormBuilder);
 form = this.fb.group({});
 
 
-constructor(private tablaService: TablaService ){
+constructor(){
 }
 
 ngOnInit() {
@@ -47,7 +45,6 @@ ngOnInit() {
   });
 }
 
-
   campos = [
   { key: 'Procedimiento', label: 'Procedimiento', required: true },
   { key: 'Categoria', label: 'Categoria', required: true },
@@ -57,17 +54,14 @@ ngOnInit() {
   { key: 'Referentes', label: 'Referentes' },
 ];
 
-  onSubmit() {
-    if (this.form.valid) {
-      const nuevo = this.form.value
-      this.guardar.emit(nuevo);
-    } else {
-      this.form.markAllAsTouched();
-    }
-  }
-  
+
   onCancel() {
     this.cerrar.emit();
     this.form.reset();
   }
+  
+  onGuardar(datos: any) {
+  this.guardar.emit(datos);
+  this.onCancel();
+}
 }

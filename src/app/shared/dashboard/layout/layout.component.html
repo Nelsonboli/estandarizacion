@@ -1,26 +1,72 @@
-<div class="flex flex-col min-h-screen">
-  <!-- HEADER FIJO -->
-  <header class="fixed top-0 left-0 w-full z-38 bg-white shadow-md">
-    <app-header></app-header>
+<!-- <div class="flex flex-col min-h-screen">
+  
+  <header class="fixed top-0 left-0 w-full z-32 bg-white shadow-md">
+    <app-header (toggleMenu)="toggleSidebar()"></app-header>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL CON SIDEBAR -->
-  <div class="flex flex-1 pt-30 sm:flex-wrap">
-    <!-- MENU LATERAL -->
-    <aside class="bg-azul-fondo w-32 hidden md:block fixed left-0 top-16 h-[calc(100vh-8rem)] z-30 overflow-y-auto shadow">
+  <div class="flex-1 pt-20 sm:flex-wrap">
+   
+    <aside class="bg-azul-fondo w-20 hidden md:block fixed left-0 top-20 h-[calc(100vh-4rem)] z-20 overflow-y-auto shadow">
       <app-menulateral></app-menulateral>
     </aside>
 
+    <main class="flex-1 ml-0 md:ml-32 bg-white min-h-[calc(100vh-4rem)]">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+
+  <footer class="flex-1 ml-0 md:ml-32 bg-white border-t border-gray-200">
+    <app-footer></app-footer>
+  </footer>
+</div> -->
+
+<div class="flex flex-col min-h-screen">
+  <!-- HEADER FIJO -->
+  <header class="fixed top-0 left-0 w-full z-32 bg-white shadow-md">
+    <app-header 
+      (toggleMenu)="toggleSidebar()" 
+      [esMenuPrincipal]="esMenuPrincipal">
+    </app-header>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL CON SIDEBAR -->
+  <div class="flex-1 pt-20 flex">
+
+    <!-- MENU LATERAL -->
+    @if (!esMenuPrincipal) {
+      <aside
+        class="bg-azul-fondo fixed top-20 left-0 h-[calc(100vh-4rem)] z-20 overflow-hidden shadow-lg
+               transition-all duration-500 ease-in-out"
+        [ngClass]="{
+          'w-32': !colapsar,
+          'w-0': colapsar
+        }">
+        @if(!colapsar){
+        <app-menulateral ></app-menulateral>
+        }
+      </aside>
+    }
+
     <!-- CONTENIDO PRINCIPAL -->
-    <main class="flex-1 ml-0 md:ml-32 py-2 bg-gray-200 min-h-[calc(100vh-4rem)]">
+    <main
+      class="flex-1 bg-white min-h-[calc(100vh-4rem)] 
+             transition-all duration-500 ease-in-out delay-100"
+      [ngClass]="{
+        'ml-32': !colapsar && !esMenuPrincipal,
+        'ml-0': colapsar || esMenuPrincipal
+      }">
       <router-outlet></router-outlet>
     </main>
   </div>
 
   <!-- FOOTER -->
-  <footer class="w-full bg-white border-t border-gray-200 p-4 text-center">
+  <footer
+    class="bg-white border-t border-gray-200 
+           transition-all duration-500 ease-in-out delay-100"
+    [ngClass]="{
+      'ml-32': !colapsar && !esMenuPrincipal,
+      'ml-0': colapsar || esMenuPrincipal
+    }">
     <app-footer></app-footer>
   </footer>
 </div>
-
-

@@ -23,6 +23,7 @@ export class TablaprocedimientoComponent  {
 
 @Output() eliminar = new EventEmitter<any>();
 @Output() editar = new EventEmitter<any>();
+Array: any;
   
 }
 

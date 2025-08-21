@@ -1,79 +1,125 @@
-<div class="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
-  <!-- tabla de procedimiento  -->
-  
-        <app-tabla-criterios
-          [columnas]="tablaestandarizacionService.encabezadoFichaTecnica"
-          [filas]="tablaestandarizacionService.tablaFichaTecnica"></app-tabla-criterios>
+<div class="font-sans text-gray-800 bg-white p-1 ">
 
-  <!-- tabla clasificacion de estados -->
-
-  <!-- Sorporte documental -->
-  <!-- Mostrar el formulario DAAC -->
-
-  <!-- Documento base -->
-
-  <!-- Mostrar Diagrama de Flujo -->
-
-  <!-- Mostrar informacion de Soporte computacional -->
-
-
-
-  <!-- Encabezado del procedimiento -->
-  <h3 class="text-lg font-semibold text-gray-800 mb-2">✍️ Descripcion procedimiento</h3>
-  <div class="text-center">
-    <h2 class="text-lg font-bold text-gray-800">Procedimiento: {{ procedimiento.titulo }}</h2>
-    <p class="mt-2 text-gray-700"> <strong> Aprobado: </strong> {{ procedimiento.aprobado }}</p>
-    <p class="mt-2 text-gray-700"> <strong> Objetivo: </strong> {{ procedimiento.objetivo }}</p>
-    <p class="mt-2 text-gray-700"> <strong> Estado incial:</strong> {{ procedimiento.estadoInicial }}</p>
-    <p class="mt-2 text-gray-700"> <strong> Estado actual: </strong> {{ procedimiento.estadoActual }}</p>
-  </div>
-
-<!-- Roles involucrados -->
-  <div>
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">👥 Roles involucrados</h3>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-      @for (rol of roles; track rol.nombre) {
-        <div class="p-3 m-2 space-y-2 bg-gray-100 rounded-lg text-center items-center">
-          <h4 class=" text-lg font-bold text-gray-700">{{ rol.nombre }}</h4>
-          <p class="text-sm text-gray-600">{{ rol.descripcion }}</p>
-        </div>
-      }
+  <!-- Título superior -->
+  <div
+    class="mb-2  bg-white text-med py-2 px-3 rounded-xl shadow-sm max-w-screen mx-auto">
+    <div
+      class="bg-azul-oscuro text-white p-2 border-2 rounded mb-2 uperlowercase">
+      4. Socialización de procedimientos
     </div>
-  </div>
 
-<!-- Paso a paso -->
-  <div>
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">🧭 Paso a paso</h3>
-    <ul class="space-y-2">
-      @for (paso of pasos; track paso.titulo) {
-        <li class="bg-gray-100 p-3 rounded-lg border-l-4 border-blue-600">
-          <strong>{{ paso.titulo }}</strong> → <span class="text-gray-700">{{ paso.responsable }}</span> 
-        </li>
-      }
-    </ul>
-  </div>
+    <app-lista-desplegable
+      [visible]="abrir"
+      (cerrar)="cerrarModal()"
+      (guardar)="onSocializar($event)">
+    </app-lista-desplegable>
 
-<!-- Documentación descargable -->
-  <div>
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">📄 Documentos</h3>
-    <ul class="list-disc list-inside text-blue-600">
-      <li><a href="#" class="hover:underline">Descargar Procedimiento PDF</a></li>
-    </ul>
-  </div>
-
-<!-- Registro de socialización -->
-  <h3 class="text-lg font-semibold text-gray-800 mb-2">📌 Registro de socialización</h3>
-  <div class="bg-gray-100 p-4 rounded-lg">
-
-    @if (!socializado) {
-      <form (ngSubmit)="registrarSocializacion()" class="flex flex-col md:flex-row items-center gap-2">
-        <input [(ngModel)]="fecha" name="fecha" type="text" placeholder="fecha" class="p-2 rounded border w-full md:w-1/3" required>
-        <input [(ngModel)]="lugar" name="lugar" type="text" placeholder="lugar" class="p-2 rounded border w-full md:w-1/3" required>
-        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500">Registrar</button>
-      </form>
-    } @else {
-      <p class="text-green-700 font-medium">✅ tu procedimiento {{ procedimiento.titulo }}. sera {{fecha }} en {{lugar}}.</p>
+    @if (procedimientoSeleccionado) {
+    <div class="mt-4 p-4 bg-gray-100 rounded">
+      <h3 class="font-bold mb-2">Procedimiento seleccionado:</h3>
+      <pre>{{ procedimientoSeleccionado | json }}</pre>
+    </div>
     }
-  </div>
 
+    <div class="px-4">
+      <!-- tabla de procedimiento  -->
+      <app-tabla-criterios
+        [columnas]="columnas"
+        [filas]="procedimientos"></app-tabla-criterios>
+
+      <!-- tabla clasificacion de estados -->
+
+      <!-- Sorporte documental -->
+      <!-- Mostrar el formulario DAAC -->
+
+      <!-- Documento base -->
+
+      <!-- Mostrar Diagrama de Flujo -->
+
+      <!-- Mostrar informacion de Soporte computacional -->
+
+      <!-- Encabezado del procedimiento -->
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">✍️ Descripcion
+        procedimiento</h3>
+      <div class="text-center">
+        <h2 class="text-lg font-bold text-gray-800">Procedimiento: {{
+          procedimiento.titulo }}</h2>
+        <p class="mt-2 text-gray-700"> <strong> Aprobado: </strong> {{
+          procedimiento.aprobado }}</p>
+        <p class="mt-2 text-gray-700"> <strong> Objetivo: </strong> {{
+          procedimiento.objetivo }}</p>
+        <p class="mt-2 text-gray-700"> <strong> Estado incial:</strong> {{
+          procedimiento.estadoInicial }}</p>
+        <p class="mt-2 text-gray-700"> <strong> Estado actual: </strong> {{
+          procedimiento.estadoActual }}</p>
+      </div>
+
+      <!-- Roles involucrados -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">👥 Roles
+          involucrados</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+          @for (rol of roles; track rol.nombre) {
+          <div
+            class="p-3 m-2 space-y-2 bg-gray-100 rounded-lg text-center items-center">
+            <h4 class=" text-lg font-bold text-gray-700">{{ rol.nombre }}</h4>
+            <p class="text-sm text-gray-600">{{ rol.descripcion }}</p>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Paso a paso -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">🧭 Paso a paso</h3>
+        <ul class="space-y-2">
+          @for (paso of pasos; track paso.titulo) {
+          <li class="bg-gray-100 p-3 rounded-lg border-l-4 border-blue-600">
+            <strong>{{ paso.titulo }}</strong> → <span class="text-gray-700">{{
+              paso.responsable }}</span>
+          </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Documentación descargable -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-2">📄 Documentos</h3>
+        <ul class="list-disc list-inside text-blue-600">
+          <li><a href="#" class="hover:underline">Descargar Procedimiento
+              PDF</a></li>
+        </ul>
+      </div>
+
+      <!-- Registro de socialización -->
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">📌 Registro de
+        socialización</h3>
+      <div class="bg-gray-100 p-4 rounded-lg">
+
+        @if (!socializado) {
+        <form (ngSubmit)="registrarSocializacion()"
+          class="flex flex-col md:flex-row items-center gap-2">
+          <input [(ngModel)]="fecha" name="fecha" type="text"
+            placeholder="fecha"
+            class="p-2 rounded border w-full md:w-1/3" required>
+          <input [(ngModel)]="lugar" name="lugar" type="text"
+            placeholder="lugar"
+            class="p-2 rounded border w-full md:w-1/3" required>
+          <button type="submit"
+            class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500">Registrar</button>
+        </form>
+        } @else {
+        <p class="text-green-700 font-medium">✅ tu procedimiento {{
+          procedimiento.titulo }}. sera {{fecha }} en {{lugar}}.</p>
+        }
+      </div>
+      <div>
+        <app-navegacion
+          [rutaAnterior]="'/identificacionrequerimientos'"
+          [rutaSiguiente]="'/manualusuario'">
+        </app-navegacion>
+      </div>
+    </div>
+
+  </div>
 </div>

@@ -1,24 +1,27 @@
 <div
-    class="font-sans text-gray-800 bg-gray-100 p-2 m-1">
+    class="font-sans text-gray-800 bg-white p-1 m-1">
+
     <div
-        class="bg-azul-oscuro text-white p-2 border-2 text-right m-2 uperlowercase rounded-sm">
-        Estandarización de procedimientos </div>
-    <div
-        class=" mb-2 space-x-0.5 min-h-screen bg-white/100 text-med px-1 py-1 rounded-lg shadow-sm max-w-screen mx-auto">
+        class=" mb-2 space-x-0.5 min-h-screen bg-white text-med px-1 py-1 rounded-lg shadow-sm max-w-screen mx-auto">
         <div
-            class="flex flex-row flex-wrap gap-3 bg-white/80 border border-gray-300 rounded-lg p-2 mb-1">
+            class="bg-azul-oscuro text-white p-2 border-2 text-right m-2 uperlowercase rounded-sm">
+            Estandarización de procedimientos
+        </div>
+
+        <div
+            class="flex flex-row flex-wrap gap-3 bg-white/80 border border-gray-300 rounded-lg p-2 m-2">
+
             @for (estado of estados; track estado; let i = $index) {
             <div
-                class="flex-1 flex flex-col items-center gap-2 group transition-transform hover:scale-102 min-w-[180px] max-w-[240px] duration-200"
+                class="flex-1 flex flex-col items-center gap-2 group transition-transform hover:scale-102 min-w-[180px] max-w-[240px] duration-200 m-2"
                 (mouseenter)="hoverIndex = i"
                 (mouseleave)="hoverIndex = null">
                 <!-- Botón -->
                 <button
                     class="w-full h-24 estados-basic-button flex flex-col items-center justify-center rounded border border-gray-500 transition-all duration-200 ease-in-out hover:shadow-md hover:scale-[1.02]"
                     [ngClass]="[
-                        getColorHover(i),
-                        (hoverIndex === i) ? 'shadow-sm ring-2 scale-105' : '',
-                        (buttonIndex === i) ? 'inset-shadow-sm inset-shadow-gray-500' : '',
+                        (hoverIndex === i) ? 'shadow-sm ring-2 scale-105 bg-gradient-to-r from-green-700 to-green-800 hover:text-white ' : '',
+                        (buttonIndex === i) ? ' inset-shadow-sm inset-shadow-gray-500' : '',
                         estadoCompletos[i] ? 'bg-green-600' : 'bg-gray-400'
                     ]"
                     (click)="onButtonClick(i)">
@@ -43,195 +46,26 @@
             </div>
             }
         </div>
-        <div
-            class="bg-white/80 border-1 border-gray-400 rounded-lg p-1 mb-1 space-y-1 ">
+        <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-2 m-2">
             @switch (buttonIndex) { @case (0) {
-            <div class="bg-white/80 border-1 border-gray-400 rounded-lg p-3 m-2 gap-4" >
-            <app-formreutilizable
-                [campos]="unificacionCriterios"
-                [titulo]="formularioDAAC"
-                (guardar)="onEnviar($event)"
-                (cancel)="onCancelar()">
-            </app-formreutilizable>
-            </div>
-            } @case (1) {
-            <div class="bg-white/80 border-1 border-gray-400 rounded-lg p-3 m-2 gap-4" >
-                <app-formreutilizable
-                    [campos]="procedimientos"
-                    [titulo]="formularioUnificacionCriterios"
-                    (submitForm)="onEnviar($event)"
-                    (cancel)="onCancelar()">
-                </app-formreutilizable>
-            </div>
-            <div
-                class="flex flex-row bg-white/80 border-1 border-gray-400 rounded-lg p-3 m-2 gap-4">
-                <div
-                    class="flex flex-col w-1/3 flex-wrap md:flex-nowrap space-x-4 mb-4 gap-2">
-                    <div class>
-                        <label
-                            class="block text-sm font-medium text-gray-700 py-1">Documento
-                            base</label>
-                        <input
-                            [(ngModel)]="nuevoDato"
-                            class="w-full p-2 border rounded placeholder-gray-400"
-                            placeholder="Escribe el nombre del documento" />
-                    </div>
-                </div>
-                <div class="flex flex-col items-center mt-4 gap-4">
-                    <button
-                        (click)="agregarDato()"
-                        class=" bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded">
-                        Agregar
-                    </button>
-                </div>
-                <div class="flex w-2/3 flex-col overflow-x-auto">
-                    <app-tablaprocedimiento
-                        [data]="listaDatos"
-                        [columns]="columnaDocumento"
-                        [accionesTemplate]="accionesPersonalizadas"
-                        (eliminar)="eliminarDato($event)">
-                    </app-tablaprocedimiento>
-                    <ng-template #accionesPersonalizadas let-dato>
-                        <div class="flex items-center justify-center space-x-1">
-                            <button (click)="eliminarDato(dato)"
-                                class="px-1 w-7 h-7"
-                                title="Eliminar Proyecto">
-                                <img
-                                    class="icono_titulos btntables hover:brightness-110"
-                                    src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg">
-                            </button>
-                        </div>
-                    </ng-template>
-                </div>
-            </div>
-            <div
-                class="flex flex-row bg-white/80 border-1 border-gray-400 rounded-lg p-3 m-2 gap-4 items-center justify-center">
-                <button routerLink='/procedimiento'
-                    class=" bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
-                    Realizar Digrama </button>
-            </div>
-            } @case (2) {
+            <!-- Unificacion de criterios -->
+            <app-unificacion-criterios></app-unificacion-criterios>
+            }
+            @case (1) {
+            <!-- Documentacion de soporte -->
+            <app-documentacion-soporte></app-documentacion-soporte>
+            }
+            @case (2) {
+            <!-- Soporte Computacional -->
             <app-soporte-computacional></app-soporte-computacional>
-            } @case (3) {
+            }
+            @case (3) {
+            <!-- Reglamento  -->
             <app-reglamento></app-reglamento>
             }
             @default {
-            <div class="mb-4 leading-relaxed">
-                <strong class="block mb-2">1. Unificación de
-                    criterios:
-                </strong>
-                <p class="mt-2">
-                    Para unificar los criterios se debe diligenciar
-                    el
-                    Formulario de procedimiento;
-                    en este formulario debe diligenciar la
-                    información básica
-                    del procedimiento
-                    (Nombre del procedimiento, Categoría del
-                    procedimiento, Rol,
-                    Estado, Actividades, Referentes).
-                </p>
-            </div>
-            <div class="mb-4 leading-relaxed">
-                <strong class="block mb-2">2. Documento
-                    soporte:</strong>
-                <p> Para el documento de soporte el procedimiento a
-                    estandarizar
-                    debe contar con documentación que permita
-                    exponer claramente
-                    la manera como se desarrolla,
-                    siguiendo las normativas de la Universidad de
-                    Nariño, para
-                    ello se puede tener en cuenta soportes
-                    documentales como
-                    acuerdos, resoluciones, actas, manuales,
-                    formatos, plantillas y el procedimiento. Esta
-                    información la
-                    encuentra en el módulo de recolección de
-                    información. </p>
-                <p class="mt-2"> Para lo anterior, se debe indagar
-                    sobre los
-                    documentos institucionales de reglamento y
-                    diligenciar el
-                    formato de procedimiento para luego realizar el
-                    diagrama de
-                    flujo. </p>
-                <p class="mt-2"> El Sistema Integrado de Gestión de
-                    Calidad
-                    (SIGC) de la Universidad de Nariño, brinda un
-                    formato donde
-                    se indica la forma específica de llevar a cabo
-                    un
-                    procedimiento; este formato consta de dos partes
-                    que son las
-                    siguientes: </p>
-                <ul
-                    class="list-[square] list-inside space-y-1 mb-4 ml-2">
-                    <li><strong> Caracterización: </strong> El cual
-                        es un
-                        formulario que contiene datos sobre el
-                        procedimiento.</li>
-                    <li><strong> Diagrama de flujo: </strong> Donde
-                        se describe
-                        los pasos a seguir para llevar a cabo el
-                        procedimiento.
-                    </li>
-                </ul>
-            </div>
-            <div class="mb-4 leading-relaxed">
-                <strong class="block mb-2">3. Soporte
-                    computacional::</strong>
-                <p> Algunos procedimientos requieren apoyo de
-                    herramientas
-                    computacionales para optimizar su ejecución.
-                    Cabe resaltar que esta no es una condición
-                    estricta para
-                    considerar a un procedimiento en estado
-                    completo, sin
-                    embargo,
-                    es importante proponer este tipo de soluciones
-                    que ayudan a
-                    mejorar notablemente el desarrollo de los
-                    procedimientos.
-                </p>
-
-                <p> El procedimiento seleccionado puede contar o no
-                    con un
-                    sistema computacional de soporte. Si existe este
-                    soporte
-                    computacional,
-                    se recomienda evaluar el desempeño del mismo de
-                    acuerdo con
-                    los resultados que se obtienen al ejecutar el
-                    procedimiento,
-                    y de ser necesario,
-                    proponer mejoras a la herramienta. Por otra
-                    parte, si el
-                    procedimiento requiere un soporte computacional,
-                    debe cumplir con las directrices institucionales
-                    que rigen
-                    en las dependencias encargadas del desarrollo
-                    tecnológico.</p>
-            </div>
-            <div class="mb-4 leading-relaxed">
-                <strong class="block mb-2">4. Reglamento: </strong>
-                <p class="mt-2">
-                    Para que un procedimiento sea reglamentado, se
-                    debe
-                    presentar el procedimiento estandarizado a la
-                    División de
-                    Autoevaluación, Acreditación y Certificación
-                    para su
-                    revisión y visto bueno,
-                    donde se avala que la definición del
-                    procedimiento cumple
-                    con los lineamientos de calidad de la
-                    Universidad y
-                    posteriormente, se presenta para la aprobación
-                    por parte del
-                    Consejo de Facultad.
-                </p>
-            </div>
+            <!-- pagina que muestra por defecto al querer estandarizar un procedimiento -->
+            <app-inicio></app-inicio>
             }
             }
         </div>
