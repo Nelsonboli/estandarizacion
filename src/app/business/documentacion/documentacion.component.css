@@ -1,0 +1,6 @@
+.active { 
+  border-left: 2px solid color-mix(in oklab, #006eff 70%, transparent);
+  color: #00232e  ;
+  font-weight: 600;
+}
+

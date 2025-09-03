@@ -1,7 +1,9 @@
-import { CommonModule, NgClass } from '@angular/common';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { TablaService } from '../../servicios/tabla.service';
 import { FormsModule } from '@angular/forms';
+import { EstadolistaService } from '../../servicios/estadolista.service';
 
 @Component({
   selector: 'app-lista-desplegable',
@@ -16,31 +18,36 @@ export class ListaDesplegableComponent implements OnInit {
   @ViewChild('formulario') formularioRef!: ElementRef;
   escalar = false;
   procedimientos: any[] = [];
-  selectedProcedimiento: any = null;
+  selectedProcedimiento: any = '';
 
-    constructor(private tablaService: TablaService) {}
+  constructor(private tablaService: TablaService, private router: Router, private listaService: EstadolistaService) { }
 
   ngOnInit() {
     this.tablaService.procedimientos$.subscribe(data => {
       this.procedimientos = data;
     });
+
+      this.listaService.visible$.subscribe(valor => {
+    this.visible = valor;
+  });
   }
 
   onCancel() {
     this.cerrar.emit();
-    // this.form.reset();
+    this.router.navigate(['/']);
   }
-  
+
   onGuardar() {
-  const procedimiento = this.procedimientos.find(
-    p => p.Procedimiento === this.selectedProcedimiento
-  );
-  this.guardar.emit(procedimiento);
-  this.onCancel();
-}
+    const procedimiento = this.procedimientos.find(
+      p => p.Procedimiento === this.selectedProcedimiento
+    );
+    if (procedimiento) {
+      this.guardar.emit(procedimiento);
+      this.cerrar.emit();
+    }
+  }
 
-
-onBackdropClick(event: MouseEvent): void {
+  onBackdropClick(event: MouseEvent): void {
     const clickedOutside = !this.formularioRef.nativeElement.contains(event.target);
     if (clickedOutside) {
       this.escalar = true;

@@ -9,9 +9,11 @@
         <!-- Contenido Manual de Usuario -->
 
         <div class="flex justify-center">
-            <app-navegacion
-                [rutaAnterior]="'/socializacionprocedimientos'">
-            </app-navegacion>
+<app-navegacion
+  [rutaAnterior]="'/socializacionprocedimientos'"
+  [rutaSiguiente]="''"
+  (anterior)="abrirListaSocializacion()">
+</app-navegacion>
         </div>
     </div>
 </div>

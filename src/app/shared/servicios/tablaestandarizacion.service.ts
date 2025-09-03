@@ -37,3 +37,5 @@ tablaFichaTecnica = [
     { col1: 'c', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
   ];
 }
+
+

@@ -1,72 +1,58 @@
-<div class="font-sans text-gray-800 bg-gray-200 p-4">
-  <div class="bg-white py-6 px-4 rounded-xl shadow-md max-w-screen-xl mx-auto">
-    <section>
-      <!-- Grid de 3 columnas -->
-      <div
-        class="grid grid-cols-1 md:grid-cols-3 gap-y-8 gap-x-12 justify-items-center">
-
-        <!-- 1 -->
-        <button routerLink="/acercadeestandarizacion"
-          class="no-underline flex items-center shadow-md rounded-full overflow-hidden hover:shadow-lg transition-shadow duration-300 w-fit">
-          <div
-            class="flex items-center justify-center w-14 h-14 bg-white border-2 border-green-800 rounded-full">
-            <span class="material-symbols-outlined text-green-800 text-xl">quick_reference</span>
-          </div>
-            <div class="bg-white px-4 py-2 ">
-            <span class="text-gray-800 font-semibold text-sm">1. Acerca de Estandarización de Procedimientos</span>
-          </div>
-        </button>
-
-        <!-- 2 -->
-        <button routerLink="/recoleccioninformacion"
-          class="no-underline flex items-center shadow-md rounded-full overflow-hidden hover:shadow-lg transition-shadow duration-300 w-fit">
-          <div
-            class="flex items-center justify-center w-14 h-14 bg-white border-2 border-green-800 rounded-full">
-            <span class="material-symbols-outlined text-green-800 text-xl">edit_document</span>
-          </div>
-          <div class="bg-white px-4 py-2 h-full">
-            <span class="text-gray-800 font-semibold text-sm">2. Recolección de Información</span>
-          </div>
-        </button>
-
-        <!-- 3 -->
-        <button routerLink="/identificacionrequerimientos"
-          class="no-underline flex items-center shadow-md rounded-full overflow-hidden hover:shadow-lg transition-shadow duration-300 w-fit">
-          <div
-            class="flex items-center justify-center w-14 h-14 bg-white border-2 border-green-800 rounded-full">
-            <span class="material-symbols-outlined  text-green-800 text-xl">data_check</span>
-          </div>
-          <div class=" bg-white px-4 py-2">
-            <span class="text-gray-800 font-semibold text-sm">3. Identificación de
-              Requerimientos</span>
-          </div>
-        </button>
-
-        <!-- 4 -->
-        <button routerLink="/socializacionprocedimientos"
-          (click)="abrirLista()"
-          class="no-underline flex items-center shadow-md rounded-full overflow-hidden hover:shadow-lg transition-shadow duration-300 w-fit">
-          <div class="flex items-center justify-center w-14 h-14 bg-white border-2 border-green-800 rounded-full">
-            <span class="material-symbols-outlined text-green-800 text-xl">diversity_3</span>
-          </div>
-          <div class="bg-white px-4 py-2">
-            <span class="text-gray-800 font-semibold text-sm">4. Socialización de Procedimiento</span>
-          </div>
-        </button>
-        <!-- 5 -->
-        <button routerLink="/manualusuario"
-          
-          class="no-underline flex items-center shadow-md rounded-full overflow-hidden hover:shadow-lg transition-shadow duration-300 w-fit">
-          <div
-            class="flex items-center justify-center w-14 h-14 bg-white border-2 border-green-800 rounded-full">
-            <span class="material-symbols-outlined text-green-800 text-xl">menu_book</span>
-          </div>
-          <div class="bg-white px-4 py-2  h-full">
-            <span class="text-gray-800 font-semibold text-sm">5. Manual de Usuario</span>
-          </div>
-        </button>
-
+<div class="font-sans text-gray-800 bg-white">
+  <!-- Título superior -->
+  <div
+    class="mb-2 bg-white text-med py-1 px-3 rounded-xl shadow-sm min-h-[calc(100vh-9rem)] max-w-screen mx-auto">
+    <div class="container m-auto grid grid-cols-1 gap-1 pt-15 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Acerca de Estandarizacion de procedimientos -->
+      <div class="bg-white hover:bg-gray-200 disabled:opacity-50">
+        <div class="cursor-pointer flex justify-center items-center "
+          (click)="redireccion(1)">
+          <img
+            src="assets/menuprincipal/Acerca_de_Estandarizacion.svg"
+            class="w- 50 h-50 hover:scale-115 transition duration-200"
+            alt="Estandarizacion de procedimientos">
+        </div>
       </div>
-    </section>
+      <!-- Recoleccion de informacion -->
+      <div class="bg-white hover:bg-gray-200 disabled:opacity-50">
+        <div class="cursor-pointer flex justify-center items-center "
+          (click)="redireccion(2)">
+          <img
+            src="assets/menuprincipal/Recoleccion_de_Informacion.svg"
+            class="w- 50 h-50 hover:scale-115 transition duration-200 "
+            alt="Recoleccion de informacion">
+        </div>
+      </div>
+      <!-- Identificacion de requerimientos -->
+      <div class="bg-white hover:bg-gray-200 disabled:opacity-50">
+        <div class="cursor-pointer flex justify-center items-center "
+          (click)="redireccion(3)">
+          <img
+            src="assets/menuprincipal/Identificacion_de_requerimientos.svg"
+            class="w- 50 h-50 hover:scale-115 transition duration-200 "
+            alt="Identificacion de requerimientos">
+        </div>
+      </div>
+      <!-- Socializacion de procedimientos -->
+      <div class="bg-white hover:bg-gray-200 disabled:opacity-50">
+        <div class="cursor-pointer flex justify-center items-center "
+          (click)="redireccion(4); ListaProcedimientos()">
+          <img
+            src="assets/menuprincipal/Socializacion_de_procedimientos.svg"
+            class="w- 50 h-50 hover:scale-115 transition duration-200"
+            alt="Socializacion de procedimientos">
+        </div>
+      </div>
+      <!-- Manual de usuario -->
+      <div class="bg-white hover:bg-gray-200 disabled:opacity-50">
+        <div class="cursor-pointer flex justify-center items-center"
+          (click)="redireccion(5)">
+          <img
+            src="assets/menuprincipal/Manual_de_usuario.svg"
+            class="w- 50 h-50 hover:scale-115 transition duration-200"
+            alt="Manual de usuario">
+        </div>
+      </div>
+    </div>
   </div>
 </div>

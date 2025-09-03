@@ -1,12 +1,52 @@
- <div
-    class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4">
-    <app-formreutilizable
-        [campos]="formularioDAAC"
+<div>
+<div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4">
+@if (mostrarFormulario()) {
+  <div class="w-full">
+      <app-formreutilizable
+        [campos]="columnasDAAC"
         [titulo]="DescripcionDAAC"
-        (guardar)="onEnviar($event)"
-        (cancel)="onCancelar()">
-    </app-formreutilizable>
+        [datoEditar]="editarformulario"
+        (guardar)="guardarDatos($event)"
+        (cerrar)="onCancelar()">
+      </app-formreutilizable>
+  </div>
+}
+
+    @else {
+    <div>
+        <app-tablaprocedimiento
+            [data]="datosDAAC"
+            [columns]="columnasDAAC"
+            encabezadoGeneral="datos DAAC"
+            [accionesTemplate]="accionesPersonalizadas">
+        </app-tablaprocedimiento>
+
+        <!-- Botones personalizados de la tabla -->
+        <ng-template #accionesPersonalizadas let-dato>
+            <div class="flex items-center justify-center space-x-1">
+                <button
+                    (click)="eliminar(dato)"
+                    class="px-1 h-7 w-7"
+                    title="Eliminar Proyecto">
+                    <img
+                        class="icono_titulos btntables hover:brightness-110"
+                        src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg" />
+                </button>
+                <button
+                    (click)="editar(dato)"
+                    class="px-1 h-7 w-7"
+                    title="Editar Proyecto">
+                    <img
+                        class="icono_titulos btntables hover:brightness-110"
+                        src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg" />
+                </button>
+            </div>
+        </ng-template>
+    </div>
+    }
 </div>
+
+@if (mostrarbase()) {
 <div
     class="flex flex-row bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4">
     <div
@@ -30,7 +70,7 @@
     </div>
     <div class="flex w-2/3 flex-col overflow-x-auto">
         <app-tablaprocedimiento
-            [data]="listaDatos"
+            [data]="datosDocumentoBase"
             [columns]="columnaDocumento"
             [accionesTemplate]="accionesPersonalizadas"
             (eliminar)="eliminarDato($event)">
@@ -48,6 +88,8 @@
         </ng-template>
     </div>
 </div>
+}
+@if(mostrarbotones()){
 <div
     class="flex flex-row bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4 items-center justify-center">
     <button routerLink='/procedimiento'
@@ -55,10 +97,11 @@
         Realizar Digrama de procedimiento </button>
 
     <!-- Opcion para general pdf Con la Información -->
-    <button 
+    <button
         (click)="descargarPDF()"
         class="px-4 py-2 bg-azul-oscuro text-white rounded hover:bg-azul-fondo">
         Descargar Documento DAAC
     </button>
     <!--  botones de Atras / Siguiente -->
 </div>
+}

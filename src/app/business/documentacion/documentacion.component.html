@@ -1,10 +1,8 @@
-<div class="mb-1 bg-white tpy-2 px-3 rounded-xl shadow-sm">
+<div class="mb-1 bg-white py-1 px-3 rounded-xl shadow-sm">
   <div class="flex flex-col md:flex-row min-h-screen mb-2 bg-white font-sans">
-
     <!-- MENÚ LATERAL -->
-
     <aside
-      class="md:w-38 w-full text-azul-fondo p-2 mt-2 mb-1 sticky top-22 md:h-screen scale-z-1 border-r-1 border-gray-200 rounded-sm bg-white">
+      class="md:w-40 w-full text-azul-fondo p-2 mt-2 mb-2 sticky top-35 md:h-screen scale-z-1 border-r-1 border-gray-200 rounded-sm bg-white">
       <h2 class="text-xl font-bold mb-3 mt-1 text-left">Contenido</h2>
       <nav class="text-sm">
 
@@ -14,12 +12,12 @@
           [class.active]="activeSection === 'definiciones'"
           class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300">
           Definiciones
-
         </a>
 
         <a class="border-gray-600"
           [routerLink]="[]"
           fragment="mapa"
+          
           [class.active]="activeSection === 'mapa'"
           class="no-underline text-gray-600 block px-3 py-3  hover:text-gray-800 transition border-l-1 border-gray-300">
           Mapa de procesos
@@ -40,7 +38,6 @@
             Volver arriba
           </a>
         </div>
-
       </nav>
     </aside>
 
@@ -84,7 +81,7 @@
       </header>
 
       <!-- SECCIÓN: DEFINICIONES -->
-      <section id="definiciones" class=" scroll-mt-20 px-6 py-2">
+      <section id="definiciones" class=" scroll-mt-34 px-6 py-2">
         <div
           class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-2 border-azul-btn/70 text-justify">
           <h2 class="text-2xl font-semibold text-azul-fondo *:mb-4">
@@ -178,7 +175,7 @@
       </section>
 
       <!-- SECCIÓN: MAPA DE PROCESOS -->
-      <section id="mapa" class="scroll-mt-20 px-4 py-2">
+      <section id="mapa" class="scroll-mt-34 px-4 py-2">
         <div
           class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-2 border-azul-btn/70 text-justify">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4"> Mapa de
@@ -207,7 +204,7 @@
       </section>
 
       <!-- SECCIÓN: METODOLOGÍA -->
-      <section id="metodologia" class="scroll-mt-20 px-6 py-2">
+      <section id="metodologia" class="scroll-mt-34 px-6 py-2">
         <div
           class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-2 border-azul-btn/70 text-justify">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4"> Metodología

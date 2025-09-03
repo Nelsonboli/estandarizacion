@@ -12,6 +12,7 @@ import { FormreutilizableComponent } from '../formreutilizable/formreutilizable.
 })
 export class ModalComponent implements OnInit { 
   @Input() visible = false;
+  @Input() datoEditar: any = null;
   @Output() cerrar = new EventEmitter<void>();
   @Output() guardar = new EventEmitter<any>();
   @ViewChild('formulario') formularioRef!: ElementRef;
@@ -22,7 +23,6 @@ onBackdropClick(event: MouseEvent): void {
     const clickedOutside = !this.formularioRef.nativeElement.contains(event.target);
     if (clickedOutside) {
       this.escalar = true;
-
       setTimeout(() => {
         this.escalar = false;
       }, 300);
@@ -32,9 +32,7 @@ onBackdropClick(event: MouseEvent): void {
 fb = inject(FormBuilder);
 form = this.fb.group({});
 
-
-constructor(){
-}
+constructor(){}
 
 ngOnInit() {
   this.campos.forEach(campo => {
@@ -45,7 +43,7 @@ ngOnInit() {
   });
 }
 
-  campos = [
+campos = [
   { key: 'Procedimiento', label: 'Procedimiento', required: true },
   { key: 'Categoria', label: 'Categoria', required: true },
   { key: 'Rol', label: 'Rol' },
@@ -64,4 +62,5 @@ ngOnInit() {
   this.guardar.emit(datos);
   this.onCancel();
 }
+
 }

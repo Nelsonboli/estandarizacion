@@ -12,7 +12,7 @@ export class MenulateralComponent {
 
   constructor(private listaService: EstadolistaService) { }
   
-  abrirLista() {
+  ListaProcedimientos() {
     this.listaService.abrir();
   }
 

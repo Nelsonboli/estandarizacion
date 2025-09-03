@@ -1,69 +1,56 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
+
 import { TablaestandarizacionService } from '../../shared/servicios/tablaestandarizacion.service';
 import { NavegacionComponent } from '../../shared/component/navegacion/navegacion';
 import { TablaService } from '../../shared/servicios/tabla.service';
 import { EstadolistaService } from '../../shared/servicios/estadolista.service';
 import { ListaDesplegableComponent } from '../../shared/component/lista-desplegable/lista-desplegable.component';
-
+import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
 
 @Component({
   selector: 'app-socializacionprocedimientos',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule,TablaCriteriosComponent, NavegacionComponent, ListaDesplegableComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent],
   templateUrl: './socializacionprocedimientos.component.html',
   styleUrl: './socializacionprocedimientos.component.css'
 })
-export class SocializacionprocedimientosComponent implements OnInit{
-   procedimientos: any[] = [];
 
-  constructor(public tablaestandarizacionService : TablaestandarizacionService,
-              private tablaService: TablaService,
-              private listaService: EstadolistaService
-   ){}
-
+export class SocializacionprocedimientosComponent implements OnInit {
+  procedimientos: any[] = [];
+  soportecomputacional?: true;
   abrir = false;
-  cerrarModal() {
-    this.listaService.cerrar();
-  }
+  procedimientoSeleccionado: any = null;
+  filasProcedimiento: { Criterio: string; Descripcion: string }[] = [];
+  objectKeys = Object.keys;
 
-   ngOnInit() {
+  constructor(public tablaestandarizacionService: TablaestandarizacionService,
+    private tablaService: TablaService,
+    private listaService: EstadolistaService
+  ) { }
+
+  ngOnInit() {
     this.tablaService.procedimientos$.subscribe(data => {
       this.procedimientos = data;
     });
 
-    this.listaService.visible$.subscribe(v => this.abrir = v);
+      this.listaService.visible$.subscribe(valor => {
+    this.abrir = valor;
+  });
   }
 
-  columnas = [
-    'Procedimiento',
-    'Categoria',
-    'Rol',
-    'Estado',
-    'Actividades',
-    'Referentes'
-  ];
+  abrirListaSocializacion() {
+  this.listaService.abrir(); // Se abre la lista al llegar a Socialización
+}
 
-  procedimiento:any = {
-    titulo: 'Gestion de Horarios',
-    aprobado: 'Si',
-    objetivo : 'Gestionar los horarios académicos de la Facultad de Ingeniería',
-    estadoInicial: 'Intermedio 2 "I2"',
-    estadoActual: 'Completo "C"'
-  };
-
-  roles: any[] = [
-    { nombre: 'secretaria academica', descripcion: 'Responsable' },
-    { nombre: 'Decano', descripcion: 'Rol' },
-    { nombre: 'Docentes', descripcion: 'Rol ' },
-  ];
-
-  nombres = this.roles.map(rol => rol.nombre);
+  cerrarModal() {
+    this.abrir = false;
+    this.listaService.cerrar();
+  }
 
   pasos: any[] = [
-    { titulo: 'Reunir a los Roles Involucrados', responsable: this.nombres},
-    { titulo: 'Socializar el procedimiento Estandarizado', responsable: 'A roles involucrados'},
+    { titulo: 'Reunir a los Roles Involucrados', responsable: "" },
+    { titulo: 'Socializar el procedimiento Estandarizado', responsable: 'A roles involucrados' },
     { titulo: 'Generar informe de socializacion', responsable: 'Consejo de Facultad' }
   ];
 
@@ -77,12 +64,16 @@ export class SocializacionprocedimientosComponent implements OnInit{
     }
   }
 
-  procedimientoSeleccionado: any = null;
+  onSocializar(procedimiento: any) {
+    this.procedimientoSeleccionado = procedimiento;
 
-onSocializar(procedimiento: any) {
-  this.procedimientoSeleccionado = procedimiento;
-  // Aquí puedes mostrar la información, abrir otro modal, etc.
-  console.log('Procedimiento a socializar:', procedimiento);
-}
-
+    // Transformar el objeto seleccionado en filas para la tabla
+    this.filasProcedimiento = Object.keys(procedimiento).map(key => ({
+      Criterio: key.toUpperCase(),
+      Descripcion: Array.isArray(procedimiento[key])
+        ? procedimiento[key].join(', ')
+        : procedimiento[key]
+    }));
+    this.cerrarModal();
+  }
 }

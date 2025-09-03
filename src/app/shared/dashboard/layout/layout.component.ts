@@ -22,6 +22,7 @@ export class LayoutComponent {
       this.esMenuPrincipal = url === '/'; // ajusta al path real
       this.colapsar = false; // cada vez que navega, sidebar inicia expandido
     });
+    
   }
 
   toggleSidebar() {

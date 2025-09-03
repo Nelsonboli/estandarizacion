@@ -1,8 +1,9 @@
 <form [formGroup]="form">
   <div class="max-w-xs mx-auto bg-white shadow-lg rounded-lg p-3 space-y-2 text-sm">
     <h2 class="text-med font-semibold text-gray-800 text-center">Actividades:</h2>
+
     <div formArrayName="checks" class="space-y-2">
-      @for (opcion of subopciones; track i; let i = $index) {
+      @for (opcion of subopciones; track opcion; let i = $index) {
         <label class="flex items-center space-x-2 mx-1 p-1">
           <input
             type="checkbox"

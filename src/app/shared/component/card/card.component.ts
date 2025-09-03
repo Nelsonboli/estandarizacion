@@ -7,7 +7,7 @@ import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular
   selector: 'app-card',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './card.component.html',
-  styleUrl: './card.component.css'
+  styleUrls: ['./card.component.css']
 })
 export class CardComponent implements OnInit {
   @Input() indice: number | null = null;
@@ -16,15 +16,34 @@ export class CardComponent implements OnInit {
   form!: FormGroup;
   subopciones: string[] = [];
 
+  // Opciones de cada grupo
+  opciones = [
+    ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
+    ["Formato de procedimiento DAAC", "Reglamento base", "Procedimiento", "Acta de socialización de procedimiento"],
+    ["Soporte computacional"],
+    ["Procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]
+  ];
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     if (typeof this.indice === 'number') {
       this.subopciones = this.opciones[this.indice];
+
+      // Recuperar estado guardado
+      const procedimientoId = sessionStorage.getItem('procedimientoActivo');
+      const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
+      const prev = procedimientoId ? guardados?.[procedimientoId]?.[this.indice] || [] : [];
+
+      // Inicializar el formulario con lo guardado
       this.form = this.fb.group({
-        checks: this.fb.array(this.subopciones.map(() => this.fb.control(false)))
+        checks: this.fb.array(
+          this.subopciones.map((_, i) => this.fb.control(prev[i] || false))
+        )
       });
+
       this.listenToChanges();
+      this.verificarEstadoCompleto(); // ← asegura que al recargar se marque como completo si ya estaba
     }
   }
 
@@ -32,17 +51,23 @@ export class CardComponent implements OnInit {
     return this.form.get('checks') as FormArray;
   }
 
-  opciones = [
-    ["Actividades del procedimiento", "Roles del procedimiento", "referencias"],
-    ["Formato de procedimiento DAAC", "Reglamento base", "Procedimiento", "Acta de socializacion de procedimiento"],
-    ["Soporte computacional"],
-    ["procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]
-  ];
+  private listenToChanges() {
+    this.checks.valueChanges.subscribe(values => {
+      this.verificarEstadoCompleto();
 
-  listenToChanges() {
-    this.checks.valueChanges.subscribe(() => {
-      const completo = this.checks.controls.every(c => c.value === true);
-      this.estadoCompleto.emit({ index: this.indice!, completo });
+      // Guardar en localStorage por procedimiento
+      const procedimientoId = sessionStorage.getItem('procedimientoActivo');
+      if (procedimientoId) {
+        const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
+        guardados[procedimientoId] = guardados[procedimientoId] || {};
+        guardados[procedimientoId][this.indice!] = values;
+        localStorage.setItem('estandarizaciones', JSON.stringify(guardados));
+      }
     });
+  }
+
+  private verificarEstadoCompleto() {
+    const completo = this.checks.controls.every(c => c.value === true);
+    this.estadoCompleto.emit({ index: this.indice!, completo });
   }
 }

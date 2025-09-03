@@ -9,10 +9,10 @@
 
     <!-- Encabezado por columnas -->
     @else if (columns && columns.length > 0) {
-    @for (col of columns; track col.header) {
+    @for (col of columns; track col.label) {
     <div
         class="p-1 px-2 w-full bg-encabezado-tabla text-white text-med font-semibold">
-        Lista de {{ col.header }}
+        Lista de {{ col.label }}
     </div>
     }
     }
@@ -23,7 +23,7 @@
                 @for (col of columns; track col.key) {
                 <th
                     class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
-                    {{ col.header }}
+                    {{ col.label }}
                 </th>
                 }
                 <th
@@ -34,7 +34,7 @@
         </thead>
 
         <tbody class="bg-white divide-y divide-gray-200">
-            @for (dato of data; track dato.id) {
+            @for (dato of data; track $index) {
             <tr class="hover:bg-gray-100">
                 @for (nombre of columns; track nombre.key) {
                 <td

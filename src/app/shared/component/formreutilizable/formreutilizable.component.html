@@ -1,4 +1,4 @@
-<h2 modal-header class="text-xl font-semibold p-2 m-2 ">{{titulo}}</h2>
+<h2 modal-label class="text-xl font-semibold p-2 m-2 ">{{titulo}}</h2>
 
 <form [formGroup]="form" class="space-y-4">
 
@@ -10,7 +10,7 @@
             <label class="text-sm font-medium text-gray-700 py-1">
                 {{ col.label }}
             </label>
-            
+
             @if (form.get(col.key)?.invalid && form.get(col.key)?.touched) {
             <p class="text-sm text-red-600">Este campo es obligatorio.</p>
             }
@@ -26,7 +26,7 @@
                 type="button"
                 (click)="agregarCampo(col.key)"
                 class="bg-verde-btn hover:bg-verde-btn/90 text-white px-4 py-2 rounded">
-                Agregar 
+                Agregar
             </button>
         </div>
 
@@ -34,14 +34,14 @@
         <div class="flex-1 overflow-x-auto">
             <app-tablaprocedimiento
                 [data]="listaDatosFiltradas(col.key)"
-                [columns]="[{ key: col.key, header: col.label }]"
+                [columns]="[{ key: col.key, label: col.label }]"
                 [accionesTemplate]="accionesPersonalizadas"
                 (eliminar)="eliminarDato($event)">
             </app-tablaprocedimiento>
         </div>
-        
     </div>
     }
+    
     <!-- Acciones -->
     <ng-template #accionesPersonalizadas let-dato>
         <div class="flex items-center justify-center space-x-1">
@@ -55,16 +55,29 @@
             </button>
         </div>
     </ng-template>
-
     <!-- Botones Cancelar y Guardar -->
     <div class="flex justify-end gap-3 pt-3 m-4">
-        <button type="button" (click)="onCancel()"
-            class="bg-gray-300 hover:bg-rojo-btn/90 transition-110 text-white px-4 py-2  rounded justify-center items-center">
+        <button
+            type="button"
+            (click)="onCancel()"
+            class="bg-gray-300 hover:bg-rojo-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
             Cancelar
         </button>
-        <button type="submit" (click)="enviarFormulario()"
+
+        @if (editIndex !== null) {
+        <button
+            type="button"
+            (click)="guardarEdicion()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+            Guardar edición
+        </button>
+        } @else {
+        <button
+            type="submit"
+            (click)="enviarFormulario()"
             class="bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
             Guardar
         </button>
+        }
     </div>
 </form>

@@ -17,7 +17,7 @@ import { CommonModule, NgTemplateOutlet } from '@angular/common';
 export class TablaprocedimientoComponent  {
 
 @Input() encabezadoGeneral?: string;
-@Input() columns: { key: string, header: string }[] = [];
+@Input() columns: { key: string, label: string }[] = [];
 @Input() data: any[] = [];
 @Input() accionesTemplate?: TemplateRef<any>;
 
