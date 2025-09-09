@@ -34,8 +34,18 @@ tablaFichaTecnica = [
     { col1: 'i1', col2: 'intermedio 1', col3: ' x ', col4: ' x ', col5: '', col6: '' },
     { col1: 'i2', col2: 'intermedio 2', col3: ' x ', col4: ' ', col5: ' x ', col6: ' ' },
     { col1: 'i3', col2: 'intermedio 3', col3: ' ', col4: 'x ', col5: ' ', col6: ' x' },
-    { col1: 'c', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
+    { col1: 'C', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
   ];
+
+
+  ProcesoEstandarizado = [
+      { col1: 'i', col2: 'inicial', col3: ' ', col4: ' ', col5: ' ', col6: ' ' },
+    { col1: 'i1', col2: 'intermedio 1', col3: '  ', col4: '  ', col5: '', col6: '' },
+    { col1: 'i2', col2: 'intermedio 2', col3: '  ', col4: ' ', col5: '  ', col6: ' ' },
+    { col1: 'i3', col2: 'intermedio 3', col3: ' ', col4: ' ', col5: ' ', col6: ' ' },
+    { col1: 'C', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
+  ]
+
 }
 
 

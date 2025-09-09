@@ -1,43 +1,35 @@
-<div>
 <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4">
-@if (mostrarFormulario()) {
-  <div class="w-full">
-      <app-formreutilizable
-        [campos]="columnasDAAC"
-        [titulo]="DescripcionDAAC"
-        [datoEditar]="editarformulario"
-        (guardar)="guardarDatos($event)"
-        (cerrar)="onCancelar()">
-      </app-formreutilizable>
-  </div>
-}
-
+    @if (mostrarFormulario()) {
+    <div class="w-full">
+        <app-formreutilizable
+            [campos]="columnasDAAC"
+            [titulo]="DescripcionDAAC"
+            [datoEditar]="editarformulario"
+            (guardar)="guardarDatos($event)"
+            (cerrar)="onCancelar()">
+        </app-formreutilizable>
+    </div>
+    }
     @else {
     <div>
         <app-tablaprocedimiento
+            [encabezadoGeneral]="'Formulario DAAC'"
             [data]="datosDAAC"
             [columns]="columnasDAAC"
             encabezadoGeneral="datos DAAC"
             [accionesTemplate]="accionesPersonalizadas">
         </app-tablaprocedimiento>
 
-        <!-- Botones personalizados de la tabla -->
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex items-center justify-center space-x-1">
-                <button
-                    (click)="eliminar(dato)"
-                    class="px-1 h-7 w-7"
-                    title="Eliminar Proyecto">
-                    <img
-                        class="icono_titulos btntables hover:brightness-110"
+                <button (click)="eliminar(dato)" class="px-1 h-7 w-7"
+                    title="Eliminar">
+                    <img class="icono_titulos btntables hover:brightness-110"
                         src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg" />
                 </button>
-                <button
-                    (click)="editar(dato)"
-                    class="px-1 h-7 w-7"
-                    title="Editar Proyecto">
-                    <img
-                        class="icono_titulos btntables hover:brightness-110"
+                <button (click)="editar(dato)" class="px-1 h-7 w-7"
+                    title="Editar">
+                    <img class="icono_titulos btntables hover:brightness-110"
                         src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg" />
                 </button>
             </div>
@@ -93,15 +85,13 @@
 <div
     class="flex flex-row bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4 items-center justify-center">
     <button routerLink='/procedimiento'
-        class=" bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
-        Realizar Digrama de procedimiento </button>
+        class="bg-verde-btn hover:bg-verde-btn/90 text-white px-4 py-2 rounded">
+        Realizar Diagrama de procedimiento
+    </button>
 
-    <!-- Opcion para general pdf Con la Información -->
-    <button
-        (click)="descargarPDF()"
+    <button (click)="descargarPDF()"
         class="px-4 py-2 bg-azul-oscuro text-white rounded hover:bg-azul-fondo">
         Descargar Documento DAAC
     </button>
-    <!--  botones de Atras / Siguiente -->
 </div>
 }

@@ -27,7 +27,11 @@
     }
 
     <div class="px-4">
-      <!-- tabla clasificacion de estados -->
+     
+      <!-- tabla clasificacion de estado de procedimiento -->
+       <p> Su procedimiento esta en un estado <Strong class="text-verde-btn"> Completo </Strong> </p>
+       <app-tabla-estados></app-tabla-estados>
+
 
       <!-- Sorporte documental -->
 
@@ -113,11 +117,11 @@
       }
     </div>
     <div>
- <app-navegacion
-  [rutaAnterior]="'/recoleccioninformacion'"
-  [rutaSiguiente]="'/socializacionprocedimientos'"
-  (siguiente)="abrirListaSocializacion()">
-</app-navegacion>
+      <app-navegacion
+        [rutaAnterior]="'/recoleccioninformacion'"
+        [rutaSiguiente]="'/socializacionprocedimientos'"
+        (siguiente)="abrirListaSocializacion()">
+      </app-navegacion>
     </div>
     }
   </div>

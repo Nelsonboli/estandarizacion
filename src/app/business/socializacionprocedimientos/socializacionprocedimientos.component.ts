@@ -8,10 +8,11 @@ import { TablaService } from '../../shared/servicios/tabla.service';
 import { EstadolistaService } from '../../shared/servicios/estadolista.service';
 import { ListaDesplegableComponent } from '../../shared/component/lista-desplegable/lista-desplegable.component';
 import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
+import { TablaEstadosComponent } from "../../shared/component/tablaEstados/tabla-estados.component";
 
 @Component({
   selector: 'app-socializacionprocedimientos',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent, TablaEstadosComponent],
   templateUrl: './socializacionprocedimientos.component.html',
   styleUrl: './socializacionprocedimientos.component.css'
 })

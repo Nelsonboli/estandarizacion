@@ -1,12 +1,11 @@
 import { FormularioDAACService } from './../../../shared/servicios/formulario-daac.service';
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectorRef } from '@angular/core';
 import { FormreutilizableComponent } from '../../../shared/component/formreutilizable/formreutilizable.component';
 import { TablaprocedimientoComponent } from '../../../shared/component/tablaprocedimiento/tablaprocedimiento.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
 
 @Component({
   selector: 'app-documentacion-soporte',
@@ -20,21 +19,14 @@ export class DocumentacionSoporteComponent {
   ultimoRegistro: any = {};
   editarformulario: any = null;
   datosDAAC: any[] = []; // guardar los datos del formulario 
-  DescripcionDAAC = " Formulario División de Autoevaluación y Acreditación de la Calidad (DAAC)"
+  DescripcionDAAC = "Formulario División de Autoevaluación y Acreditación de la Calidad (DAAC)";
+
+  // signals para controlar UI
   mostrarFormulario = signal(true);
   mostrarbase = signal(false);
   mostrarbotones = signal(false);
+  
 
-  camposMultiplesDAAC = [
-    'Proveedores',
-    'Insumos',
-    'Resultados',
-    'Requisitos legales',
-    'Documentos',
-    'Registros'
-  ];
-
-  // Datos del formulario DAAC  
   columnasDAAC = [
     { key: 'Objetivo', label: 'Objetivo' },
     { key: 'Alcance', label: 'Alcance' },
@@ -45,30 +37,57 @@ export class DocumentacionSoporteComponent {
     { key: 'Requisitos legales', label: 'Requisitos legales' },
     { key: 'Documentos', label: 'Documentos a realizar' },
     { key: 'Registros', label: 'Registros a realizar' },
-    { key: 'Indicador', label: 'Indicador' },
   ];
 
-  constructor(private formularioDAACService: FormularioDAACService) { }
+  columnaDocumento = [
+    { key: 'Documento', label: 'Documento' }
+  ];
+
+  constructor(
+    private formularioDAACService: FormularioDAACService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     this.formularioDAACService.formularioDAAC$.subscribe(data => {
       this.datosDAAC = data;
+
+      // 👇 si ya hay un formulario guardado → mostrar tabla
+      if (this.datosDAAC.length > 0) {
+        this.mostrarFormulario.set(false);
+        this.mostrarbase.set(true);
+      } else {
+        this.mostrarFormulario.set(true);
+        this.mostrarbase.set(false);
+      }
     });
   }
 
   editar(dato: any) {
     this.editarformulario = dato;
     this.mostrarFormulario.set(true);
+    this.mostrarbase.set(false);
+    this.cdr.detectChanges();
   }
 
-  //elimina el dato seleccionado y actualiza la tabla service
   eliminar(item: any) {
     this.datosDAAC = this.datosDAAC.filter(p => p !== item);
     this.formularioDAACService.setformularioDAAC(this.datosDAAC);
+
+    // 👇 Si ya no hay registros, volvemos a mostrar el formulario
+    if (this.datosDAAC.length === 0) {
+      this.mostrarFormulario.set(true);
+      this.mostrarbase.set(false);
+    }
   }
 
-
   guardarDatos(nuevoDato: any) {
+    // ✅ Validación: máximo un formulario
+    if (!this.editarformulario && this.datosDAAC.length > 0) {
+      alert('⚠️ Ya has llenado el formulario, no puedes agregar otro.');
+      return;
+    }
+
     if (this.editarformulario) {
       const index = this.datosDAAC.indexOf(this.editarformulario);
       if (index !== -1) {
@@ -80,50 +99,37 @@ export class DocumentacionSoporteComponent {
     }
 
     this.formularioDAACService.setformularioDAAC(this.datosDAAC);
+    this.ultimoRegistro = nuevoDato;
 
-    // ✅ Cerrar formulario y volver a tabla
+    // ✅ mostrar tabla y documentos base
     this.mostrarFormulario.set(false);
-    this.editarformulario = null;
     this.mostrarbase.set(true);
-    
   }
 
-  // Datos Documents base
-  columnaDocumento = [
-    { key: 'Documento', label: 'Documento' }
-  ]
-
-  // Agregar datos a tabla de Documentos base
   agregarDato() {
     if (this.nuevoDato.trim()) {
       const nuevo = { Documento: this.nuevoDato.trim() };
-      this.datosDocumentoBase
-        .push(nuevo);
-      this.nuevoDato = ''
+      this.datosDocumentoBase.push(nuevo);
+      this.nuevoDato = '';
       this.mostrarbotones.set(true);
     }
   }
 
-  // Eliminar datos de tabla de documentos base 
   eliminarDato(item: any) {
-    this.datosDocumentoBase
-      = this.datosDocumentoBase
-        .filter(p => p !== item);
+    this.datosDocumentoBase = this.datosDocumentoBase.filter(p => p !== item);
   }
 
   onCancelar() {
     this.mostrarFormulario.set(false);
     this.editarformulario = null;
-    
+    this.mostrarbase.set(true);
   }
 
   descargarPDF() {
     const doc = new jsPDF();
-
     doc.setFontSize(14);
     doc.text(this.DescripcionDAAC, 10, 10);
 
-    // Datos principales del formulario (campos dinámicos)
     const campos = Object.keys(this.ultimoRegistro || {});
     const filas = campos.map(campo => [
       campo,
@@ -132,23 +138,16 @@ export class DocumentacionSoporteComponent {
         : this.ultimoRegistro[campo]
     ]);
 
-    // Primera tabla
     autoTable(doc, {
       head: [['Campo', 'Valor']],
       body: filas,
       startY: 20,
     });
 
-    // obtener el finalY
     const finalY = (doc as any).lastAutoTable?.finalY || 20;
 
-    // Datos extra .datosDocumentoBase
-    // de Documentos base)
-    if (this.datosDocumentoBase
-      .length > 0) {
-      const filasDocs = this.datosDocumentoBase
-        .map(d => [d.Documento]);
-
+    if (this.datosDocumentoBase.length > 0) {
+      const filasDocs = this.datosDocumentoBase.map(d => [d.Documento]);
       autoTable(doc, {
         head: [['Documento base']],
         body: filasDocs,
@@ -156,7 +155,6 @@ export class DocumentacionSoporteComponent {
       });
     }
 
-    // Descargar el PDF
-    doc.save("formularioDAAC.pdf");
+    doc.save("FormatoDAAC.pdf");
   }
 }
