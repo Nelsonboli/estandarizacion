@@ -25,6 +25,7 @@
   --text-semigrande : 14px;
   --text-grande: 16px;
   --text-btn: 40px;
+  --color-naranja: #fbb03b;
 }
 .estados-basic-button {
   @apply font-sans ring-1 ring-background shadow-sm scale-105 bg-transparent text-4xl font-bold text-center;

@@ -2,7 +2,7 @@
   <div
     class="mb-1 bg-white text-med py-2 px-3 rounded-xl shadow-sm max-w-screen mx-auto">
     <div
-      class="bg-azul-oscuro text-white p-2 border-2 rounded mb-2 uperlowercase">
+      class="bg-azul-oscuro font-medium text-white p-2 border-2 rounded mb-2 uppercase">
       2. Recoleccion de información
     </div>
     <div class="px-4">
@@ -22,32 +22,32 @@
           <li><a
               href="https://electronica.udenar.edu.co/wp-content/uploads/2020/10/Estatuto-General.pdf"
               target="_blank"
-              class="text-blue-600 hover:underline">Estatuto
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto
               General</a></li>
           <li><a
               href="https://secretariageneral.udenar.edu.co/wp-content/uploads/2011/09/Proyecto-educativo-institucional-2009.pdf"
               target="_blank"
-              class="text-blue-600 hover:underline">Proyecto Educativo
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Proyecto Educativo
               Institucional</a></li>
           <li><a
               href="https://www.udenar.edu.co/recursos/wp-content/uploads/2017/08/Estatutoposgrados.pdf"
               target="_blank"
-              class="text-blue-600 hover:underline">Estatuto de
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto des
               Posgrados</a></li>
           <li><a
               href="https://www.udenar.edu.co/documentos/PDI-UDENAR-2020.pdf"
               target="_blank"
-              class="text-blue-600 hover:underline">Plan
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Plan
               de Desarrollo Institucional</a></li>
           <li><a
               href="https://www.udenar.edu.co/recursos/wp-content/uploads/2017/11/estatuto-estudiantil-udenar.pdf"
               target="_blank"
-              class="text-blue-600 hover:underline">Estatuto
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto
               Estudiantil</a></li>
           <li><a
               href="https://secretariageneral.udenar.edu.co/wp-content/uploads/2024/05/ESTATUTO-DE-PERSONAL-DOCENTE-a-febrero-2024.pdf"
               target="_blank"
-              class="text-blue-600 hover:underline">Estatuto Personal
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto Personal
               Docente</a></li>
         </ul>
       </section>
@@ -61,7 +61,7 @@
         </p>
         <p> Se adjunta el formato de entrevista:
           <a href="enlace-para-formato-de-entrevista" target="_blank"
-            class="text-blue-600 hover:underline">Formato de
+            class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Formato de
             Entrevista</a>
         </p>
       </section>
@@ -99,7 +99,8 @@
           procedimiento </h6>
         <app-tabla-criterios
           [columnas]="tablaestandarizacionService.encabezadoCriterios"
-          [filas]="tablaestandarizacionService.tablaCriterios"></app-tabla-criterios>
+          [filas]="tablaestandarizacionService.tablaCriterios">
+        </app-tabla-criterios>
 
         <!-- Tabla Clasificacion de estados -->
         <app-tabla-estados></app-tabla-estados>

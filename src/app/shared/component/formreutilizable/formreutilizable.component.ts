@@ -1,26 +1,31 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TablaprocedimientoComponent } from '../tablaprocedimiento/tablaprocedimiento.component';
+import { AlertService } from '../../servicios/alert.service';
+import { MatIconModule } from '@angular/material/icon';
+
+
 
 @Component({
   selector: 'app-formreutilizable',
-  imports: [ReactiveFormsModule, FormsModule, TablaprocedimientoComponent],
+  imports: [ReactiveFormsModule, FormsModule, TablaprocedimientoComponent, MatIconModule],
   templateUrl: './formreutilizable.component.html',
   styleUrl: './formreutilizable.component.css'
 })
 export class FormreutilizableComponent implements OnInit {
   // Inputs y outputs
   @Input() titulo: string | undefined;
-  @Input() campos: { key: string; label: string }[] = [];
+  @Input() campos: { key: string; label: string; Tooltip?: string; required?: boolean }[] = [];
   @Input() datoEditar: any = null;
   @Output() guardar = new EventEmitter<any>();
   @Output() cerrar = new EventEmitter<void>();
+  showTooltip: string | null = null;
 
   form!: FormGroup;
   listaDatos: any[] = [];
   editIndex: number | null = null;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private alertService: AlertService) { }
 
   ngOnInit(): void {
     const group: any = {};
@@ -35,10 +40,10 @@ export class FormreutilizableComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-  if (changes['datoEditar'] && this.datoEditar) {
-    this.cargarDatoEditar(this.datoEditar);
+    if (changes['datoEditar'] && this.datoEditar) {
+      this.cargarDatoEditar(this.datoEditar);
+    }
   }
-}
 
   // Campos que aceptan múltiples valores
   camposMultiples = ['Rol', 'Actividades', 'Referentes'];
@@ -48,21 +53,21 @@ export class FormreutilizableComponent implements OnInit {
    * Carga los valores del dato en edición en el formulario y las tablas
    */
   cargarDatoEditar(dato: any) {
-  this.listaDatos = [];
-  this.campos.forEach(campo => {
-    const valor = dato[campo.key];
-    if (valor !== undefined && valor !== null) {
-      if (this.todosMultiples.includes(campo.key) && Array.isArray(valor)) {
-        valor.forEach((v: any) => {
-          this.listaDatos.push({ [campo.key]: v });
-        });
-      } else {
-        this.listaDatos.push({ [campo.key]: valor });
+    this.listaDatos = [];
+    this.campos.forEach(campo => {
+      const valor = dato[campo.key];
+      if (valor !== undefined && valor !== null) {
+        if (this.todosMultiples.includes(campo.key) && Array.isArray(valor)) {
+          valor.forEach((v: any) => {
+            this.listaDatos.push({ [campo.key]: v });
+          });
+        } else {
+          this.listaDatos.push({ [campo.key]: valor });
+        }
+        this.form.get(campo.key)?.setValue(valor);
       }
-      this.form.get(campo.key)?.setValue(valor);
-    }
-  });
-}
+    });
+  }
   /**
    * Agregar un valor a la tabla correspondiente
    */
@@ -74,23 +79,6 @@ export class FormreutilizableComponent implements OnInit {
       control.reset();
     } else {
       control?.markAsTouched();
-    }
-  }
-
-  /**
-   * Guardar edición (si se está editando dentro de la tabla)
-   */
-  guardarEdicion() {
-    if (this.form.valid && this.editIndex !== null) {
-      const registroEditado: any = {};
-      this.campos.forEach(campo => {
-        registroEditado[campo.key] = this.form.get(campo.key)?.value;
-      });
-      this.listaDatos[this.editIndex] = registroEditado;
-      this.editIndex = null;
-      this.datoEditar = null;
-      this.form.reset();
-      this.guardar.emit(registroEditado);
     }
   }
 
@@ -111,10 +99,15 @@ export class FormreutilizableComponent implements OnInit {
   /**
    * Cancelar formulario
    */
-  onCancel() {
-    this.cerrar.emit();
-    this.form.reset();
-    this.listaDatos = [];
+  cancelarFormulario() {
+    this.alertService.alertCancelar().then((res) => {
+      if (res.isConfirmed) {
+        this.cerrar.emit();
+        this.form.reset();
+        this.listaDatos = [];
+      }
+    });
+
   }
   /**
    * Enviar el formulario con todos los datos
@@ -129,15 +122,21 @@ export class FormreutilizableComponent implements OnInit {
           .map(d => d[campo.key]);
 
         if (this.todosMultiples.includes(campo.key)) {
-          registro[campo.key] = datosCampo; 
+          registro[campo.key] = datosCampo;
         } else {
           registro[campo.key] = datosCampo.length > 0 ? datosCampo[0] : '';
         }
       });
+      this.alertService.alertGuardar().then((res) => {
+        if (res.isConfirmed) {
+          this.alertService.exito('Formulario guardado exitosamente')
+          this.guardar.emit(registro);
+          this.listaDatos = [];
+          this.form.reset();
+        }
+      });
 
-      this.guardar.emit(registro);
-      this.listaDatos = [];
-      this.form.reset();
+
     } else {
       this.form.markAllAsTouched();
     }

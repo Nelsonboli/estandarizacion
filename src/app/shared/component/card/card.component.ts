@@ -16,9 +16,9 @@ export class CardComponent implements OnInit {
   form!: FormGroup;
   subopciones: string[] = [];
 
-  opciones = [
+  opciones = [ 
     ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
-    ["Formulario de procedimiento DAAC", "Reglamento base", "Diagrama de procedimiento", "Documento DAAC descargado"],
+    ["Formulario de procedimiento DAAC", "Reglamento base", "Diagrama de procedimiento"],
     ["Soporte computacional"],
     ["Procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]
   ];

@@ -12,12 +12,12 @@ export class UnificacionCriteriosComponent {
 
 
   unificacionCriterios = [
-    { key: 'Procedimiento', label: 'Procedimiento', },
-    { key: 'Categoria', label: 'Categoria', },
-    { key: 'Rol', label: 'Rol' },
-    { key: 'Estado', label: 'Estado' },
-    { key: 'Actividades', label: 'Actividades' },
-    { key: 'Referentes', label: 'Referentes' },
+    { key: 'Procedimiento', label: 'Procedimiento',tooltip: 'hola mundo' },
+    { key: 'Categoria', label: 'Categoria', tooltip:'hola mundo'},
+    { key: 'Rol', label: 'Rol',tooltip:'hola mundo' },
+    { key: 'Estado', label: 'Estado', tooltip:'hola mundo' },
+    { key: 'Actividades', label: 'Actividades', tooltip:'hola mundo' },
+    { key: 'Referentes', label: 'Referentes', tooltip:'hola mundo' },
   ];
 
   onEnviar(data: any) {

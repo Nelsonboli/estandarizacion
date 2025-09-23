@@ -4,7 +4,7 @@
     <ul class="space-y-2">
         @for (paso of pasos; track paso.titulo) {
         <li
-            class="bg-gray-100 p-3 rounded-lg border-l-4 border-blue-600">
+            class="bg-white/20 p-3 rounded-lg border-l-4 border-blue-600">
             <strong>{{paso.id}} {{ paso.titulo }}</strong> → <span
                 class="text-gray-700">{{ paso.responsable
                 }}</span>{{ paso.completado }}
@@ -47,7 +47,7 @@
                 <strong class="text-med m-2 pt-2 text-red-500">
                     Recuerde que el procedimiento debe ser
                     aprobado por la DAAC antes de ser presentado
-                    al Consejo de Facultad.
+                    a la dependencia.
                 </strong>
                 <strong class="text-med m-2 pt-2">
                     Una vez aprobado por la DAAC, el procedimiento
@@ -95,11 +95,22 @@
                         @if (form.get('respuesta1')?.value === 'si')
                         {
                         <div>
-                            <strong class="text-med m-2 pt-2">Debe enviar el documento al consejo de Facultad para su aprobación.al siguiente correo electronico: 
+                            <strong class="text-med m-2 pt-2">Debe enviar el
+                                documento al consejo de Facultad para su
+                                aprobación.al siguiente correo electronico:
                                 <span
                                     class="text-med text-blue-600">
                                     acreditacioninstitucional&#64;udenar.edu.co
                                 </span>
+                            </strong>
+                        </div>
+                        }
+                        @if(form.get('respuesta1')?.value === 'no'){
+                        <div>
+                            <strong class="text-med pt-4">Recuerde que el procedimiento debe
+                                 ser enviado a la División de Autoevaluación,
+                                 Acreditación y Certificación (DAAC) para su aprobacion, 
+                                 para continuar con el proceso.
                             </strong>
                         </div>
                         }

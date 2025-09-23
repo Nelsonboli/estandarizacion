@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { AlertService } from '../../../shared/servicios/alert.service';
 
 @Component({
   selector: 'app-documentacion-soporte',
@@ -28,15 +29,18 @@ export class DocumentacionSoporteComponent {
   
 
   columnasDAAC = [
-    { key: 'Objetivo', label: 'Objetivo' },
-    { key: 'Alcance', label: 'Alcance' },
-    { key: 'Responsable', label: 'Responsable' },
-    { key: 'Proveedores', label: 'Proveedores' },
-    { key: 'Insumos', label: 'Insumos' },
-    { key: 'Resultados', label: 'Resultados' },
-    { key: 'Requisitos legales', label: 'Requisitos legales' },
-    { key: 'Documentos', label: 'Documentos a realizar' },
-    { key: 'Registros', label: 'Registros a realizar' },
+    { key: 'Objetivo', label: 'Objetivo',Tooltip:'Establece el propósito que tiene el Procedimiento.' },
+    { key: 'Alcance', label: 'Alcance',Tooltip:' Hace referencia al cubrimiento de las actividades del Procedimiento' },
+    { key: 'Responsable', label: 'Responsable', Tooltip:' Determina al (los) funcionario(s) que es (son) responsable(s) de la implementación de las actividades que conforman el Procedimiento' },
+    { key: 'Proveedores', label: 'Proveedores', Tooltip:'Son las personas o entidades que proporcionan las entradas para el Procedimiento. ' },
+    { key: 'Insumos', label: 'Insumos', Tooltip:'Elementos requeridos para el desarrollo del Procedimiento' },
+    { key: 'Resultados', label: 'Resultados', Tooltip:' Producto o servicio que se obtiene del desarrollo del Procedimiento' },
+    { key: 'Quien recibe el resultado', label: 'Quien recibe', Tooltip:'Persona o grupo de personas a quienes va dirigida la implementación del Procedimiento' },
+    { key: 'Requisitos legales', label: 'Requisitos legales', Tooltip:'Hace referencia a las Normas o Actos Administrativos que indican la necesidad u obligatoriedad del Procedimiento o sus actividades' },
+    { key: 'Documentos', label: 'Documentos a realizar', Tooltip:'Información que está evidenciada por medio de un soporte magnético o impreso, estos documentos pueden ser internos o externos a la Universidad ' },
+    { key: 'Registros', label: 'Registros a realizar', Tooltip:' Documentos que presentan resultados obtenidos o proporcionan evidencias de actividades desarrolladas.  Los Registros se originan por el diligenciamiento de Formatos' },
+    { key: 'Indicador', label: 'Indicador', Tooltip:' Magnitud utilizada para medir o comparar los resultados efectivamente obtenidos, en la ejecución de un proyecto, programa o actividad. Resultado cuantitativo de comparar dos variables' },
+    { key: 'Fórmula', label: 'Fórmula', Tooltip:' Modelo establecido para expresar, realizar o resolver algo; en este caso, se refiere al Indicador' },
   ];
 
   columnaDocumento = [
@@ -45,7 +49,8 @@ export class DocumentacionSoporteComponent {
 
   constructor(
     private formularioDAACService: FormularioDAACService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private alertService: AlertService
   ) { }
 
   ngOnInit() {
@@ -84,8 +89,7 @@ export class DocumentacionSoporteComponent {
   guardarDatos(nuevoDato: any) {
     // ✅ Validación: máximo un formulario
     if (!this.editarformulario && this.datosDAAC.length > 0) {
-      alert('⚠️ Ya has llenado el formulario, no puedes agregar otro.');
-      return;
+      this.alertService.error('Ya existe registro del formulario')
     }
 
     if (this.editarformulario) {

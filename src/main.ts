@@ -10,13 +10,17 @@ bootstrapApplication(AppComponent, {
     ...(appConfig.providers ?? []),
     provideRouter(
       routes,
-      // Feature correcta para restauración de scroll y anchor scrolling
+      // Configuración mejorada para scroll y fragments
       withInMemoryScrolling({
-        scrollPositionRestoration: 'enabled', // 'disabled' | 'enabled' | 'top'
-        anchorScrolling: 'enabled'            // 'disabled' | 'enabled'
+        scrollPositionRestoration: 'top',
+        anchorScrolling: 'enabled',
       }),
-      // opcional: otras configuraciones de router
-      withRouterConfig({ onSameUrlNavigation: 'reload' })
+      // Configuración adicional del router
+      withRouterConfig({ 
+        onSameUrlNavigation: 'reload',
+        // Esto es importante para que los fragments funcionen correctamente
+        paramsInheritanceStrategy: 'emptyOnly'
+      })
     )
   ]
 }).catch(err => console.error(err));

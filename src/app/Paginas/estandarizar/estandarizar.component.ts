@@ -1,8 +1,8 @@
+import { AlertService } from './../../shared/servicios/alert.service';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
 import { CardComponent } from '../../shared/component/card/card.component';
 import { SoporteComputacionalComponent } from '../Estados/soporte-computacional/soporte-computacional.component';
 import { ReglamentoComponent } from '../Estados/reglamento/reglamento.component';
@@ -28,6 +28,7 @@ import { TablaService } from '../../shared/servicios/tabla.service';
   templateUrl: './estandarizar.component.html',
   styleUrls: ['./estandarizar.component.css'],
 })
+
 export class EstandarizarComponent {
   hoverIndex: number | null = null;
   buttonIndex: number | null = null;
@@ -41,8 +42,11 @@ export class EstandarizarComponent {
   procedimientoId: string = '';
   procedimiento: any;
   datosEstandarizacion: any = {};
-
-  constructor(private route: ActivatedRoute, private tablaService: TablaService) {}
+  estado: string = '';
+  
+  constructor(private route: ActivatedRoute, private tablaService: TablaService,
+    private alertService: AlertService
+  ) { }
 
   ngOnInit() {
     this.procedimientoId = this.route.snapshot.paramMap.get('id')!;
@@ -53,13 +57,18 @@ export class EstandarizarComponent {
   }
 
   onButtonClick(index: number) {
-    if (index === 0 || this.estadoCompletos[index - 1]) {
+    
+    if (index === 0 || this.estadoCompletos[index-1]) {
       this.buttonIndex = index;
       this.hoverIndex = null;
-    } else {
-      alert("Debes completar todas las subopciones del estado anterior antes de continuar.");
+    } 
+    else {
+      this.estado = this.estados[index-1];
+      const siguiente = this.estados[index];
+      this.alertService.info(`Debe completar todas las actividades del estado ${this.estado}  para seguir con ${siguiente}`)
     }
   }
+
 
   onEstadoCompleto(event: { index: number; completo: boolean }) {
     this.estadoCompletos[event.index] = event.completo;

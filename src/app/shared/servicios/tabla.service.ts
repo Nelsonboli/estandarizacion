@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 
@@ -7,7 +8,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 })
 
 export class TablaService {
-
+ 
   private estandarizaciones: { [id: string]: any } = {};
 
   private procedimientosSubject = new BehaviorSubject<any[]>([]);
@@ -19,7 +20,7 @@ export class TablaService {
   }
 
   getProcedimientos(): Observable<any[]> {
-    return this.procedimientos$;
+    return this.procedimientos$
   }
 
   setProcedimientos(datos: any[]) {
@@ -38,5 +39,6 @@ getEstandarizacion(id: string) {
   }
   return this.estandarizaciones[id] || {};
 }
+
 
 }

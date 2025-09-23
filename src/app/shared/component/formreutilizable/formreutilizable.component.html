@@ -1,83 +1,121 @@
-<h2 modal-label class="text-xl font-semibold p-2 m-2 ">{{titulo}}</h2>
+
+<h1 class="text-grande font-medium p-2 m-2 flex items-center gap-3 ">
+    <img src="https://sapiens.udenar.edu.co:3026/cdn/images/crear.svg"
+        class="icono_titulos w-6 h-6">{{titulo}}</h1>
+<hr>
 
 <form [formGroup]="form" class="space-y-4">
 
     @for (col of campos; track col) {
+
     <div
         class="bg-white/80 border border-gray-400 rounded-lg p-3 m-2 flex flex-row gap-3 items-start">
-        <!-- Input y validación -->
-        <div class="flex flex-col w-1/4">
-            <label class="text-sm font-medium text-gray-700 py-1">
-                {{ col.label }}
-            </label>
+        <!-- label y validación -->
 
-            @if (form.get(col.key)?.invalid && form.get(col.key)?.touched) {
-            <p class="text-sm text-red-600">Este campo es obligatorio.</p>
-            }
-            <input
-                type="text"
-                [formControlName]="col.key"
-                class="w-full p-2 border rounded placeholder-gray-400"
-                [placeholder]="'Ingrese ' + col.label.toLowerCase()" />
-        </div>
-        <!-- Botón -->
-        <div class="flex items-end mb-2 mr-5">
-            <button
-                type="button"
-                (click)="agregarCampo(col.key)"
-                class="bg-verde-btn hover:bg-verde-btn/90 text-white px-4 py-2 rounded">
-                Agregar
-            </button>
+        <!-- Contenedor general en flex -->
+        <div class="flex items-start gap-4 w-full">
+            <!-- Columna: Input + Botón -->
+            <div class="w-1/2">
+                <label
+                    class="flex items-center text-sm text-gray-700 relative group cursor-pointer">
+                    <mat-icon fontIcon="help" class="text-sm w-4 h-4 mr-1"
+                        aria-hidden="true"></mat-icon>
+                    {{ col.label }}
+
+                    <!-- Tooltip -->
+
+                    @if (col.Tooltip) {
+                    <div
+                        class="absolute bottom-full ml-20 -translate-x-1/3 mb-2
+             w-68 p-2 text-peq bg-black text-white rounded
+             shadow-lg opacity-1 group-hover:opacity-90
+             transition-opacity duration-300 z-20 pointer-events-none">
+                        {{ col.Tooltip }}
+                    </div>
+                    }
+                </label>
+
+                <div class="flex items-center gap-2">
+                    <!-- Input -->
+                    <input
+                        type="text"
+                        [formControlName]="col.key"
+                        class="flex-1 p-2 border border-gray-300 rounded 
+               placeholder-gray-400 transition-all duration-200
+               hover:bg-gray-100/25 focus:outline-none focus:ring-1 
+               focus:ring-blue-400 focus:border-blue-500"
+                        [placeholder]="'Ingrese ' + col.label.toLowerCase()" />
+
+                    <!-- Botón -->
+                     <div class="p-2">
+                    <button
+                        class="flex items-center gap-1 px-3 py-2 bg-white hover:bg-gray-100 hover:scale-105 hover:brightness-115 transition duration-300"
+                        type="button"
+                        (click)="agregarCampo(col.key)">
+                        <img src="assets/simbolos/agregar.svg" alt="Agregar"
+                            class="w-5 h-5">
+                        <span>Agregar</span>
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Validación -->
+                @if(form.get(col.key)?.invalid && form.get(col.key)?.touched){
+                <div class="text-red-500 text-xs mt-1">
+                    {{ col.label }} es obligatorio
+                </div>
+                }
+            </div>
+
+            <!-- Columna: Tabla -->
+            <div class="flex-1 overflow-x-auto">
+                <app-tablaprocedimiento
+                    [data]="listaDatosFiltradas(col.key)"
+                    [columns]="[{ key: col.key, label: col.label }]"
+                    [accionesTemplate]="accionesPersonalizadas"
+                    (eliminar)="eliminarDato($event)">
+                </app-tablaprocedimiento>
+            </div>
         </div>
 
-        <!-- Tabla para cada Input -->
-        <div class="flex-1 overflow-x-auto">
-            <app-tablaprocedimiento
-                [data]="listaDatosFiltradas(col.key)"
-                [columns]="[{ key: col.key, label: col.label }]"
-                [accionesTemplate]="accionesPersonalizadas"
-                (eliminar)="eliminarDato($event)">
-            </app-tablaprocedimiento>
-        </div>
     </div>
+
     }
-    
     <!-- Acciones -->
     <ng-template #accionesPersonalizadas let-dato>
         <div class="flex items-center justify-center space-x-1">
             <button
                 (click)="eliminarDato(dato)"
-                class="px-1 w-7 h-7"
+                class="px-1 w-6 h-6"
                 title="Eliminar">
-                <img
-                    class="icono_titulos btntables hover:brightness-110"
-                    src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg" />
+                <img src="assets/simbolos/eliminar.svg" alt="eliminar"
+                    class=" hover:brightness-120 w-6 h-6">
             </button>
         </div>
     </ng-template>
+    <hr>
     <!-- Botones Cancelar y Guardar -->
-    <div class="flex justify-end gap-3 pt-3 m-4">
-        <button
-            type="button"
-            (click)="onCancel()"
-            class="bg-gray-300 hover:bg-rojo-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
-            Cancelar
-        </button>
+    <div class="flex justify-end gap-2 pt-2 m-2">
+        <div class="flex gap-3">
+            <button
+                type="button"
+                (click)="cancelarFormulario()"
+                class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-150 transition-colors duration-300">
+                <img src="assets/simbolos/cancelar.svg"
+                    alt="Cancelar formulario" class="w-6 h-6" />
+                Cancelar
+            </button>
+        </div>
 
-        @if (editIndex !== null) {
-        <button
-            type="button"
-            (click)="guardarEdicion()"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-            Guardar edición
-        </button>
-        } @else {
-        <button
-            type="submit"
-            (click)="enviarFormulario()"
-            class="bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded justify-center items-center">
-            Guardar
-        </button>
-        }
+        <div class="flex gap-3">
+            <button
+                type="submit"
+                (click)="enviarFormulario()"
+                class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-110 transition-colors duration-300">
+                <img src="assets/simbolos/guardar.svg" alt="Guardar formulario"
+                    class="w-6 h-6" />
+                Guardar
+            </button>
+        </div>
     </div>
 </form>

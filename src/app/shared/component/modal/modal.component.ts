@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, Vie
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormreutilizableComponent } from '../formreutilizable/formreutilizable.component';
+import { AlertService } from '../../servicios/alert.service';
 
 @Component({
   selector: 'app-modal',
@@ -19,6 +20,8 @@ export class ModalComponent implements OnInit {
   escalar = false;
   fichaTecnica = " Ficha tecnica de procedimiento"  
 
+ constructor (private alertService: AlertService){} 
+
 onBackdropClick(event: MouseEvent): void {
     const clickedOutside = !this.formularioRef.nativeElement.contains(event.target);
     if (clickedOutside) {
@@ -32,7 +35,6 @@ onBackdropClick(event: MouseEvent): void {
 fb = inject(FormBuilder);
 form = this.fb.group({});
 
-constructor(){}
 
 ngOnInit() {
   this.campos.forEach(campo => {
@@ -44,23 +46,55 @@ ngOnInit() {
 }
 
 campos = [
-  { key: 'Procedimiento', label: 'Procedimiento', required: true },
-  { key: 'Categoria', label: 'Categoria', required: true },
-  { key: 'Rol', label: 'Rol' },
-  { key: 'Estado', label: 'Estado' },
-  { key: 'Actividades', label: 'Actividades' },
-  { key: 'Referentes', label: 'Referentes' },
+  { 
+    key: 'Procedimiento', 
+    label: 'Procedimiento',  
+    Tooltip: 'Defina el procedimiento que desea estandarizar.', 
+    required: true 
+  },
+  { 
+    key: 'Categoria', 
+    label: 'Categoría', 
+    Tooltip: 'Seleccione la categoría a la cual pertenece el procedimiento.', 
+    required: true 
+  },
+  { 
+    key: 'Rol', 
+    label: 'Rol', 
+    Tooltip: 'Indique el rol o roles responsables de este procedimiento.', 
+    required: true 
+  },
+  { 
+    key: 'Estado', 
+    label: 'Estado', 
+    Tooltip: 'Especifique el estado actual del procedimiento (Inicial, Intermedio 1, Intermedio 2, Intermedio 3).', 
+    required: true 
+  },
+  { 
+    key: 'Actividades', 
+    label: 'Actividades', 
+    Tooltip: 'Liste las actividades que componen el procedimiento, en orden secuencial.', 
+    required: true 
+  },
+  { 
+    key: 'Referentes', 
+    label: 'Referentes', 
+    Tooltip: 'Agregue los documentos o normativas que sirvan de referencia para este procedimiento.', 
+    required: true 
+  },
 ];
 
 
-  onCancel() {
-    this.cerrar.emit();
-    this.form.reset();
-  }
+  Cancelar() {
+        this.cerrar.emit();
+        this.form.reset();
+      }
+    
   
-  onGuardar(datos: any) {
+  
+  Guardar(datos: any) {
   this.guardar.emit(datos);
-  this.onCancel();
+  this.Cancelar()
 }
 
 }

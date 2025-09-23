@@ -2,7 +2,8 @@
     <!-- Encabezado general -->
     @if (encabezadoGeneral) {
     <div
-        class="p-1 px-2 w-full bg-encabezado-tabla text-white text-med font-semibold">
+        class="flex w-full gap-2 p-2 bg-encabezado-tabla text-white text-med font-semibold">
+        <img src="assets/simbolos/lista.svg" alt="" class="ml-2 w-4 h-4" >
         {{ encabezadoGeneral }}
     </div>
     }
@@ -11,7 +12,8 @@
     @else if (columns && columns.length > 0) {
     @for (col of columns; track col.label) {
     <div
-        class="p-1 w-full bg-encabezado-tabla text-white text-med font-semibold">
+        class="p-1 w-full flex gap-2 bg-encabezado-tabla text-white text-med font-semibold">
+        <img src="assets/simbolos/lista.svg" alt="" class=" ml-2 w-4 h-4" >
         Lista de {{ col.label }}
     </div>
     }
@@ -27,7 +29,7 @@
                 </th>
                 }
                 <th
-                    class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
+                    class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[100px]">
                     Opciones
                 </th>
             </tr>
@@ -49,17 +51,11 @@
                         *ngTemplateOutlet="template; context: { $implicit: dato }"></ng-container>
                     }
                     @else {
-                    <button (click)="eliminar.emit(dato)" class="px-1 w-7 h-7"
-                        title="Eliminar Proyecto">
-                        <img
-                            class="icono_titulos btntables hover:brightness-110"
-                            src="https://sapiens.udenar.edu.co:3026/cdn//images/eliminar.svg">
+                    <button (click)="eliminar.emit(dato)">
+                        <img src="assets/simbolos/eliminar.svg" alt="Eliminar" class=" hover:brightness-120 w-4 h-4">
                     </button>
-                    <button (click)="editar.emit(dato)" class="px-1 w-7 h-7"
-                        title="Editar Proyecto">
-                        <img
-                            class="icono_titulos btntables hover:brightness-110"
-                            src="https://sapiens.udenar.edu.co:3026/cdn//images/editar_color.svg">
+                    <button (click)="editar.emit(dato)">
+                        <img src="assets/simbolos/editar.svg" alt="Editar" class=" hover:brightness-120 w-4 h-4">
                     </button>
                     }
                 </td>

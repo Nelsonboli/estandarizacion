@@ -7,33 +7,29 @@
       <nav class="text-sm">
 
         <a
-          [routerLink]="[]"
-          fragment="definiciones"
+          (click)="onMenuClick('definiciones', $event)"
           [class.active]="activeSection === 'definiciones'"
-          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300">
+          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300 cursor-pointer">
           Definiciones
         </a>
 
-        <a class="border-gray-600"
-          [routerLink]="[]"
-          fragment="mapa"
-          
+        <a 
+          (click)="onMenuClick('mapa', $event)"
           [class.active]="activeSection === 'mapa'"
-          class="no-underline text-gray-600 block px-3 py-3  hover:text-gray-800 transition border-l-1 border-gray-300">
+          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300 cursor-pointer">
           Mapa de procesos
         </a>
 
         <a
-          [routerLink]="[]"
-          fragment="metodologia"
+          (click)="onMenuClick('metodologia', $event)"
           [class.active]="activeSection === 'metodologia'"
-          class="no-underline text-gray-600 block px-3 py-3  hover:text-gray-800 transition border-l-1 border-gray-300">
+          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300 cursor-pointer">
           Metodología
         </a>
 
         <div class="mt-6">
-          <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-            class="no-underline flex items-center gap-1 px-1 py-2 rounded-full hover:text-azul-fondo  text-gray-600 transition-colors">
+          <a (click)="window.scrollTo({top: 0, behavior: 'smooth'})"
+            class="no-underline flex items-center gap-1 px-1 py-2 rounded-full hover:text-azul-fondo text-gray-600 transition-colors cursor-pointer">
             <span class="material-symbols-outlined">arrow_upward_alt</span>
             Volver arriba
           </a>
@@ -43,82 +39,74 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <main
-      class="flex-1 px-2 py-2 m-1 mt-2 md:p-10 space-y-1 overflow-auto bg-white md:rounded-sm  text-med border-l-1 border-r-1 border-gray-200 ">
+      class="flex-1 px-2 py-2 m-1 mt-2 md:p-10 space-y-1 overflow-auto bg-white md:rounded-sm text-med border-l- border-r-1 border-gray-200">
 
       <div
-        class="bg-azul-oscuro text-white p-2 rounded uperlowercase">
-        1. Acerca de la Estandarización de Procedimientos
+        class="bg-azul-oscuro font-medium text-white p-2 rounded uppercase">
+        1. Acerca de Estandarización de Procedimientos
       </div>
       <!-- TÍTULO -->
       <header class="px-4">
 
         <h1
-          class="text-2xl sfont-extrabold text-gray-800 mb-2">Introduccion </h1>
+          class="text-2xl font-extrabold text-gray-800 mb-2">Introducción</h1>
 
-        <p class="Text-justify"> En este apartado se presenta una propuesta de
-          guía metodológica para
+        <p class="text-justify leading-relaxed">
+          En este apartado se presenta una propuesta de guía metodológica para
           la estandarización de procedimientos en la Facultad de Ingeniería de
-          la
-          Universidad de Nariño.</p>
-        <p class="Text-justify">Esta guía metodológica ofrece una estrategia
-          para
-          llevar a cualquier
-          procedimiento a un estado completo. Es decir, procedimientos
-          debidamente
-          documentados,
-          con herramientas computacionales de soporte (si es necesario) y
-          reglamentado. </p>
-        <p class="Text-justify"> Esta guía está enfocada en brindar el
-          acompañamiento en el proceso de
-          estandarización de procedimientos, especificando cada actividad desde
-          el
-          levantamiento de información hasta el reconocimiento oficial del
-          procedimiento. </p>
-        <p class="Text-justify"> los siguientes terminos son importantes para
-          entender el contexto de
-          la
-          estandarización de procedimientos:</p>
+          la Universidad de Nariño. Esta guía metodológica ofrece una estrategia
+          para llevar a cualquier procedimiento a un estado completo. Es decir,
+          procedimientos debidamente documentados, con herramientas
+          computacionales
+          de soporte (si es necesario) y reglamentado, la guía está enfocada en
+          brindar
+          el acompañamiento en el proceso de estandarización de procedimientos,
+          especificando cada actividad desde el levantamiento de información
+          hasta el reconocimiento oficial del procedimiento.
+        </p>
+        <p class="text-justify">Los siguientes términos son importantes para
+          entender el contexto de la estandarización de procedimientos:</p>
       </header>
 
       <!-- SECCIÓN: DEFINICIONES -->
-      <section id="definiciones" class=" scroll-mt-34 px-6 py-2">
+      <section id="definiciones" class="scroll-mt-32 px-6 py-2">
         <div
-          class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-2 border-azul-btn/70 text-justify">
-          <h2 class="text-2xl font-semibold text-azul-fondo *:mb-4">
+          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify">
+          <h2 class="text-2xl font-semibold text-azul-fondo mb-4">
             Definiciones</h2>
           <ul class="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed">
-            <li><strong>Mapa de procesos:</strong> “Es una descripción ilustrada
+            <li><strong>Mapa de procesos:</strong> "Es una descripción ilustrada
               que permite visualizar la dinámica de toda la Universidad como
               sistema integral, e identifica las áreas, fortalezas que reconocen
-              el valor de las contribuciones individuales”.</li>
-            <li><strong>Proceso:</strong> “Conjunto de actividades
+              el valor de las contribuciones individuales".</li>
+            <li><strong>Proceso:</strong> "Conjunto de actividades
               interrelacionadas que transforman una o más entradas en salidas
-              mientras consume recursos para realizar la transformación”.</li>
-            <li><strong>Procedimiento: </strong> “Los procedimientos especifican
+              mientras consume recursos para realizar la transformación".</li>
+            <li><strong>Procedimiento: </strong> "Los procedimientos especifican
               y
               detallan un proceso, los cuales conforman un método o modo de
               ejecutar un conjunto ordenado de operaciones o actividades
               determinadas secuencialmente en relación con los responsables de
               la
-              ejecución”.</li>
+              ejecución".</li>
             <li><strong>Estandarización:</strong> Proceso por el cual una serie
               de
               actividades o procedimientos relacionados, se ajustan a un modelo
               en
               común que se considera referencia.</li>
-            <li><strong>Direccionamiento Estratégico:</strong> “Definir
+            <li><strong>Direccionamiento Estratégico:</strong> "Definir
               lineamientos para dirigir las actividades propias de la
               Universidad
-              de acuerdo con su misión institucional”.</li>
-            <li><strong>Gestión de Calidad:</strong> “Implementar, revisar y
+              de acuerdo con su misión institucional".</li>
+            <li><strong>Gestión de Calidad:</strong> "Implementar, revisar y
               mantener el Sistema Integrado de Gestión de Calidad, en función de
               la misión institucional, el mejoramiento continuo y la
               satisfacción
-              de la Comunidad Estudiantil y los Grupos de Interés”.</li>
+              de la Comunidad Estudiantil y los Grupos de Interés".</li>
             <li><strong>Formación académica:</strong> Proceso misional que se
               basa
-              en “Formar integralmente estudiantes a través de los diferentes
-              Programas, niveles y modalidades de Educación Superior”.</li>
+              en "Formar integralmente estudiantes a través de los diferentes
+              Programas, niveles y modalidades de Educación Superior".</li>
             <li><strong>Investigación:</strong> Producir conocimiento y
               contribuir
               a identificar y resolver problemáticas de la ciencia, las artes,
@@ -175,13 +163,13 @@
       </section>
 
       <!-- SECCIÓN: MAPA DE PROCESOS -->
-      <section id="mapa" class="scroll-mt-34 px-4 py-2">
+      <section id="mapa" class="scroll-mt-32 px-4 py-2">
         <div
-          class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-2 border-azul-btn/70 text-justify">
+          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4"> Mapa de
             proceso
             de la Universidad de Nariño</h2>
-          <p class="text-gray-700 mb-4">
+          <p class="text-gray-700 mb-2">
             La Universidad de Nariño tiene definido un mapa de procesos como una
             descripción ilustrada que permite visualizar la dinámica de toda la
             Universidad como sistema integral, e identifica las áreas y
@@ -204,9 +192,9 @@
       </section>
 
       <!-- SECCIÓN: METODOLOGÍA -->
-      <section id="metodologia" class="scroll-mt-34 px-6 py-2">
+      <section id="metodologia" class="scroll-mt-40 px-6 py-2">
         <div
-          class="bg-gray-100/50 rounded-lg shadow-md shadow-gray-400 p-4 border-l-2 border-azul-btn/70 text-justify">
+          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4"> Metodología
             para
             la estandarización de procedimientos</h2>
@@ -239,8 +227,8 @@
         </div>
       </section>
       <p class="py-1 text-gray-700 text-center justify-center">
-        <strong>Para la recoleccion de la informacion se
-          le recomienda seguir a el siguiente apartado </strong>
+        <strong>Para la recolección de la información se
+          le recomienda seguir al siguiente apartado </strong>
       </p>
       <div class="flex justify-center">
         <app-navegacion

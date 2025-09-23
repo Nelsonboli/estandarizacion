@@ -7,6 +7,7 @@ import { ModalComponent } from '../../shared/component/modal/modal.component';
 import { NavegacionComponent } from '../../shared/component/navegacion/navegacion';
 import { EstadolistaService } from '../../shared/servicios/estadolista.service';
 import { Router } from '@angular/router';
+import { AlertService } from '../../shared/servicios/alert.service';
 
 @Component({
   selector: 'app-identificacionrequerimientos',
@@ -19,18 +20,18 @@ export class IdentificacionrequerimientosComponent implements OnInit {
   procedimientos: any[] = [];
   datoEditar: any = null;
   constructor(private tablaService: TablaService, private listaService: EstadolistaService,
-    private router: Router
+  private router: Router, private alertService : AlertService
   ) { }
 
   // Datos del formulario Ficha Tecnica de Procedimiento  
-  columnas = [
-    { key: 'Procedimiento', label: 'Procedimiento' },
-    { key: 'Categoria', label: 'Categoría' },
-    { key: 'Rol', label: 'Rol' },
-    { key: 'Estado', label: 'Estado' },
-    { key: 'Actividades', label: 'Actividades' },
-    { key: 'Referentes', label: 'Referentes' },
-  ];
+columnas = [
+  { key: 'Procedimiento', label: 'Procedimiento', },
+  { key: 'Categoria', label: 'Categoría',  },
+  { key: 'Rol', label: 'Rol', },
+  { key: 'Estado', label: 'Estado',  },
+  { key: 'Actividades', label: 'Actividades',  },
+  { key: 'Referentes', label: 'Referentes',  },
+];
 
   ngOnInit() {
     this.tablaService.procedimientos$.subscribe(data => {
@@ -38,34 +39,42 @@ export class IdentificacionrequerimientosComponent implements OnInit {
     });
   }
 
-  editar(dato: any) {
+  // Editar procodemiento   
+  editarProcedimiento(dato: any) {
     this.datoEditar = dato;
     this.mostrarModal = true;
     document.body.classList.add('overflow-hidden');
   }
 
-  estandarizar(dato: any) {
+  // Estandarizar procedimiento
+  estandarizarProcedimiento(dato: any) {
     this.router.navigate(['/estandarizar', dato]);
     console.log('dato recibido:', dato)
   }
 
-  // abrir Formulario modal
+  // Abrir Formulario modal
   abrirFormulario() {
     this.mostrarModal = true;
     document.body.classList.add('overflow-hidden');
   }
 
-  // eliminar formulario modal
+  // Eliminar formulario modal
   cerrarFormulario() {
     this.mostrarModal = false;
     this.datoEditar = null;
     document.body.classList.remove('overflow-hidden');
   }
 
-  //elimina el dato seleccionado y actualiza la tabla service
-  eliminar(item: any) {
-    this.procedimientos = this.procedimientos.filter(p => p !== item);
+  // Elimina el dato seleccionado y actualiza la tabla service
+  eliminarProcedimiento(item: any) {
+    this.alertService.alertEliminar().then((res) => {
+      if (res.isConfirmed){
+        this.alertService.exito('procedimiento eliminado')
+        this.procedimientos = this.procedimientos.filter(p => p !== item);
     this.tablaService.setProcedimientos(this.procedimientos);
+      }
+    });
+    
   }
 
   //Guarda los datos y los envia a la tabla service para que se actualice 
@@ -81,8 +90,10 @@ export class IdentificacionrequerimientosComponent implements OnInit {
     }
     this.tablaService.setProcedimientos(this.procedimientos);
     this.mostrarModal = false;
-    document.body.classList.remove('overflow-hidden');
+    document.body.classList.remove('overflow-hidden')
   }
+
+
 
   ListaProcedimientos() {
     this.listaService.abrir();

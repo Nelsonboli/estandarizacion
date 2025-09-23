@@ -8,15 +8,15 @@
   </header>
 
   <!-- CONTENIDO PRINCIPAL CON SIDEBAR -->
-  <div class="flex-1 flex">
+  <div class="flex-1 flex overflow-hidden">
     <!-- MENU LATERAL -->
     @if (!esMenuPrincipal) {
     <aside
-      class="bg-azul-fondo sticky top-[4rem] z-40 shadow-lg transition-all duration-500 ease-in-out hidden md:block"
+      class="bg-azul-fondo z-40 shadow-lg transition-all duration-500 ease-in-out hidden md:block"
       [ngClass]="{
-    'md:w-56': !colapsar,  
-    'md:w-0': colapsar
-  }">
+        'md:w-56': !colapsar,  
+        'md:w-0': colapsar
+      }">
       @if(!colapsar){
       <app-menulateral></app-menulateral>
       }
@@ -24,14 +24,14 @@
     }
 
     <!-- CONTENIDO PRINCIPAL -->
- <main
-  class="flex-1 w-full bg-white transition-all duration-500 ease-in-out delay-100">
-  <router-outlet></router-outlet>
-</main>
+    <main
+      class="flex-1 w-full h-full bg-white overflow-y-auto transition-all duration-500 ease-in-out delay-100">
+      <router-outlet></router-outlet>
+    </main>
   </div>
 
   <!-- FOOTER -->
-<footer class="bg-white border-t border-gray-200 transition-all duration-500 ease-in-out delay-100">
-  <app-footer></app-footer>
-</footer>
+  <footer class="bg-white border-t border-gray-200 transition-all duration-500 ease-in-out delay-100">
+    <app-footer></app-footer>
+  </footer>
 </div>
