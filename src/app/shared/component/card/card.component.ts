@@ -11,6 +11,7 @@ import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular
 })
 export class CardComponent implements OnInit {
   @Input() indice: number | null = null;
+  @Input() refrescar!: boolean; 
   @Output() estadoCompleto = new EventEmitter<{ index: number; completo: boolean }>();
 
   form!: FormGroup;
@@ -68,4 +69,20 @@ export class CardComponent implements OnInit {
     }
     this.estadoCompleto.emit({ index: this.indice!, completo });
   }
+
+  ngOnChanges() {
+  if (this.refrescar && typeof this.indice === 'number') {
+    const procedimientoId = sessionStorage.getItem('procedimientoActivo');
+    const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
+    const prev = procedimientoId ? guardados?.[procedimientoId]?.[this.indice] || [] : [];
+
+    // Actualizar visualmente los checks
+    prev.forEach((val: boolean, i: number) => {
+      if (this.checks.at(i)) {
+        this.checks.at(i).setValue(val, { emitEvent: false });
+      }
+    });
+  }
+}
+
 }

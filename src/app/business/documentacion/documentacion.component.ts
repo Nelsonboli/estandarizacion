@@ -1,72 +1,26 @@
 import { Component, HostListener, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
-import { TablaestandarizacionService } from '../../shared/servicios/tablaestandarizacion.service';
-import { Router, RouterLink, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { NavegacionComponent } from "../../shared/component/navegacion/navegacion";
 import { CommonModule } from '@angular/common';
-import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { NavegacionComponent } from "../../shared/component/navegacion/navegacion";
 
 @Component({
   selector: 'app-documentacion',
   standalone: true,
-  imports: [ NavegacionComponent, CommonModule],
+  imports: [CommonModule, NavegacionComponent],
   templateUrl: './documentacion.component.html',
-  styleUrl: './documentacion.component.css'
+  styleUrls: ['./documentacion.component.css']
 })
 export class DocumentacionComponent implements OnInit, OnDestroy, AfterViewInit {
   activeSection: string = '';
   private destroy$ = new Subject<void>();
-window: any;
+  private sections: HTMLElement[] = [];
 
-  constructor(
-    public tablaestandarizacionService: TablaestandarizacionService,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
-
-  ngOnInit(): void {
-    // Escuchar cambios en el fragment desde la URL
-    this.route.fragment.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(fragment => {
-      if (fragment) {
-        // Delay para asegurar que el DOM esté listo
-        setTimeout(() => {
-          this.scrollToFragment(fragment);
-          this.activeSection = fragment;
-        }, 200);
-      }
-    });
-
-    // También escuchar los eventos de navegación completa
-    this.router.events.pipe(
-      filter(e => e instanceof NavigationEnd),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      setTimeout(() => {
-        const tree = this.router.parseUrl(this.router.url);
-        if (tree.fragment) {
-          this.scrollToFragment(tree.fragment);
-          this.activeSection = tree.fragment;
-        }
-      }, 300);
-    });
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    // Verificar si hay un fragment en la URL al cargar
-    const currentFragment = this.route.snapshot.fragment;
-    if (currentFragment) {
-      setTimeout(() => {
-        this.scrollToFragment(currentFragment);
-        this.activeSection = currentFragment;
-      }, 500);
-    }
-
-    // Detectar la sección activa inicial
-    setTimeout(() => {
-      this.detectActiveSection();
-    }, 600);
+    // Guardamos las secciones del contenido
+    this.sections = Array.from(document.querySelectorAll('section'));
+    this.onScroll(); // Inicializa el activo al cargar
   }
 
   ngOnDestroy(): void {
@@ -74,82 +28,36 @@ window: any;
     this.destroy$.complete();
   }
 
-  private scrollToFragment(fragment: string): void {
-    const element = document.getElementById(fragment);
-    if (element) {
-      // Calcular el offset considerando tu header fijo
-      // Estimando: header principal (~64px) + nav (~48px) + padding extra
-      const headerHeight = 120; // Ajusta este valor según tu header real
-      
-      const elementTop = element.getBoundingClientRect().top + window.scrollY;
-      const offsetTop = elementTop - headerHeight;
-      
-      window.scrollTo({ 
-        top: offsetTop, 
-        behavior: 'smooth' 
-      });
-
-      console.log('Navegando a:', fragment, 'Posición:', offsetTop);
-    } else {
-      console.warn('Elemento no encontrado:', fragment);
-    }
-  }
-
-  private detectActiveSection(): void {
-    const sections = ['definiciones', 'mapa', 'metodologia'];
-    const headerHeight = 120;
-    
-    for (let section of sections) {
-      const el = document.getElementById(section);
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const top = rect.top;
-        const bottom = rect.bottom;
-        
-        // Si la sección está visible en el viewport considerando el header
-        if (top <= headerHeight + 50 && bottom >= headerHeight) {
-          if (this.activeSection !== section) {
-            this.activeSection = section;
-            console.log('Sección activa:', section);
-          }
-          break;
-        }
-      }
-    }
-  }
-
+  /** Detecta el scroll y actualiza la sección activa */
   @HostListener('window:scroll', [])
   onScroll(): void {
-    this.detectActiveSection();
+    let currentSection = '';
+
+    for (const section of this.sections) {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 120 && rect.bottom >= 120) { // posición visible en viewport
+        currentSection = section.id;
+        break;
+      }
+    }
+
+    if (currentSection && this.activeSection !== currentSection) {
+      this.activeSection = currentSection;
+    }
   }
 
-  // Método para manejar clics en los enlaces del menú
-  onMenuClick(fragment: string, event: Event): void {
-    event.preventDefault();
-    
-    console.log('Click en menú:', fragment);
-    
-    // Actualizar la sección activa inmediatamente
-    this.activeSection = fragment;
-    
-    // Navegar al fragment
-    this.router.navigate([], { 
-      fragment: fragment,
-      relativeTo: this.route 
-    }).then(() => {
-      // Hacer scroll después de la navegación
-      setTimeout(() => {
-        this.scrollToFragment(fragment);
-      }, 100);
-    });
+  /** Hace scroll suave a la sección */
+  scrollToSection(sectionId: string): void {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.activeSection = sectionId;
+    }
   }
 
-  // Método para volver arriba
+  /** Vuelve al inicio */
   scrollToTop(): void {
-    window.scrollTo({
-      top: 0, 
-      behavior: 'smooth'
-    });
+    window.scrollTo({ top: 20, behavior: 'smooth' });
     this.activeSection = '';
   }
 }

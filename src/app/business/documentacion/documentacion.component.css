@@ -1,22 +1,21 @@
-.active { 
+aside nav {
+  position: fixed;
+  top: 120px; /* Ajusta según la altura real del header */
+  left: 20px;
+  width: 180px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  padding-bottom: 1rem;
+}
+
+.active {
   border-left: 3px solid #00232e !important;
   color: #00232e !important;
   font-weight: 700 !important;
-  background-color: rgba(197, 216, 235, 0.1) ;
+  background-color: rgba(197, 216, 235, 0.1);
   transition: all 0.2s ease-in-out;
 }
 
-/* Estilo para hover en los enlaces del menú */
 nav a:hover:not(.active) {
   background-color: rgba(0, 0, 0, 0.03);
- 
-  
 }
-
-/* Asegurar que los enlaces del menú mantengan el estilo */
-nav a {
-  transition: all 0.3s ease-in-out;
-  display: block;
-  border-left: 1px solid transparent;
-}
-

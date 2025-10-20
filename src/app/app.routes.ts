@@ -38,7 +38,7 @@ export const routes: Routes = [
 
             {
                 path: 'estandarizar/:id',
-                loadComponent: () => import('./Paginas/estandarizar/estandarizar.component').then(m => m.EstandarizarComponent)
+                loadComponent: () => import('./paginas/estandarizar/estandarizar.component').then(m => m.EstandarizarComponent)
             },
 
             {

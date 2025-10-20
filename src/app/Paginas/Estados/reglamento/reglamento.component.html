@@ -1,124 +1,139 @@
- <div>
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">🧭 Pasos para que el
-        proceso sea reglamentado</h3>
-    <ul class="space-y-2">
-        @for (paso of pasos; track paso.titulo) {
-        <li
-            class="bg-white/20 p-3 rounded-lg border-l-4 border-blue-600">
-            <strong>{{paso.id}} {{ paso.titulo }}</strong> → <span
-                class="text-gray-700">{{ paso.responsable
-                }}</span>{{ paso.completado }}
-        </li>
-        }
-    </ul>
-</div>
-<div
-    class="grid grid-cols-2 md:flex-row justify-center items-center gap-4 m-4">
+<div class="grid grid-cols-2 md:flex-row justify-center items-center gap-4 m-4">
 
-    <!-- Descargar Documento DAAC -->
-    <div class="col-span-1 flex flex-col items-center gap-4">
-        @if (seccionActiva !== 'descargar') {
-        <button
-            class="px-4 py-2 bg-azul-oscuro text-white rounded"
-            (click)="seccionActiva = 'descargar'">
-            Descargar Documento DAAC
-        </button>
-        }
-        @if (seccionActiva === 'descargar') {
-        <ng-container>
-            <div
-                class="flex flex-col items-center text-justify flex-wrap md:flex-nowrap space-y-4 p-4 border rounded-lg bg-gray-50 w-full max-w-md">
-                <label class> Descargar el formato de procedimiento
-                    para la DAAC </label>
-                <button
-                    class="bg-gray-400 hover:bg-gray-400/50 transition-all text-black border-gray-600 px-4 py-2 rounded">
-                    Descargar Procedimiento DAAC
-                </button>
-                <strong class="text-med m-2 pt-2">
-                    Para completar el procedimiento debe enviar el
-                    documento descargado a la
-                    División de Autoevaluación, Acreditación y
-                    Certificación (DAAC) de la Universidad de
-                    Nariño, al siguiente correo electrónico:
-                    <span class="text-med text-blue-600">
-                        acreditacioninstitucional&#64;udenar.edu.co
-                    </span>
-                </strong>
-                <strong class="text-med m-2 pt-2 text-red-500">
-                    Recuerde que el procedimiento debe ser
-                    aprobado por la DAAC antes de ser presentado
-                    a la dependencia.
-                </strong>
-                <strong class="text-med m-2 pt-2">
-                    Una vez aprobado por la DAAC, el procedimiento
-                    debe ser presentado al Consejo de Facultad
-                    para su aprobación final.
-                </strong>
-            </div>
-        </ng-container>
-        }
-    </div>
-    <!-- Validar Documento -->
-    <div class="col-span-1 flex flex-col items-center gap-4">
-        @if (seccionActiva !== 'validar') {
-        <button
-            class="px-4 py-2 bg-azul-oscuro text-white rounded"
-            (click)="seccionActiva = 'validar'">
-            Validar Documento
-        </button>
-        }
+  <!-- 🔹 Ficha de Procedimiento -->
+  <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4">
+    @if (seccionActiva !== 'descargar') {
+    <button
+      class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70"
+      (click)="seccionActiva = 'descargar'">
+      <img src="assets/elementos/descargarDocumento.svg" alt="{{fichaProcedimiento}}" class="w-6 h-6" />
+      {{ fichaProcedimiento }}
+    </button>
+    }
 
-        @if (seccionActiva === 'validar') {
-        <ng-container>
-            <div
-                class="flex flex-col items-center mt-4 gap-4 p-4 border rounded-lg bg-gray-50 w-full max-w-md">
-                <form [formGroup]="form" (ngSubmit)="onSubmit()"
-                    class="space-y-4 w-full">
-                    <div class=" items-center justify-center">
-                        <label
-                            class="text-med block font-bold mb-3 ml-4">
-                            ¿el documento ya esta validado por la
-                            DAAC?
-                        </label>
-                        <div>
-                            <label class="ml-10 ">
-                                <input type="radio"
-                                    formControlName="respuesta1"
-                                    value="si" /> Sí
-                            </label>
-                            <label class="ml-10">
-                                <input type="radio"
-                                    formControlName="respuesta1"
-                                    value="no" /> No
-                            </label>
-                        </div>
-                        @if (form.get('respuesta1')?.value === 'si')
-                        {
-                        <div>
-                            <strong class="text-med m-2 pt-2">Debe enviar el
-                                documento al consejo de Facultad para su
-                                aprobación.al siguiente correo electronico:
-                                <span
-                                    class="text-med text-blue-600">
-                                    acreditacioninstitucional&#64;udenar.edu.co
-                                </span>
-                            </strong>
-                        </div>
-                        }
-                        @if(form.get('respuesta1')?.value === 'no'){
-                        <div>
-                            <strong class="text-med pt-4">Recuerde que el procedimiento debe
-                                 ser enviado a la División de Autoevaluación,
-                                 Acreditación y Certificación (DAAC) para su aprobacion, 
-                                 para continuar con el proceso.
-                            </strong>
-                        </div>
-                        }
-                    </div>
-                </form>
-            </div>
-        </ng-container>
-        }
-        <!--  botones de Atras -->
-    </div>
+    @if (seccionActiva === 'descargar') {
+    <ng-container>
+      <div
+        class="flex flex-col justify-center items-center text-center space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
+        <strong>Descargar la Ficha de Procedimiento para la DAAC</strong>
+        <p class="text-med m-2 pt-2 mb-4">
+          <span class="text-med text-blue-600 font-semibold">Información:</span>
+          Descargue la Ficha de Procedimiento y envíe el documento a la División
+          de Autoevaluación, Acreditación y Certificación (DAAC) de la Universidad
+          de Nariño para su aprobación.  
+          Envíelo al correo:
+          <span class="text-med text-blue-600">
+            acreditacioninstitucional&#64;udenar.edu.co
+          </span>
+        </p>
+        <button (click)="descargarDocumento()"
+          class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
+          <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
+          Descargar {{ fichaProcedimiento }}
+        </button>
+        <p class="text-med m-2 pt-2">
+          Luego de recibir la aprobación por parte de la DAAC, deberá subir la
+          Ficha de Procedimiento aprobada para continuar con el Formato de
+          Estandarización.
+        </p>
+      </div>
+    </ng-container>
+    }
+
+    <button
+      class="flex items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-500 px-4 py-2 rounded min-w-70 group">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+        class="w-6 h-6 mr-2 fill-gray-500 group-hover:fill-gray-600 transition-colors duration-300">
+        <path
+          d="M444-336v-342L339-573l-51-51 192-192 192 192-51 51-105-105v342h-72ZM263.72-192Q234-192 213-213.15T192-264v-72h72v72h432v-72h72v72q0 29.7-21.16 50.85Q725.68-192 695.96-192H263.72Z" />
+      </svg>
+      Subir {{ fichaProcedimiento }}
+    </button>
+  </div>
+
+  <!-- 🔹 Formato de Estandarización -->
+  <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4">
+    @if (seccionActiva !== 'validar') {
+    <button
+      class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70"
+      (click)="seccionActiva = 'validar'">
+      <img src="assets/elementos/descargarDocumento.svg" alt="{{formatoEstandarizacion}}" class="w-6 h-6" />
+      {{ formatoEstandarizacion }}
+    </button>
+    }
+
+    @if (seccionActiva === 'validar') {
+    <ng-container>
+      <div
+        class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-2 w-full">
+
+          <!-- Pregunta centrada -->
+          <label class="block text-med font-bold text-center pb-4">
+            ¿El documento ya está validado por la DAAC?
+          </label>
+
+          <!-- Radio buttons centrados -->
+          <div class="flex justify-center items-center gap-4 pb-2">
+            <label class="flex items-center gap-2">
+              <input type="radio" formControlName="respuesta1" value="si" /> Sí
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" formControlName="respuesta1" value="no" /> No
+            </label>
+          </div>
+
+          <!-- Si la respuesta es Sí -->
+          @if (form.get('respuesta1')?.value === 'si') {
+          <div class="flex flex-col items-center text-center space-y-3">
+            <p class="text-med m-2 pt-2 mb-4">
+              Descargue el Formato de Estandarización y envíe el documento al
+              correo electrónico de la Dependencia correspondiente.
+            </p>
+            <button
+              class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
+              <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato"
+                class="w-6 h-6" />
+              {{ formatoEstandarizacion }}
+            </button>
+            <p class="text-med m-2 pt-2">
+              Luego de recibir la aprobación por la Dependencia, deberá subir el
+              Formato de Estandarización para continuar con la Socialización del
+              procedimiento.
+            </p>
+          </div>
+          }
+
+          <!-- Si la respuesta es No -->
+          @if (form.get('respuesta1')?.value === 'no') {
+          <div class="flex flex-col items-center text-center space-y-3">
+            <p class="text-med m-2 pt-2 mb-4">
+              <span class="text-blue-600 font-semibold">Recuerde:</span>
+              Descargar la Ficha de Procedimiento y envíar el documento a la División
+            de Autoevaluación, Acreditación y Certificación (DAAC) de la Universidad
+            de Nariño para su aprobación y subir el documento aprobrado. para continuar 
+            con el Formato de Estandarización.
+            </p>
+            <button
+              class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
+              <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
+              Descargar {{ fichaProcedimiento }}
+            </button>
+          </div>
+          }
+        </form>
+      </div>
+    </ng-container>
+    }
+
+    <button
+      class="flex items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-500 px-4 py-2 rounded min-w-70 group">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+        class="w-6 h-6 mr-2 fill-gray-500 group-hover:fill-gray-600 transition-colors duration-300">
+        <path
+          d="M444-336v-342L339-573l-51-51 192-192 192 192-51 51-105-105v342h-72ZM263.72-192Q234-192 213-213.15T192-264v-72h72v72h432v-72h72v72q0 29.7-21.16 50.85Q725.68-192 695.96-192H263.72Z" />
+      </svg>
+      Subir {{ formatoEstandarizacion }}
+    </button>
+  </div>
 </div>

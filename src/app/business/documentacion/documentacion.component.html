@@ -1,41 +1,45 @@
 <div class="mb-1 bg-white py-1 px-3 rounded-xl shadow-sm">
-  <div class="flex flex-col md:flex-row min-h-screen mb-2 bg-white font-sans">
+  <div class="flex flex-col md:flex-row min-h-screen mb-2 bg-white font-sans overflow-visible">
     <!-- MENÚ LATERAL -->
-    <aside
-      class="md:w-40 w-full text-azul-fondo p-2 mt-2 mb-2 sticky top-2 md:h-[calc(100vh-100px)] scale-z-1 border-r-1 border-gray-200 rounded-sm bg-white">
-      <h2 class="text-xl font-bold mb-3 mt-1 text-left">Contenido</h2>
-      <nav class="text-sm">
+<aside
+  class=" md:w-52 w-full text-azul-fondo p-3 mb-2 border-r border-gray-200 rounded-sm bg-white overflow-y-auto shadow-sm">
 
-        <a
-          (click)="onMenuClick('definiciones', $event)"
-          [class.active]="activeSection === 'definiciones'"
-          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300 cursor-pointer">
-          Definiciones
-        </a>
+  
+  <nav class="ml-58 mt-4 text-sm">
+    <h2 class="text-xl font-bold mb-3 mt-2 item-center justify-center">Contenido</h2>
 
-        <a 
-          (click)="onMenuClick('mapa', $event)"
-          [class.active]="activeSection === 'mapa'"
-          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300 cursor-pointer">
-          Mapa de procesos
-        </a>
+    <a
+      (click)="scrollToSection('definiciones')"
+      [class.active]="activeSection === 'definiciones'"
+      class="no-underline text-gray-600 block px-3 py-2 hover:text-gray-800 transition border-l border-gray-300 cursor-pointer">
+      Definiciones
+    </a>
 
-        <a
-          (click)="onMenuClick('metodologia', $event)"
-          [class.active]="activeSection === 'metodologia'"
-          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l-1 border-gray-300 cursor-pointer">
-          Metodología
-        </a>
+    <a
+      (click)="scrollToSection('mapa')"
+      [class.active]="activeSection === 'mapa'"
+      class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l border-gray-300 cursor-pointer">
+      Mapa de procesos
+    </a>
 
-        <div class="mt-6">
-          <a (click)="window.scrollTo({top: 0, behavior: 'smooth'})"
-            class="no-underline flex items-center gap-1 px-1 py-2 rounded-full hover:text-azul-fondo text-gray-600 transition-colors cursor-pointer">
-            <span class="material-symbols-outlined">arrow_upward_alt</span>
-            Volver arriba
-          </a>
-        </div>
-      </nav>
-    </aside>
+    <a
+      (click)="scrollToSection('metodologia')"
+      [class.active]="activeSection === 'metodologia'"
+      class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l border-gray-300 cursor-pointer">
+      Metodología
+    </a>
+
+    <div class="mt-6">
+      <a
+        (click)="scrollToTop()"
+        class="no-underline flex items-center gap-1 px-1 py-2 rounded-full hover:text-azul-fondo text-gray-600 transition-colors cursor-pointer">
+        <span class="material-symbols-outlined">arrow_upward_alt</span>
+        Volver arriba
+      </a>
+    </div>
+  </nav>
+</aside>
+
 
     <!-- CONTENIDO PRINCIPAL -->
     <main
@@ -46,11 +50,12 @@
         1. Acerca de Estandarización de Procedimientos
       </div>
       <!-- TÍTULO -->
-      <header class="px-4">
+      <header class="px-4 text-grande">
 
         <h1
           class="text-2xl font-extrabold text-gray-800 mb-2">Introducción</h1>
 
+     
         <p class="text-justify leading-relaxed">
           En este apartado se presenta una propuesta de guía metodológica para
           la estandarización de procedimientos en la Facultad de Ingeniería de
@@ -66,12 +71,13 @@
         </p>
         <p class="text-justify">Los siguientes términos son importantes para
           entender el contexto de la estandarización de procedimientos:</p>
+          
       </header>
 
       <!-- SECCIÓN: DEFINICIONES -->
       <section id="definiciones" class="scroll-mt-32 px-6 py-2">
         <div
-          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify">
+          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify text-grande">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4">
             Definiciones</h2>
           <ul class="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed">
@@ -165,7 +171,7 @@
       <!-- SECCIÓN: MAPA DE PROCESOS -->
       <section id="mapa" class="scroll-mt-32 px-4 py-2">
         <div
-          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify">
+          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify text-grande">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4"> Mapa de
             proceso
             de la Universidad de Nariño</h2>
@@ -186,7 +192,7 @@
           <div class="flex justify-center">
             <img src="assets/images/mapa-procesos.jpg"
               alt="Mapa de procesos Universidad de Nariño"
-              class="rounded-xl border shadow-md max-w-2xl" />
+              class="rounded-xl border shadow-sm max-w-2xl" />
           </div>
         </div>
       </section>
@@ -194,7 +200,7 @@
       <!-- SECCIÓN: METODOLOGÍA -->
       <section id="metodologia" class="scroll-mt-40 px-6 py-2">
         <div
-          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify">
+          class="bg-white/80 rounded-lg shadow-md shadow-gray-300 p-4 border-l-2 border-azul-fondo/70 text-justify text-grande">
           <h2 class="text-2xl font-semibold text-azul-fondo mb-4"> Metodología
             para
             la estandarización de procedimientos</h2>
@@ -211,22 +217,22 @@
             procedimiento en
             particular.
           </p>
-          <li><a
+          <li class="ml-4"><a
               href="https://electronica.udenar.edu.co/wp-content/uploads/2020/10/Estatuto-General.pdf"
-              target="_blank" class="text-blue-600 hover:underline">
+              target="_blank" class="text-blue-600 hover:underline  ">
               Guía Metodológica para la Estandarización de Procedimientos de la
               Facultad de Ingeniería de la Universidad de Nariño </a>
           </li>
           <div class="flex justify-center my-6">
             <img src="assets/images/metodologia-flujo.png"
               alt="Flujo metodológico para la estandarización de procedimientos"
-              class="rounded-xl border shadow-md max-w-xl"
+              class="max-w-xl"
               onerror="this.onerror=null;this.src='assets/placeholder.png';" />
           </div>
 
         </div>
       </section>
-      <p class="py-1 text-gray-700 text-center justify-center">
+      <p class="py-1 text-gray-700 text-center justify-center text-grande">
         <strong>Para la recolección de la información se
           le recomienda seguir al siguiente apartado </strong>
       </p>

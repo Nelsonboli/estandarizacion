@@ -5,8 +5,9 @@
       class="bg-azul-oscuro font-medium text-white p-2 border-2 rounded mb-2 uppercase">
       2. Recoleccion de información
     </div>
-    <div class="px-4">
-      <p> <strong class="text-grande">Nota:</strong> se recomienda utilizar los siguientes
+    <div class="px-4 text-grande">
+      <p> <strong class="text-grande">Nota:</strong> se recomienda utilizar los
+        siguientes
         mecanismos de información
       </p>
       <h1 class="text-grande font-bold text-gray-800 mb-2"> Revisión Documental
@@ -14,7 +15,7 @@
       <p class="mb-4 ">
         La Universidad cuenta con documentos oficiales, en los cuales
         encontramos información de referencia sobre las funciones,
-        actividades, planes y estrategias de las dependencisas. Estos
+        actividades, planes y estrategias de las dependencias. Estos
         documentos son:
       </p>
       <section>
@@ -27,12 +28,14 @@
           <li><a
               href="https://secretariageneral.udenar.edu.co/wp-content/uploads/2011/09/Proyecto-educativo-institucional-2009.pdf"
               target="_blank"
-              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Proyecto Educativo
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Proyecto
+              Educativo
               Institucional</a></li>
           <li><a
               href="https://www.udenar.edu.co/recursos/wp-content/uploads/2017/08/Estatutoposgrados.pdf"
               target="_blank"
-              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto des
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto
+              des
               Posgrados</a></li>
           <li><a
               href="https://www.udenar.edu.co/documentos/PDI-UDENAR-2020.pdf"
@@ -47,11 +50,12 @@
           <li><a
               href="https://secretariageneral.udenar.edu.co/wp-content/uploads/2024/05/ESTATUTO-DE-PERSONAL-DOCENTE-a-febrero-2024.pdf"
               target="_blank"
-              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto Personal
+              class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Estatuto
+              Personal
               Docente</a></li>
         </ul>
       </section>
-      <section class="mt-4 text-med">
+      <section class="mt-4 text-grande">
         <h2 class="text-grande font-bold text-gray-800 mb-2"> Entrevista</h2>
         <p class="mb-2">
           De ser necesario, se recomienda realizar entrevistas a las
@@ -61,31 +65,32 @@
         </p>
         <p> Se adjunta el formato de entrevista:
           <a href="enlace-para-formato-de-entrevista" target="_blank"
-            class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Formato de
+            class="no-underline font-semibold text-azul-oscuro hover:no-underline hover:text-blue-600">Formato
+            de
             Entrevista</a>
         </p>
       </section>
       <!--Tabla Descripcion de criterios -->
-      <section class="mt-4 text-med">
+      <section class="mt-4 text-grande">
         <h2 class="text-grande font-bold text-gray-800900 mb-2"> Observación
           directa</h2>
         <p class="mb-2">Es posible tambien, hacer una Observación directa de
           la manera en que se realiza el procedimiento dentro de la
-          facultad
-          para una mayor obtencion de la información
-        </p>
-        <p> la información que se recolecte con las actividades anteriores es
+          facultad para una mayor obtencion de la información; 
+          la información que se recolecte con las actividades anteriores es
           pertinentes para diligenciar la siguiente ficha de procedimiento
         </p>
 
-        <h2 class="text-grande font-bold text-gray-800 mt-6 mb-2"> ficha tecnica de
+        <h2 class="text-grande font-bold text-gray-800 mt-6 mb-2"> Ficha técnica
+          de
           procedimiento </h2>
         <p> Como primer paso, es importante recolectar la información pertinente
-          para diligenciar la siguiente ficha técnica que describe los elementos
+          que permite diligenciar la ficha técnica de procedimiento, esta ficha
+          describe los elementos
           constitutivos del procedimiento:
         </p>
 
-        <h6 class="text-med text-center"><strong> Tabla 1: </strong> Ficha
+        <h6 class="text-grande text-center"><strong> Tabla 1: </strong> Ficha
           técnica
           de procedimiento</h6>
 
@@ -95,8 +100,7 @@
 
         <!-- Tabla de Criterios -->
         <h6 class="text-med text-center"> <strong>Tabla 2:</strong> Descripcion
-          criterios para definir el estado de un
-          procedimiento </h6>
+          criterios para definir el estado de un procedimiento </h6>
         <app-tabla-criterios
           [columnas]="tablaestandarizacionService.encabezadoCriterios"
           [filas]="tablaestandarizacionService.tablaCriterios">
@@ -104,6 +108,23 @@
 
         <!-- Tabla Clasificacion de estados -->
         <app-tabla-estados></app-tabla-estados>
+
+        <!-- <h2 class="text-grande font-bold text-gray-800 mt-4 lowercase">
+          Identificar qué requerimientos se nesesitan para que el
+          procedimiento se encuentre en estado completo </h2> -->
+
+        <!-- <p class="text-med mb-2">Teniendo en cuenta el estado actual del
+          procedimiento a estandarizar, es necesario
+          identificar cuáles de los siguientes requerimientos hacen falta
+          para que dicho procedimiento pase a un estado completo. De acuerdo con la Tabla 3. Clasificación
+          de estado de procedimientos, Un estado completo hace referencia al
+          procedimiento que:</p>
+          <ul class="list list-inside space-y-1 mb-6 ml-4">
+            <li> Se encuentra documentado. </li>
+            <li> Cuenta con soporte computacional de ser necesario.</li>
+            <li> Se encuentra reglamentado institucionalmente.</li>
+          </ul>
+    -->
 
       </section>
       <div>

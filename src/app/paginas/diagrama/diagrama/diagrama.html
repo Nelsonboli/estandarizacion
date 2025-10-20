@@ -1,0 +1,119 @@
+<div class="overflow-x-hidden overflow-y-hidden">
+    <div class="flex flex-row">
+        <div class="p-2 space-y-2 flex flex-row">
+            <!-- Sidebar -->
+            <aside
+                class="md:w-40 w-full p-2 sticky top-2 border-r border-gray-200 bg-white rounded-sm">
+                <h2 class="text-grande font-bold pt-2">Diagrama de flujo</h2>
+                <hr>
+                <div class="relative group">
+                    <!-- contenedor que mantiene botones + card -->
+                    <nav class="mt-2">
+                        <div class="flex gap-2 flex-wrap">
+                            @for (boton of botones; track boton.nombre) {
+                            <button
+                                (click)="boton.accion()"
+                                (mouseenter)="botonActivo.set(boton)"
+                                class="flex-1 bg-gray-100 border border-gray-500 hover:bg-gray-200 hover:border-gray-900 text-black px-3 py-2 rounded">
+                                {{ boton.nombre }}
+                            </button>
+                            }
+                        </div>
+                    </nav>
+                    <!-- card dependiente del hover del grupo -->
+                    @if (botonActivo()) {
+                    <div
+                        class=" absolute left-48 top-2 -translate-y-4 w-80 min-h-58 max-h-58 
+             bg-white shadow-lg rounded-lg p-1 border border-gray-200 z-99999 
+             hidden group-hover:block">
+                        <img [src]="botonActivo()?.imagen" alt="simbolo"
+                            class="w-26 h-26 mx-auto" />
+                        <h3 class="text-center font-bold text-gray-800">
+                            {{ botonActivo()?.titulo }}
+                        </h3>
+                        <p class="text-sm text-gray-600 text-center mt-1 px-2">
+                            {{ botonActivo()?.descripcion }}
+                        </p>
+                    </div>
+                    }
+                </div>
+            </aside>
+        </div>
+        <main
+            class="flex-1 px-2 py-1 mb-1 mt-2 md:p-10 space-y-1 overflow-y-auto overflow-x-hidden bg-white md:rounded-sm text-med border-l border-gray-200">
+            <div class="flex flex-row gap-2 justify-center items-center">
+                <label class="text-grande font-semibold justify-center">
+                    Texto para simbolo:
+                </label>
+                <input [(ngModel)]="textoNodo" placeholder="Texto del simbolo"
+                    type="text"
+                    class="flex-1 p-1 border border-gray-300 rounded placeholder-gray-400 transition-all duration-200 
+                hover:bg-gray-100/25 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-500 m-2" />
+            </div>
+
+            <div #canvas
+                class="border min-h-[calc(100vh-20rem)] rounded-lg">
+            </div>
+            <!-- Popover flotante -->
+            @if (popoverVisible()) {
+            <div
+                class="fixed z-50 bg-white border border-gray-300 shadow-lg rounded-lg p-4 flex flex-col gap-2 custom-popover"
+                [style.left.px]="popoverPos().x - 30"
+                [style.top.px]="popoverPos().y - 60">
+                <!-- Campo editable -->
+                <input
+                    type="text"
+                    [(ngModel)]="popoverText"
+                    class="border border-gray-300 rounded p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    (keydown.enter)="guardarPopover()"
+                    autofocus />
+
+                <!-- Botones -->
+                <div class="flex flex-row gap-2 justify-center">
+                    <button
+                        class="bg-blue-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-blue-600"
+                        (click)="guardarPopover()">
+                        Guardar
+                    </button>
+                    <button
+                        class="bg-red-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-red-600"
+                        (click)="eliminarConBoton()">
+                        Eliminar
+                    </button>
+                    <button
+                        class="bg-gray-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-gray-600"
+                        (click)="popoverVisible.set(false)">
+                        Cerrar
+                    </button>
+                </div>
+
+                <!-- Flechita hacia abajo -->
+                <div
+                    class="absolute left-1/2 -bottom-2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-t-6 border-t-gray-300">
+                </div>
+                <div
+                    class="absolute left-1/2 -bottom-1 transform -translate-x-1/2 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-t-6 border-t-white">
+                </div>
+            </div>
+            }
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button
+                    type="submit"
+                    (click)="guardarDiagrama()"
+                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-110 transition-colors duration-300">
+                    <img src="assets/elementos/guardar.svg"
+                        alt="Guardar diagrama" class="w-6 h-6" /> Guardar diagrama
+                </button>
+
+                <button
+                    type="submit"
+                    (click)="exportar()"
+                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-110 transition-colors duration-300">
+                    <img src="assets/elementos/descargar.svg"
+                        alt="Descargar diagrama" class="w-7 h-7" /> Descargar diagrama
+                </button>
+            </div>
+        </main>
+    </div>
+</div>

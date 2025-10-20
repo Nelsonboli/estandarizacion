@@ -7,22 +7,22 @@ import { AlertService } from '../../servicios/alert.service';
 @Component({
   selector: 'app-modal',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule, FormreutilizableComponent],
+  imports: [ReactiveFormsModule, CommonModule, FormreutilizableComponent],
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.css']
 })
-export class ModalComponent implements OnInit { 
+export class ModalComponent implements OnInit {
   @Input() visible = false;
   @Input() datoEditar: any = null;
   @Output() cerrar = new EventEmitter<void>();
   @Output() guardar = new EventEmitter<any>();
   @ViewChild('formulario') formularioRef!: ElementRef;
   escalar = false;
-  fichaTecnica = " Ficha tecnica de procedimiento"  
+  fichaTecnica = [" Ficha tecnica de procedimiento"]
 
- constructor (private alertService: AlertService){} 
+  constructor(private alertService: AlertService) { }
 
-onBackdropClick(event: MouseEvent): void {
+  onBackdropClick(event: MouseEvent): void {
     const clickedOutside = !this.formularioRef.nativeElement.contains(event.target);
     if (clickedOutside) {
       this.escalar = true;
@@ -32,69 +32,66 @@ onBackdropClick(event: MouseEvent): void {
     }
   }
 
-fb = inject(FormBuilder);
-form = this.fb.group({});
+  fb = inject(FormBuilder);
+  form = this.fb.group({});
 
 
-ngOnInit() {
-  this.campos.forEach(campo => {
-    this.form.addControl(
-      campo.key,
-      this.fb.control('', campo.required ? Validators.required : [])
-    );
-  });
-}
+  campos = [
+    {
+      key: 'Procedimiento',
+      label: 'Procedimiento',
+      Tooltip: 'Defina el procedimiento que desea estandarizar.',
+      required: true
+    },
+    {
+      key: 'Categoria',
+      label: 'Categoría',
+      Tooltip: 'Seleccione la categoría a la cual pertenece el procedimiento.',
+      required: true
+    },
+    {
+      key: 'Roles',
+      label: 'Roles',
+      Tooltip: 'Indique el rol o roles responsables de este procedimiento.',
+      required: true
+    },
+    {
+      key: 'Estado',
+      label: 'Estado',
+      Tooltip: 'Especifique el estado actual del procedimiento (Inicial, Intermedio 1, Intermedio 2, Intermedio 3).',
+      required: true
+    },
+    {
+      key: 'Actividades',
+      label: 'Actividades',
+      Tooltip: 'Liste las actividades que componen el procedimiento, en orden secuencial.',
+      required: true
+    },
+    {
+      key: 'Referentes',
+      label: 'Referentes',
+      Tooltip: 'Agregue los documentos o normativas que sirvan de referencia para este procedimiento.',
+      required: true
+    },
+  ];
 
-campos = [
-  { 
-    key: 'Procedimiento', 
-    label: 'Procedimiento',  
-    Tooltip: 'Defina el procedimiento que desea estandarizar.', 
-    required: true 
-  },
-  { 
-    key: 'Categoria', 
-    label: 'Categoría', 
-    Tooltip: 'Seleccione la categoría a la cual pertenece el procedimiento.', 
-    required: true 
-  },
-  { 
-    key: 'Rol', 
-    label: 'Rol', 
-    Tooltip: 'Indique el rol o roles responsables de este procedimiento.', 
-    required: true 
-  },
-  { 
-    key: 'Estado', 
-    label: 'Estado', 
-    Tooltip: 'Especifique el estado actual del procedimiento (Inicial, Intermedio 1, Intermedio 2, Intermedio 3).', 
-    required: true 
-  },
-  { 
-    key: 'Actividades', 
-    label: 'Actividades', 
-    Tooltip: 'Liste las actividades que componen el procedimiento, en orden secuencial.', 
-    required: true 
-  },
-  { 
-    key: 'Referentes', 
-    label: 'Referentes', 
-    Tooltip: 'Agregue los documentos o normativas que sirvan de referencia para este procedimiento.', 
-    required: true 
-  },
-];
-
+  ngOnInit() {
+    this.campos.forEach(campo => {
+      this.form.addControl(
+        campo.key,
+        this.fb.control('', campo.required ? Validators.required : [])
+      );
+    });
+  }
 
   Cancelar() {
-        this.cerrar.emit();
-        this.form.reset();
-      }
-    
-  
-  
+    this.cerrar.emit();
+    this.form.reset();
+  }
+
   Guardar(datos: any) {
-  this.guardar.emit(datos);
-  this.Cancelar()
-}
+    this.guardar.emit(datos);
+    this.Cancelar()
+  }
 
 }

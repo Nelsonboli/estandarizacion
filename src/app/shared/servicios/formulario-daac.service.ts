@@ -8,7 +8,6 @@ export class FormularioDAACService {
 
   constructor() { }
 
-
  private formularioDAACSubject = new BehaviorSubject<any[]>([]);
   formularioDAAC$ = this.formularioDAACSubject.asObservable();
 
@@ -17,7 +16,7 @@ export class FormularioDAACService {
     this.formularioDAACSubject.next([...actuales, p]);
   }
 
-  geformularioDAAC(): Observable<any[]> {
+  getformularioDAAC(): Observable<any[]> {
     return this.formularioDAAC$;
   }
 

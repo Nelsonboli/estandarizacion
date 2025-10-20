@@ -1,7 +1,7 @@
 <div class="font-sans text-gray-800 bg-white p-1">
     <!-- Título superior -->
     <div
-        class="mb-2 bg-white text-med py-1 px-3 rounded-xl shadow-sm max-w-screen mx-auto min-h-[calc(100vh-13rem)] overflow-y-auto"
+        class="mb-2 bg-white text-med py-2 px-3 rounded-xl shadow-sm max-w-screen mx-auto min-h-[calc(100vh-13rem)] overflow-y-auto"
         style="overflow-y: auto;">
 
         <div
@@ -11,6 +11,9 @@
 
         <div class="bg-white/80 border border-gray-300 rounded-lg p-4">
             <!-- Encabezado Procedimientos + Botón + Buscador -->
+
+
+
             <div
                 class="bg-azul-fondo flex flex-wrap items-center justify-between gap-3 p-2 rounded-t-md">
                 <!-- Texto Procedimientos -->
@@ -54,6 +57,7 @@
             <!-- Modal -->
             <app-modal
                 [visible]="mostrarModal"
+                [datoEditar]="datoEditar"
                 (guardar)="guardarDatos($event)"
                 (cerrar)="cerrarFormulario()">
             </app-modal>
@@ -78,18 +82,21 @@
                         title="Eliminar procedimiento">
                         <img
                             class="hover:brightness-120 w-4 h-4"
-                            src="assets/simbolos/eliminar.svg" />
+                            src="assets/elementos/eliminar.svg" />
                     </button>
                     <button
                         (click)="editarProcedimiento(dato)"
                         title="Editar procedimiento">
                         <img
                             class="hover:brightness-120 w-4 h-4"
-                            src="assets/simbolos/editar.svg" />
+                            src="assets/elementos/editar.svg" />
                     </button>
                 </div>
             </ng-template>
+
         </div>
+
+        
         <div>
             <app-navegacion
                 [rutaAnterior]="'/recoleccioninformacion'"
@@ -98,4 +105,5 @@
             </app-navegacion>
         </div>
     </div>
+
 </div>

@@ -14,108 +14,111 @@
     </app-lista-desplegable>
 
     @if (procedimientoSeleccionado) {
-    <h3>Procedimiento: {{ procedimientoSeleccionado.nombre }}</h3>
+    <h4 class="font-normal"> <strong>Procedimiento:</strong>
+      {{procedimientoSeleccionado.Procedimiento}}</h4>
 
     <!-- tabla de procedimiento  -->
     @if (procedimientoSeleccionado) {
-    <h3 class=" text-grande font-bold mb-2 text-center justify-center"> ficha
-      tecnica del procedimiento: </h3>
+    <h3 class=" text-grande font-bold m-3 text-center justify-center"> Ficha
+      Tecnica del Procedimiento </h3>
     <app-tabla-criterios
-      [columnas]="tablaestandarizacionService.encabezadoFichaTecnica"
+      [columnas]="datosTablaService.encabezadoFichaTecnica"
       [filas]="filasProcedimiento">
     </app-tabla-criterios>
     }
 
     <div class="px-4">
-     
-      <!-- tabla clasificacion de estado de procedimiento -->
-       <p> Su procedimiento esta en un estado <Strong class="text-verde-btn"> Completo </Strong> </p>
-       <app-tabla-estados></app-tabla-estados>
 
-      <!-- Sorporte documental -->
-
-       
       <!-- Mostrar el formulario DAAC -->
-
-      <!-- Mostrar Diagrama de flujo -->
+      <h3 class=" text-grande font-bold m-3 text-center justify-center">
+        Formulario DAAC</h3>
+      <app-tabla-criterios
+        [columnas]="datosTablaService.DescripcionDAAC"
+        [filas]="datosDAAC">
+      </app-tabla-criterios>
 
       <!-- Documento base -->
+      <h3
+        class="text-grande font-bold m-3 text-center justify-center">Documento
+        Base</h3>
+
+      <app-tablaprocedimiento
+        [data]="documentoBaseService.documentosBase$()"
+        [columns]="datosTablaService.columnaDocumento"
+        [mostrarOpciones]="false">
+      </app-tablaprocedimiento>
 
 
-      <!-- Mostrar informacion de Soporte computacional (si el sofware cuenta o no con soporte computacional) -->
-       
-      <!-- Mostrar Informacion de Reglamento base  -->
+      <!-- Mostrar Diagrama de flujo -->
+      <h3 class="text-grande font-bold m-3 text-center justify-center"> Diagrama
+        de Flujo procedimiento {{procedimientoSeleccionado.Procedimiento}}</h3>
+      @if (imagenDiagrama) {
+      <img [src]="imagenDiagrama"
+        alt="Diagrama de flujo de procedimiento {{procedimientoSeleccionado.Procedimiento}}"
+        class="max-w-full mx-auto  " />
+      } @else {
+      <p class="text-gray-500 italic">el procedimiento no tiene un diagrama de
+        flujo creado</p>
+      }
 
-      <!-- @if(soportecomputacional){
-         <h3 class="text-lg font-semibold text-gray-800 mb-2"> 
-          Soporte Computacional {{ procedimientoSeleccionado.titulo }}</h3
-         } -->
+      <!-- Sorporte documental -->
+      <h3 class="text-grande font-bold m-3 text-center justify-center">Soporte Computacional</h3>
+<!-- Muestra los datos guardados -->
+ @if(soporteComputacional){
+<div class=" flex flex-1 w-1/2 text-center items-center justify-center borde rounded-lg border-gray-100 p-3 shadow-sm m-3 ">
+  <ul class="list-disc list-inside text-gray-700">
+    <li><strong>¿Cuenta con soporte?:</strong> {{ soporteComputacional.respuesta1 }}</li>
+    @if (soporteComputacional.detalle1) {
+      <li><strong>Nombre del soporte:</strong> {{ soporteComputacional.detalle1 }}</li>
+      <li><strong>Descripción:</strong> {{ soporteComputacional.detalle2 }}</li>
+    }
+    @if (soporteComputacional.respuesta2) {
+      <li><strong>¿Requiere soporte?:</strong> {{ soporteComputacional.respuesta2 }}</li>
+    }
+  </ul>
+</div>
+} @else(){
+  <p class="text-gray-500 italic">el procedimiento no tiene un soporte computacional registrado</p>
+
+}
+
+<ng-template #sinSoporte>
+  <p class="italic text-gray-500 m-3">Aún no se ha registrado información de soporte computacional.</p>
+</ng-template>
+
 
       <!-- Encabezado del procedimiento -->
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">✍️ Descripcion
-        procedimiento</h3>
-
-    </div>
-    @if (procedimientoSeleccionado?.roles) {
-    <div>
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">👥 Roles
-        involucrados</h3>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-        @for (rol of procedimientoSeleccionado.roles; track $index) {
-        <div class="p-2 bg-white rounded shadow">{{ rol }}</div>
-        }
-      </div>
-    </div>
-    }
-
-    <!-- Paso a paso -->
-    @if (procedimientoSeleccionado) {
-    <div>
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">🧭 Paso a paso</h3>
-      <ol class="list-decimal list-inside">
-        @for (p of pasos; track $index) {
-        <li>{{ p.titulo }} <span class="text-gray-500">({{ p.responsable
-            }})</span></li>
-        }
-      </ol>
-    </div>
-    }
-
-    <!-- Soporte computacional -->
-    @if (procedimientoSeleccionado?.soportecomputacional) {
-    <div class="mt-4">
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">💻 Soporte
-        computacional</h3>
-      <p class="p-2 bg-gray-100 rounded">Este procedimiento cuenta con soporte
-        computacional.</p>
-    </div>
-    }
-
-    <!-- Documentación descargable -->
-    <div>
-      <h3 class="text-lg font-semibold text-gray-800 mb-2">📄 Documentos</h3>
+      <h2 class="text-xl font-semibold text-azul-fondo m-3"> Formato de
+        Estandarización </h2>
       <ul class="list-disc list-inside text-blue-600">
         <li><a href="#" class="hover:underline">Descargar Procedimiento
             PDF</a></li>
       </ul>
+
     </div>
 
     <!-- Registro de socialización -->
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">📌 Registro de
-      socialización</h3>
-    <div class="bg-gray-100 p-4 rounded-lg">
+    <h1 class="text-xl font-semibold text-gray-800 mb-2"> Registro de
+      socialización</h1>
+    <div class="p-4">
 
       @if (!socializado) {
       <form (ngSubmit)="registrarSocializacion()"
         class="flex flex-col md:flex-row items-center gap-2">
-        <input [(ngModel)]="fecha" name="fecha" type="text"
+        <label for> Fecha: </label>
+        <input [(ngModel)]="fecha" name="fecha" type="date"
           placeholder="fecha"
           class="p-2 rounded border w-full md:w-1/3" required>
+        <label for> Hora: </label>
+        <input [(ngModel)]="lugar" name="hora" type="time"
+          placeholder="hora"
+          class="p-2 rounded border w-full md:w-1/3" required>
+        <label for> Lugar: </label>
         <input [(ngModel)]="lugar" name="lugar" type="text"
           placeholder="lugar"
           class="p-2 rounded border w-full md:w-1/3" required>
         <button type="submit"
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-500">Registrar</button>
+          class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-500">Registrar</button>
       </form>
       }
     </div>

@@ -22,7 +22,6 @@ import { TablaService } from '../../shared/servicios/tabla.service';
     ReactiveFormsModule,
     ReglamentoComponent,
     InicioComponent,
-    UnificacionCriteriosComponent,
     DocumentacionSoporteComponent
   ],
   templateUrl: './estandarizar.component.html',
@@ -32,9 +31,8 @@ import { TablaService } from '../../shared/servicios/tabla.service';
 export class EstandarizarComponent {
   hoverIndex: number | null = null;
   buttonIndex: number | null = null;
-  estadoCompletos: boolean[] = [false, false, false, false];
+  estadoCompletos: boolean[] = [ false, false, false];
   estados = [
-    "Unificación de Criterios",
     "Documento de Soporte",
     "Soporte Computacional",
     "Reglamento"
@@ -87,4 +85,34 @@ export class EstandarizarComponent {
         : false
     );
   }
+marcarchecklist(index: number) {
+  this.estadoCompletos[index] = true;
+  this.alertService.alertArriba(`El estado "${this.estados[index]}" ha sido completado`);
+
+  // 🔹 Obtener el procedimiento activo
+  const procedimientoId = sessionStorage.getItem('procedimientoActivo');
+  if (!procedimientoId) return;
+
+  // 🔹 Cargar lo que ya esté en localStorage
+  const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
+  guardados[procedimientoId] = guardados[procedimientoId] || {};
+
+  // 🔹 Obtener la cantidad de subopciones según el índice del estado
+  const opcionesPorEstado = [
+    ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
+    ["Formulario de procedimiento DAAC", "Reglamento base", "Diagrama de procedimiento"],
+    ["Soporte computacional"],
+    ["Procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]
+  ];
+
+  const totalChecks = opcionesPorEstado[index].length;
+  guardados[procedimientoId][index] = Array(totalChecks).fill(true);
+
+  // 🔹 Guardar en localStorage
+  localStorage.setItem('estandarizaciones', JSON.stringify(guardados));
+
+  // 🔹 Actualizar visualmente en pantalla
+  this.estadoCompletos[index] = true;
+}
+
 }

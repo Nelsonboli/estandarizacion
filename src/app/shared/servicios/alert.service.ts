@@ -9,10 +9,11 @@ export class AlertService {
    * Confirmación genérica
    */
   confirmar(
+
     titulo: string,
     texto: string,
     icono: SweetAlertIcon = 'question',
-    confirmColor: string = '#3085d6', 
+    confirmColor: string = '#3085d6',
     cancelColor: string = '#d33',
     textoConfirmar: string = 'Aceptar',
     textoCancelar: string = 'Cancelar'
@@ -43,6 +44,31 @@ export class AlertService {
       'Cancelar',
     );
   }
+
+
+alertArriba(titulo: string) {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    background: "#ffffff", // verde (Tailwind: green-600)
+    color: "16a34a",       // texto blanco
+    showClass: {
+      popup: ''             // sin animación al mostrar
+    },
+    hideClass: {
+      popup: ''             // sin animación al ocultar
+    }
+  });
+
+  Toast.fire({
+    icon: "success",
+    title: titulo
+  });
+}
+
+
 
   /**
    * Confirmación para eliminar
@@ -77,14 +103,14 @@ export class AlertService {
   /**
    * Mensaje de éxito
    */
-  exito(mensaje: string, titulo: string = 'Éxito' )  {
+  exito(mensaje: string, titulo: string = 'Éxito') {
     return Swal.fire({
       title: titulo,
-      text: mensaje, 
-      icon:'success',
+      text: mensaje,
+      icon: 'success',
       confirmButtonText: 'De acuerdo',
       confirmButtonColor: '#2563eb'
-       });
+    });
   }
 
   /**
@@ -93,12 +119,12 @@ export class AlertService {
   error(mensaje: string, titulo: string = 'Error') {
     return Swal.fire({
       title: titulo,
-      text: mensaje, 
-      icon:'error',
+      text: mensaje,
+      icon: 'error',
       confirmButtonText: 'De acuerdo',
       confirmButtonColor: '#2563eb'
-       });
-    
+    });
+
   }
 
   /**
@@ -107,11 +133,11 @@ export class AlertService {
   info(mensaje: string, titulo: string = 'Información') {
     return Swal.fire({
       title: titulo,
-      text: mensaje, 
-      icon:'info',
+      text: mensaje,
+      icon: 'info',
       confirmButtonText: 'De acuerdo',
       confirmButtonColor: '#2563eb'
-       });
+    });
   }
 
   /**
@@ -120,12 +146,12 @@ export class AlertService {
   advertencia(mensaje: string, titulo: string = 'Atención') {
     return Swal.fire({
       title: titulo,
-      text: mensaje, 
-      icon:'warning',
+      text: mensaje,
+      icon: 'warning',
       confirmButtonText: 'De acuerdo',
       confirmButtonColor: '#2563eb'
-       });
+    });
   }
 
-  
+
 }

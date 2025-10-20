@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormreutilizableComponent } from '../../../shared/component/formreutilizable/formreutilizable.component';
 
 @Component({
@@ -8,7 +8,9 @@ import { FormreutilizableComponent } from '../../../shared/component/formreutili
   styleUrl: './unificacion-criterios.component.css'
 })
 export class UnificacionCriteriosComponent {
-  fichaTecnica = " Ficha tecnica de procedimiento"
+  @Output () unifiacionEnviado = new EventEmitter<boolean>();
+
+  fichaTecnica = [" Ficha tecnica de procedimiento"]
 
 
   unificacionCriterios = [

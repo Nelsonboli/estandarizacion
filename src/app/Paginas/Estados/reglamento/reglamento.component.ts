@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DiagramaService } from '../../../shared/servicios/diagrama.service';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-reglamento',
@@ -9,17 +11,13 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 })
 export class ReglamentoComponent implements OnInit{
   seccionActiva: 'descargar' | 'validar' | null = null;
-
+  formatoEstandarizacion = "Formato de Estandarizacion"
+  fichaProcedimiento= "Ficha de Procedimiento"
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
-
-      pasos: any[] = [
-      {id: '✅', titulo: 'Envíar Documento a la DAAC', responsable: 'DAAC' },
-      {id: '✅', titulo: 'Documento Revisado por la DAAC', responsable:'DAAC'  },
-      {id: '✅', titulo: 'Enviar Documento a Consejo de Facultad Para Aprobacion', responsable: 'Consejo de Facultad'},
-      {id: '✅', titulo: 'Documento aprobado por Cosejo de Facultad', responsable: 'Consejo de Facultad' }
-  ];
+  constructor(private fb: FormBuilder,
+    private diagramaService: DiagramaService 
+  ) {}
 
  ngOnInit() {
     this.form = this.fb.group({
@@ -31,6 +29,24 @@ export class ReglamentoComponent implements OnInit{
     onSubmit(){
 
     }
+
+    descargarDocumento() {
+    const doc = new jsPDF();
+
+    // Agregar título
+    doc.text('Ficha de Procedimiento', 10, 10);
+
+    // Cargar diagrama
+    const imgData = this.diagramaService.cargarImagen();
+    if (imgData) {
+      doc.addImage(imgData, 'PNG', 10, 20, 180, 100); // posición y tamaño
+    } else {
+      doc.text('No se ha guardado ningún diagrama.', 10, 20);
+    }
+
+    // Guardar PDF
+    doc.save('procedimiento.pdf');
+  }
 
 
 

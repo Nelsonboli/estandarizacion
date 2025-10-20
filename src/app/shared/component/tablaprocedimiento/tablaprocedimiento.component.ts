@@ -21,6 +21,8 @@ export class TablaprocedimientoComponent  {
 @Input() data: any[] = [];
 @Input() accionesTemplate?: TemplateRef<any>;
 
+@Input() mostrarOpciones: boolean = true;
+
 @Output() eliminar = new EventEmitter<any>();
 @Output() editar = new EventEmitter<any>();
 Array: any;

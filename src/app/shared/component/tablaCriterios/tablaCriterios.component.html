@@ -1,7 +1,7 @@
 
 <div class="p-2">           
   <table class="border border-gray-300 text-peq w-full max-w-[400px] mx-auto">
-    <thead class="bg-encabezado-tabla text-white">
+    <thead class="bg-encabezado-tabla text-white text-med font-semibold">
       <tr>
         @for (col of columnas; track col) {
         @if(columnas.length > 1) {
@@ -11,7 +11,7 @@
           </th>
           }
         @if(columnas.length === 1) {
-            <th class="px-1 py-0.5 uppercase tracking-wider text-center text-small font-semibold"></th>
+            <th class=" text-med font-semibold px-1 py-0.5 uppercase tracking-wider text-center "></th>
             {{ col }}
             }
         }
