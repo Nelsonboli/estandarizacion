@@ -10,33 +10,33 @@
         </div>
 
         <div class="bg-white/80 border border-gray-300 rounded-lg p-4">
-            <!-- Encabezado Procedimientos + Botón + Buscador -->
-
-
 
             <div
-                class="bg-azul-fondo flex flex-wrap items-center justify-between gap-3 p-2 rounded-t-md">
-                <!-- Texto Procedimientos -->
-                <div class="text-white text-med font-semibold capitalize">
+                class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-azul-fondo p-2 rounded-t-md gap-2">
+                
+                <div
+                    class="py-2 px-2 text-white sm:items-center text-med font-semibold capitalize">
                     Procedimientos
                 </div>
 
-                <!-- Contenedor Botón + Buscador -->
-                <div class="flex items-center gap-2">
-                    <!-- Botón Agregar procedimiento -->
+                <div
+                    class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                    <!-- Botón -->
                     <button
                         (click)="abrirFormulario()"
-                        class="inline-flex items-center justify-center bg-verde-btn text-white text-xs px-3 py-1.5 rounded hover:bg-verde-btn/90 transition">
+                        class="flex items-center justify-center bg-verde-btn text-white text-xs px-3 py-1.5 rounded hover:bg-verde-btn/90 transition w-full sm:w-auto">
                         Agregar procedimiento
                     </button>
 
                     <!-- Input con icono lupa -->
-                    <div class="relative w-70">
+                    <div class="flex items-center relative w-full sm:w-60">
                         <input
                             type="search"
                             name="Buscar"
+                            [(ngModel)]="terminoBusqueda"
+                            (input)="buscarProcedimientos()"
                             placeholder="Buscar procedimiento"
-                            class="pl-3 pr-8 py-1.5 text-black bg-white rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-200 w-full hover:bg-gray-500" />
+                            class="pl-3 pr-8 py-1.5 text-black bg-white rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-200 w-full hover:bg-gray-100" />
                         <!-- Icono lupa -->
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -52,23 +52,24 @@
                         </svg>
                     </div>
                 </div>
+
             </div>
 
             <!-- Modal -->
             <app-modal
                 [visible]="mostrarModal"
                 [datoEditar]="datoEditar"
-                (guardar)="guardarDatos($event)"
+                (guardar)="guardarDatosFormulario($event)"
                 (cerrar)="cerrarFormulario()">
             </app-modal>
 
             <!-- Tabla -->
-            <app-tablaprocedimiento
+            <app-tabla-datos
                 [data]="procedimientos"
-                [columns]="columnas"
+                [columns]="datosService.columnasFormularioFTP"
                 encabezadoGeneral="Lista de procedimientos"
                 [accionesTemplate]="accionesPersonalizadas">
-            </app-tablaprocedimiento>
+            </app-tabla-datos>
             <!-- Botones personalizados de la tabla -->
             <ng-template #accionesPersonalizadas let-dato>
                 <div class="flex items-center justify-center space-x-1 gap-2">
@@ -96,7 +97,6 @@
 
         </div>
 
-        
         <div>
             <app-navegacion
                 [rutaAnterior]="'/recoleccioninformacion'"

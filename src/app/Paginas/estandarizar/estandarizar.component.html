@@ -16,7 +16,7 @@
                     <button
                         class="w-full h-24 flex flex-col items-center justify-center rounded-xl border hover:text-white border-gray-700 transition-all duration-200 ease-in-out hover:shadow-sm shadow-gray-400 hover:scale-[1.05]
                         hover:bg-gradient-to-r from-green-700 to-green-800 m-2"
-                        [ngClass]="[(hoverIndex === i) ? 'shadow-sm ring-2 scale-105 bg-gradient-to-r from-green-700 to-green-800 text-white border border-gray-400 hover:text-white'  :  'border border-gray-500',
+                        [ngClass]="[(hoverIndex === i) ? 'shadow-sm ring-2 scale-105 bg-gradient-to-r from-green-700 to-green-800 text-white border border-gray-400 hover:text-white'  : 'border border-gray-500',
                          (buttonIndex === i) ? ' inset-shadow-sm inset-shadow-gray-300':'border border-gray-500',
                          estadoCompletos[i] ? 'bg-gradient-to-r from-green-700 to-green-800 text-white border border-gray-500 shadow shadow-gray-400' : 'border border-gray-500' ]"
                         (click)="onButtonClick(i)">

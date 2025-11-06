@@ -1,5 +1,5 @@
-import { AlertService } from './../../shared/servicios/alert.service';
-import { Component } from '@angular/core';
+import { AlertService } from '../../shared/Utils/Alertas/alert.service';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -7,7 +7,6 @@ import { CardComponent } from '../../shared/component/card/card.component';
 import { SoporteComputacionalComponent } from '../Estados/soporte-computacional/soporte-computacional.component';
 import { ReglamentoComponent } from '../Estados/reglamento/reglamento.component';
 import { InicioComponent } from '../Estados/inicio/inicio.component';
-import { UnificacionCriteriosComponent } from "../Estados/unificacion-criterios/unificacion-criterios.component";
 import { DocumentacionSoporteComponent } from "../Estados/documentacion-soporte/documentacion-soporte.component";
 import { TablaService } from '../../shared/servicios/tabla.service';
 
@@ -43,7 +42,7 @@ export class EstandarizarComponent {
   estado: string = '';
   
   constructor(private route: ActivatedRoute, private tablaService: TablaService,
-    private alertService: AlertService
+    private alertService: AlertService, private cd:ChangeDetectorRef
   ) { }
 
   ngOnInit() {
@@ -55,10 +54,10 @@ export class EstandarizarComponent {
   }
 
   onButtonClick(index: number) {
-    
     if (index === 0 || this.estadoCompletos[index-1]) {
       this.buttonIndex = index;
       this.hoverIndex = null;
+      this.cd.detectChanges();
     } 
     else {
       this.estado = this.estados[index-1];
@@ -70,6 +69,7 @@ export class EstandarizarComponent {
 
   onEstadoCompleto(event: { index: number; completo: boolean }) {
     this.estadoCompletos[event.index] = event.completo;
+    this.cd.detectChanges()
   }
 
   guardarDatosEstandarizacion() {
@@ -98,8 +98,9 @@ marcarchecklist(index: number) {
   guardados[procedimientoId] = guardados[procedimientoId] || {};
 
   // 🔹 Obtener la cantidad de subopciones según el índice del estado
+   // ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
   const opcionesPorEstado = [
-    ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
+   
     ["Formulario de procedimiento DAAC", "Reglamento base", "Diagrama de procedimiento"],
     ["Soporte computacional"],
     ["Procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]

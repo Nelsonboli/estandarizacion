@@ -1,6 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, } from 'rxjs';
 
 
 @Injectable({
@@ -8,7 +7,6 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 })
 
 export class TablaService {
- 
   private estandarizaciones: { [id: string]: any } = {};
 
   private procedimientosSubject = new BehaviorSubject<any[]>([]);
@@ -27,7 +25,7 @@ export class TablaService {
     this.procedimientosSubject.next(datos);
   }
 
-  guardarEstandarizacion(id: string, datos: any) {
+guardarEstandarizacion(id: string, datos: any) {
   this.estandarizaciones[id] = datos;
   localStorage.setItem('estandarizaciones', JSON.stringify(this.estandarizaciones));
 }

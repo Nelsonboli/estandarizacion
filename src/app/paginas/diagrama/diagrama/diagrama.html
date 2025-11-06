@@ -10,7 +10,7 @@
                     <!-- contenedor que mantiene botones + card -->
                     <nav class="mt-2">
                         <div class="flex gap-2 flex-wrap">
-                            @for (boton of botones; track boton.nombre) {
+                            @for (boton of botones; track $index) {
                             <button
                                 (click)="boton.accion()"
                                 (mouseenter)="botonActivo.set(boton)"

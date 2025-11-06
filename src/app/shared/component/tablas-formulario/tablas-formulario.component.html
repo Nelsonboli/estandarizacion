@@ -1,26 +1,18 @@
 <div class="overflow-x-auto mx-auto">
-  <!-- Encabezado general -->
-  @if (encabezadoGeneral) {
-    <div class="flex w-full gap-2 p-2 bg-encabezado-tabla text-white text-med font-semibold">
-      <img src="assets/elementos/lista.svg" alt="" class="ml-2 w-4 h-4">
-      {{ encabezadoGeneral }}
-    </div>
-  }
+
   <!-- Encabezado por columnas -->
-  @else if (columns && columns.length > 0) {
+  @if (columns && columns.length > 0) {
     @for (col of columns; track col.label) {
       <div 
        [ngClass]="{'w-full':mostrarOpciones,
         'w-1/4':!mostrarOpciones
        }"
-       
        class="p-1 flex gap-2 mx-auto bg-encabezado-tabla text-white text-med font-semibold">
         <img src="assets/elementos/lista.svg" alt="" class="ml-2 w-4 h-4">
         Lista de {{ col.label }}
       </div>
     }
   }
-
   <table 
   [ngClass]="{'w-full':mostrarOpciones,
         'w-1/4':!mostrarOpciones
@@ -30,7 +22,7 @@
         @for (col of columns; track col.key) {
           <th
             class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
-            {{ col.label }}
+            {{ col.label | titlecase }}
           </th>
         }
         <!-- ✅ Mostrar solo si mostrarOpciones es true -->
@@ -44,12 +36,12 @@
     </thead>
 
     <tbody class="bg-white divide-y divide-gray-200">
-      @for (dato of data; track $index) {
+      @for (item of data; track $index) {
         <tr class="hover:bg-gray-100">
           @for (nombre of columns; track nombre.key) {
             <td
               class="px-1 py-2 border border-gray-300 text-center align-top whitespace-normal break-words">
-              {{ dato[nombre.key] }}
+              {{ item[nombre.key] | titlecase }}
             </td>
           }
 
@@ -58,7 +50,8 @@
             <td class="border border-gray-300 p-2 m-2 text-center align-middle">
               @if (accionesTemplate; as template) {
                 <ng-container
-                  *ngTemplateOutlet="template; context: { $implicit: dato }"></ng-container>
+                  *ngTemplateOutlet="template; context: { $implicit: item }">
+                </ng-container>
               }
             </td>
           }

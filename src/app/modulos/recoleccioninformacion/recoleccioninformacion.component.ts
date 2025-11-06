@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DatosTablaService } from '../../shared/servicios/datosTablas.service';
+import { DatosService } from '../../shared/servicios/datos.service';
 import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
 import { TablaEstadosComponent } from "../../shared/component/tablaEstados/tabla-estados.component";
 import { NavegacionComponent } from '../../shared/component/navegacion/navegacion';
@@ -13,7 +13,7 @@ import { NavegacionComponent } from '../../shared/component/navegacion/navegacio
   styleUrl: './recoleccioninformacion.component.css'
 })
 export class RecoleccioninformacionComponent {
-  constructor(public tablaestandarizacionService: DatosTablaService ) {
+  constructor(public tablaestandarizacionService: DatosService ) {
 
   }
 }

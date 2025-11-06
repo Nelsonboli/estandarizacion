@@ -2,34 +2,33 @@
     @if (mostrarFormulario()) {
     <div class="w-full">
         <app-formreutilizable
-            [campos]=" datosTablaService.columnasDAAC"
-            [titulo]="this.datosTablaService.DescripcionDAAC"
-            [datoEditar]="editarformulario"
-            (guardar)="guardarDatos($event)"
+            [campos]=" datosService.columnasDAAC"
+            [titulo]="this.datosService.DescripcionDAAC"
+            [datoEditar]="editarformulario()"
+            (guardar)="guardarDatosFormularioDAAC($event)"
             (cerrar)="onCancelar()">
         </app-formreutilizable>
     </div>
     }
     @else {
     <div>
-        <app-tablaprocedimiento
-            [encabezadoGeneral]="'Formulario DAAC'"
+        <app-tabla-datos
             [data]="datosDAAC()"
-            [columns]="datosTablaService.columnasDAAC"
-            encabezadoGeneral="datos DAAC"
+            [columns]="datosService.columnasformularioDAAC"
+            encabezadoGeneral="Datos Formulario DAAC"
             [accionesTemplate]="accionesPersonalizadas">
-        </app-tablaprocedimiento>
+        </app-tabla-datos>
 
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex items-center justify-center space-x-1">
-                <button (click)="eliminar(dato)" class="px-1 h-6 w-6"
+                <button (click)="eliminarDatoFormularioDAAC(dato)" class="px-1 h-6 w-6"
                     title="Eliminar">
                     <img src="assets/elementos/eliminar.svg" alt="eliminar"
                         class=" hover:brightness-120 w-6 h-6" />
                 </button>
-                <button (click)="editar(dato)" class="px-1 h-6 w-6"
+                <button (click)="editarFormulario(dato)" class="px-1 h-6 w-6"
                     title="Editar">
-                    <img src="assets/elementos/eliminar.svg" alt="editar"
+                    <img src="assets/elementos/editar.svg" alt="editar"
                         class=" hover:brightness-120 w-6 h-6" />
                 </button>
             </div>
@@ -56,26 +55,31 @@
     <div class="flex flex-col items-center mt-4 gap-4">
         <button
             (click)="agregarDato()"
-            class=" bg-verde-btn hover:bg-verde-btn/90 transition-110 text-white px-4 py-2 rounded">
-            Agregar
+            class="  text-black px-4 py-2 ">
+            <img  src="assets/elementos/agregar.svg" alt="Agregar"class="w-5 h-5"> Agregar
         </button>
     </div>
     <div class="flex w-2/3 flex-col overflow-x-auto">
-        <app-tablaprocedimiento
+        <app-tablas-formulario
             [columns]="columnaDocumento"
-            [data]="documentoBaseService.documentosBase$()"
+            [data]="datosDocumentoBase()"
             [accionesTemplate]="accionesPersonalizadas"
             (eliminar)="eliminarDato($event)">
-        </app-tablaprocedimiento>
+        </app-tablas-formulario>
         <ng-template #accionesPersonalizadas let-dato>
-            <div class="flex items-center justify-center space-x-1">
-                <button (click)="eliminarDato(dato)"
-                    class="px-1 w-6 h-6"
-                    title="Eliminar Proyecto">
-                    <img
-                        src="assets/elementos/eliminar.svg" alt="eliminar"
-                        class=" hover:brightness-120 w-6 h-6">
-                </button>
+            <div class="flex items-center justify-center space-x-1 gap-2">
+                <div class="p-2 flex-row">
+                        <button
+                            class="flex items-center gap-1 px-3 py-2 bg-white hover:bg-gray-100 hover:scale-105 hover:brightness-115 transition duration-300"
+                            type="button"
+                            (click)="eliminarDato(dato)"
+                            class="px-1 w-6 h-6">
+                            <img src="assets/elementos/agregar.svg"
+                                alt="Agregar"
+                                class="w-5 h-5">
+                            <span>Agregar</span>
+                        </button>
+                    </div>
                 <button
                     (click)="editarDato(dato)"
                     class="px-1 w-6 h-6"

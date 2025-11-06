@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, OnInit, output, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SoporteComputacionalService } from '../../../shared/servicios/soporte-computacional.service';
-import { AlertService } from '../../../shared/servicios/alert.service';
+import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
 
 @Component({
   selector: 'app-soporte-computacional',

@@ -9,6 +9,7 @@
     <!-- Modal de lista desplegable  -->
     <app-lista-desplegable
       [visible]="abrir"
+      [items]="procedimientos"
       (cerrar)="cerrarModal()"
       (guardar)="onSocializar($event)">
     </app-lista-desplegable>
@@ -42,12 +43,11 @@
         class="text-grande font-bold m-3 text-center justify-center">Documento
         Base</h3>
 
-      <app-tablaprocedimiento
+      <!-- <app-tablas-formulario
         [data]="documentoBaseService.documentosBase$()"
         [columns]="datosTablaService.columnaDocumento"
         [mostrarOpciones]="false">
-      </app-tablaprocedimiento>
-
+      </app-tablas-formulario> -->
 
       <!-- Mostrar Diagrama de flujo -->
       <h3 class="text-grande font-bold m-3 text-center justify-center"> Diagrama
@@ -62,30 +62,37 @@
       }
 
       <!-- Sorporte documental -->
-      <h3 class="text-grande font-bold m-3 text-center justify-center">Soporte Computacional</h3>
-<!-- Muestra los datos guardados -->
- @if(soporteComputacional){
-<div class=" flex flex-1 w-1/2 text-center items-center justify-center borde rounded-lg border-gray-100 p-3 shadow-sm m-3 ">
-  <ul class="list-disc list-inside text-gray-700">
-    <li><strong>¿Cuenta con soporte?:</strong> {{ soporteComputacional.respuesta1 }}</li>
-    @if (soporteComputacional.detalle1) {
-      <li><strong>Nombre del soporte:</strong> {{ soporteComputacional.detalle1 }}</li>
-      <li><strong>Descripción:</strong> {{ soporteComputacional.detalle2 }}</li>
-    }
-    @if (soporteComputacional.respuesta2) {
-      <li><strong>¿Requiere soporte?:</strong> {{ soporteComputacional.respuesta2 }}</li>
-    }
-  </ul>
-</div>
-} @else(){
-  <p class="text-gray-500 italic">el procedimiento no tiene un soporte computacional registrado</p>
+      <h3 class="text-grande font-bold m-3 text-center justify-center">Soporte
+        Computacional</h3>
+      <!-- Muestra los datos guardados -->
+      @if(soporteComputacional){
+      <div
+        class=" flex flex-1 w-1/2 text-center items-center justify-center borde rounded-lg border-gray-100 p-3 shadow-sm m-3 ">
+        <ul class="list-disc list-inside text-gray-700">
+          <li><strong>¿Cuenta con soporte?:</strong> {{
+            soporteComputacional.respuesta1 }}</li>
+          @if (soporteComputacional.detalle1) {
+          <li><strong>Nombre del soporte:</strong> {{
+            soporteComputacional.detalle1 }}</li>
+          <li><strong>Descripción:</strong> {{ soporteComputacional.detalle2
+            }}</li>
+          }
+          @if (soporteComputacional.respuesta2) {
+          <li><strong>¿Requiere soporte?:</strong> {{
+            soporteComputacional.respuesta2 }}</li>
+          }
+        </ul>
+      </div>
+      } @else(){
+      <p class="text-gray-500 italic">el procedimiento no tiene un soporte
+        computacional registrado</p>
 
-}
+      }
 
-<ng-template #sinSoporte>
-  <p class="italic text-gray-500 m-3">Aún no se ha registrado información de soporte computacional.</p>
-</ng-template>
-
+      <ng-template #sinSoporte>
+        <p class="italic text-gray-500 m-3">Aún no se ha registrado información
+          de soporte computacional.</p>
+      </ng-template>
 
       <!-- Encabezado del procedimiento -->
       <h2 class="text-xl font-semibold text-azul-fondo m-3"> Formato de

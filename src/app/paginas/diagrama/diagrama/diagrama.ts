@@ -1,4 +1,5 @@
-import { Component, AfterViewInit, ViewChild, ElementRef, signal, } from '@angular/core';
+import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
+import { Component, AfterViewInit, ViewChild, ElementRef, signal, Output, EventEmitter, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as joint from 'jointjs';
 import * as htmlToImage from 'html-to-image';
@@ -16,6 +17,7 @@ import { DiagramaService } from '../../../shared/servicios/diagrama.service';
   styleUrl: './diagrama.css'
 })
 export class Diagrama implements AfterViewInit {
+  @Output () diagramaEnviado = new EventEmitter<boolean>()
   @ViewChild('canvas') canvasRef!: ElementRef;
   textoNodo: string = '';
   private graph = new joint.dia.Graph();
@@ -26,7 +28,9 @@ export class Diagrama implements AfterViewInit {
   private selectedElement: joint.dia.Element | null = null;
   private clickTimer: any = null;
 
-  constructor(private diagramaService: DiagramaService){
+  constructor(private diagramaService: DiagramaService,
+    private alertService: AlertService,
+  ){
 
   }
 
@@ -479,7 +483,10 @@ eliminarConBoton() {
 guardarDiagrama() {
   htmlToImage.toPng(this.canvasRef.nativeElement).then((dataUrl) => {
     this.diagramaService.guardarImagen(dataUrl);
-    alert('✅ Diagrama guardado correctamente');
+    this.alertService.alertArriba('Diagrama de Flujo Guardado');
+    this.diagramaEnviado.emit(true)
+
+    
   }).catch(err => {
     console.error('Error al guardar diagrama:', err);
   });

@@ -1,27 +1,29 @@
-import { DatosTablaService } from './../../../shared/servicios/datosTablas.service';
+import { TablaFormularioDAACService, } from '../../../shared/servicios/tabla-formularioDAAC.service';
+import { DatosService } from '../../../shared/servicios/datos.service';
 import { Diagrama } from '../../../paginas/diagrama/diagrama/diagrama';
-import { FormularioDAACService } from './../../../shared/servicios/formulario-daac.service';
-import { Component, signal, ChangeDetectorRef, Output, EventEmitter, output } from '@angular/core';
+import { FormularioDAACService } from './../../../shared/servicios/modulos/formulario-daac.service';
+import { Component, signal, ChangeDetectorRef, output } from '@angular/core';
 import { FormreutilizableComponent } from '../../../shared/component/formreutilizable/formreutilizable.component';
-import { TablaprocedimientoComponent } from '../../../shared/component/tablaprocedimiento/tablaprocedimiento.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { AlertService } from '../../../shared/servicios/alert.service';
-import { DocumentoBaseService } from './../../../shared/servicios/documento-base.service';
+import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
+import { TablasFormularioComponent } from "../../../shared/component/tablas-formulario/tablas-formulario.component";
+import { TablaDatosComponent } from "../../../shared/component/tabla-datos/tabla-datos.component";
+import { ReglamentoBaseService } from '../../../shared/servicios/modulos/reglamento-base.service';
+
 
 @Component({
   selector: 'app-documentacion-soporte',
-  imports: [FormreutilizableComponent, TablaprocedimientoComponent, CommonModule, FormsModule, Diagrama],
+  imports: [FormreutilizableComponent, CommonModule, FormsModule, Diagrama, TablasFormularioComponent, TablaDatosComponent],
   templateUrl: './documentacion-soporte.component.html',
   styleUrl: './documentacion-soporte.component.css'
 })
 export class DocumentacionSoporteComponent {
   documentoEnviado = output<boolean>();
 
- 
- 
+
   //variables con signals
   datosDAAC = signal<any[]>([]);
   datosDocumentoBase = signal<any[]>([]);
@@ -38,108 +40,179 @@ export class DocumentacionSoporteComponent {
   mostrarbase = signal(false);
   realizarDiagrama = signal(false);
   mostrarDiagrama = signal(false);
-  descargarDocumento= signal(false)
+  descargarDocumento = signal(false)
 
   constructor(
     private formularioDAACService: FormularioDAACService,
+    private tablaFormularioDAACService: TablaFormularioDAACService,
+    private ReglamentoBase: ReglamentoBaseService,
     private cdr: ChangeDetectorRef,
     private alertService: AlertService,
-    public datosTablaService: DatosTablaService,
-    public documentoBaseService: DocumentoBaseService
+    public datosService: DatosService,
+
   ) { }
 
-     columnaDocumento = [
+  columnaDocumento = [
     { key: 'Documento', label: 'Documento' }
   ];
- 
+
 
   ngOnInit() {
-    this.formularioDAACService.formularioDAAC$.subscribe(data => {
-      this.datosDAAC.set(data);
+    this.formularioDAACService.getFormularioDAAC().subscribe({
+      next: (data) => {
+        this.datosDAAC.set(data);
+        this.tablaFormularioDAACService.setDatosFormularioDAAC(data);
+        console.log("datos de la tabla de formulario", data)
 
-      if (data.length > 0) {
-        this.mostrarFormulario.set(false);
-        this.mostrarbase.set(true);
-        this.mostrarDiagrama.set(false);
-      } else {
-        this.mostrarFormulario.set(true);
-        this.mostrarbase.set(false);
-        this.mostrarDiagrama.set(true);
+        if (data.length > 0) {
+          this.mostrarFormulario.set(false);
+          this.mostrarbase.set(true);
+          this.mostrarDiagrama.set(false);
+        } else {
+          this.mostrarFormulario.set(true);
+          this.mostrarbase.set(false);
+          this.mostrarDiagrama.set(false);
+        }
+      },
+      error: () => this.alertService.error('Error al cargar formularios DAAC')
+    });
+  }
+
+  guardarDatosFormularioDAAC(nuevoDato: any) {
+    if (this.editarformulario()) {
+      // Actualizar registro existente
+      const id = this.editarformulario().id;
+      this.formularioDAACService.editarFormularioDAAC(id, nuevoDato).subscribe({
+        next: () => {
+          this.formularioDAACService.getFormularioDAAC().subscribe(data => {
+            this.tablaFormularioDAACService.setDatosFormularioDAAC(data);
+            this.alertService.exito('Formulario actualizado correctamente');
+          })
+          this.actualizarLista();
+          console.log(this.actualizarLista)
+        },
+        error: () => this.alertService.error('Error al actualizar el formulario')
+      });
+      this.editarformulario.set(null);
+    } else {
+      // Crear nuevo registro
+      this.formularioDAACService.crearFormularioDAAC(nuevoDato).subscribe({
+        next: () => {
+          this.alertService.exito('Formulario guardado correctamente');
+          this.formularioDAACService.getFormularioDAAC().subscribe(data => {
+            this.tablaFormularioDAACService.setDatosFormularioDAAC(data);
+          })
+          this.actualizarLista();
+        }, error: (err) => {
+
+          console.error('Error al guardar procedimiento', err);
+          this.alertService.error('Error al guardar el formulario');
+        }
+      });
+    }
+
+    this.mostrarFormulario.set(false);
+    this.mostrarbase.set(true);
+  }
+
+  //Eliminar datos formulario DAAC
+  eliminarDatoFormularioDAAC(item: any) {
+    this.alertService.alertEliminar().then((res) => {
+      if (res.isConfirmed) {
+        this.formularioDAACService.eliminarFormularioDAAC(item.id).subscribe({
+          next: () => {
+            // Actualizar correctamente la señal
+            this.datosDAAC.update(lista => lista.filter(p => p !== item));
+
+            // Actualizar la tabla con el nuevo valor
+            this.tablaFormularioDAACService.setDatosFormularioDAAC(this.datosDAAC());
+
+           
+            this.alertService.exito('Formulario eliminado correctamente');
+          },
+          error: (err) => {
+            console.error(err);
+            this.alertService.error('No se pudo eliminar el formulario');
+          },
+        });
       }
     });
   }
 
   // ✅ EDITAR FORMULARIO
-  editar(dato: any) {
+  editarFormulario(dato: any) {
     this.editarformulario.set(dato);
+
     this.mostrarFormulario.set(true);
     this.mostrarbase.set(false);
     this.mostrarDiagrama.set(false);
+
+    this.cdr.detectChanges();
   }
 
-  //Eliminar datos formulario DAAC
-  eliminar(item: any) {
-    const actualizados = this.datosDAAC().filter(p => p !== item);
-    this.datosDAAC.set(actualizados);
-    this.formularioDAACService.setformularioDAAC(actualizados);
-
-    if (actualizados.length === 0) {
-      this.mostrarFormulario.set(true);
-      this.mostrarbase.set(false);
-      this.mostrarDiagrama.set(false);
-    }
+  ngAfterViewInit() {
+    this.cargarDocumentosBase();
   }
 
-  guardarDatos(nuevoDato: any) {
-    let actualizados = [...this.datosDAAC()];
-    if (!this.editarformulario() && actualizados.length > 0) {
-      this.alertService.error('Ya existe registro del formulario');
-      return;
-    }
-    if (this.editarformulario()) {
-      const index = actualizados.indexOf(this.editarformulario());
-      if (index !== -1) {
-        actualizados[index] = nuevoDato;
-      }
-      this.editarformulario.set(null);
-    } else {
-      actualizados.push(nuevoDato);
-    }
-
-    this.datosDAAC.set(actualizados);
-    this.formularioDAACService.setformularioDAAC(actualizados);
-    this.ultimoRegistro.set(nuevoDato);
-    this.mostrarFormulario.set(false);
-    this.mostrarbase.set(true);
+  // Obtener todos los documentos base del backend
+  cargarDocumentosBase() {
+    this.ReglamentoBase.getAll().subscribe({
+      next: (data) => {
+        this.datosDocumentoBase.set(data);
+      },
+      error: () => this.alertService.error('Error al cargar documentos base')
+    });
   }
 
-  //CRUD DOCUMENTOS BASE
- agregarDato() {
-  if (this.nuevoDato().trim()) {
+  // Agregar o editar documento base
+  agregarDato() {
+    const nombre = this.nuevoDato().trim();
+    if (!nombre) return;
+
+    const nuevoDoc = { documento: nombre };
+
+    // Si está editando
     if (this.documentoEditando()) {
-      const actualizados = this.documentoBaseService.getDocumentosBase().map(doc =>
-        doc === this.documentoEditando() ? { Documento: this.nuevoDato().trim() } : doc
-      );
-      this.documentoBaseService.setDocumentosBase(actualizados);
-      this.documentoEditando.set(null);
+      const id = this.documentoEditando().id;
+      this.ReglamentoBase.update(id, nuevoDoc).subscribe({
+        next: () => {
+          this.alertService.exito('Documento base actualizado');
+          this.cargarDocumentosBase();
+          this.documentoEditando.set(null);
+          this.nuevoDato.set('');
+        },
+        error: () => this.alertService.error('Error al actualizar documento')
+      });
     } else {
-      const nuevo = { Documento: this.nuevoDato().trim() };
-      this.documentoBaseService.agregarDocumento(nuevo); 
+      // Si es nuevo
+      this.ReglamentoBase.create(nuevoDoc).subscribe({
+        next: () => {
+          this.alertService.exito('Documento base agregado');
+          this.cargarDocumentosBase();
+          this.nuevoDato.set('');
+        },
+        error: () => this.alertService.error('Error al agregar documento')
+      });
     }
 
-    this.nuevoDato.set('');
     this.realizarDiagrama.set(true);
   }
-}
 
+  // Eliminar documento base
   eliminarDato(item: any) {
-  this.documentoBaseService.eliminarDocumento(item); 
-}
+    this.ReglamentoBase.delete(item.id).subscribe({
+      next: () => {
+        this.alertService.exito('Documento eliminado correctamente');
+        this.cargarDocumentosBase();
+      },
+      error: () => this.alertService.error('Error al eliminar documento')
+    });
+  }
 
-
+  // Editar documento base (precarga en el input)
   editarDato(item: any) {
-    this.nuevoDato.set(item.Documento);   // cargo el valor al input
-    this.documentoEditando.set(item);     // guardo la referencia del documento que edito
+    this.nuevoDato.set(item.documento);
+    this.documentoEditando.set(item);
   }
 
   onCancelar() {
@@ -151,7 +224,7 @@ export class DocumentacionSoporteComponent {
   descargarPDF() {
     const doc = new jsPDF();
     doc.setFontSize(14);
-    doc.text(this.datosTablaService.DescripcionDAAC, 10, 10);
+    doc.text(this.datosService.DescripcionDAAC, 10, 10);
 
     const campos = Object.keys(this.ultimoRegistro() || {});
     const filas = campos.map(campo => [
@@ -179,8 +252,6 @@ export class DocumentacionSoporteComponent {
     }
 
     doc.save("FormatoDAAC.pdf");
-
-    
   }
 
   abrirDiagrama() {
@@ -194,5 +265,14 @@ export class DocumentacionSoporteComponent {
     this.mensajedeDiagrama = true;
   }
 
+  actualizarLista() {
+    this.formularioDAACService.getFormularioDAAC().subscribe({
+      next: (data) => {
+        this.datosDAAC.set(data);
+        this.cdr.detectChanges();
+      },
+      error: () => this.alertService.error('Error al recargar datos')
+    });
+  }
 
 }

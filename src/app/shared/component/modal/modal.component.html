@@ -7,8 +7,8 @@
       class="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl transform transition-transform duration-300 ease-out"
       [ngClass]="{ 'scale-105': escalar, 'scale-100': !escalar }">
       <app-formreutilizable
-        [campos]="campos"
-        [titulo]="fichaTecnica"
+        [campos]="datosService.camposFormularioFTP"
+        [titulo]="datosService.encabezadoFichaTecnica"
         [datoEditar]="datoEditar"
         (guardar)="Guardar($event)"
         (cerrar)="Cancelar()">

@@ -45,7 +45,6 @@ export class AlertService {
     );
   }
 
-
 alertArriba(titulo: string) {
   const Toast = Swal.mixin({
     toast: true,
@@ -76,7 +75,7 @@ alertArriba(titulo: string) {
   alertEliminar() {
     return this.confirmar(
       '¡Atención!',
-      'Si elimina este procedimiento, no podra revertir los cambios',
+      'Si elimina este campo, no podra revertir los cambios',
       'warning',
       '#00b248',
       '#d33',

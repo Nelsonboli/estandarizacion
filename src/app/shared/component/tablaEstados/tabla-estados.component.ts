@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { DatosTablaService } from '../../servicios/datosTablas.service';
+import { DatosService } from '../../servicios/datos.service';
 
 @Component({
   selector: 'app-tabla-estados',
@@ -9,6 +9,6 @@ import { DatosTablaService } from '../../servicios/datosTablas.service';
 })
 export class TablaEstadosComponent {
 
-  constructor(public tablaEstadosService: DatosTablaService) {}
+  constructor(public tablaEstadosService: DatosService) {}
 
 }

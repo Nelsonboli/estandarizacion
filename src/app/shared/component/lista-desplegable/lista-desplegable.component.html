@@ -25,13 +25,13 @@
           
           <!-- Placeholder -->
           <option value="" disabled>
-            Seleccionar un procedimiento...
+            Seleccionar un procedimiento.
           </option>
 
           <!-- Opciones -->
-          @for (proc of procedimientos; track proc.Procedimiento) {
-            <option [value]="proc.Procedimiento" class="py-2">
-              {{ proc.Procedimiento }}
+          @for (proc of procedimientos; track $index) {
+            <option [value]="proc.procedimiento" class="py-2">
+              {{ proc.procedimiento | titlecase  }}
             </option>
           }
         </select>

@@ -8,33 +8,29 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                loadComponent: () => import('./business/menuprincipal/menuprincipal.component').then(m => m.menuprincipalComponent)
+                loadComponent: () => import('./modulos/menuprincipal/menuprincipal.component').then(m => m.menuprincipalComponent)
             },
             {
                 path: 'acercadeestandarizacion',
-                loadComponent: () => import('./business/documentacion/documentacion.component').then(m => m.DocumentacionComponent)
+                loadComponent: () => import('./modulos/documentacion/documentacion.component').then(m => m.DocumentacionComponent)
             },
             {
                 path: 'recoleccioninformacion',
-                loadComponent: () => import('./business/recoleccioninformacion/recoleccioninformacion.component').then(m => m.RecoleccioninformacionComponent),
+                loadComponent: () => import('./modulos/recoleccioninformacion/recoleccioninformacion.component').then(m => m.RecoleccioninformacionComponent)
             },
             {
                 path: 'identificacionrequerimientos',
-                loadComponent: () => import('./business/identificacionrequerimientos/identificacionrequerimientos.component').then(m => m.IdentificacionrequerimientosComponent)
+                loadComponent: () => import('./modulos/identificacionrequerimientos/identificacionrequerimientos.component').then(m => m.IdentificacionrequerimientosComponent),
+               
             },
             {
                 path: 'socializacionprocedimientos',
-                loadComponent: () => import('./business/socializacionprocedimientos/socializacionprocedimientos.component').then(m => m.SocializacionprocedimientosComponent)
+                loadComponent: () => import('./modulos/socializacionprocedimientos/socializacionprocedimientos.component').then(m => m.SocializacionprocedimientosComponent)
             },
             {
                 path: 'manualusuario',
-                loadComponent: () => import('./business/manualusuario/manualusuario.component').then(m => m.ManualusuarioComponent)
+                loadComponent: () => import('./modulos/manualusuario/manualusuario.component').then(m => m.ManualusuarioComponent)
             },
-
-            // {
-            //     path: 'estandarizar',
-            //         loadComponent: () => import('./Paginas/estandarizar/estandarizar.component').then(m => m.EstandarizarComponent)
-            //     },
 
             {
                 path: 'estandarizar/:id',
