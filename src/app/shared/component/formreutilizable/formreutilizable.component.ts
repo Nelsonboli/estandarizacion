@@ -55,7 +55,7 @@ export class FormreutilizableComponent implements OnInit {
 
   // Campos que aceptan múltiples valores
   camposMultiples = ['roles', 'actividades', 'referencias'];
-  camposMultiplesDAAC = ['responsables', 'proveedores', 'insumos', 'resultados', 'quien_recibe','requisitos', 'documentos', 'registros'];
+  camposMultiplesDAAC = ['responsables', 'proveedores', 'insumos', 'resultados', 'recibe', 'requisitos', 'documentos', 'registros'];
   todosMultiples = [...this.camposMultiples, ...this.camposMultiplesDAAC];
 
   cargarDatoEditar(dato: any) {

@@ -1,3 +1,4 @@
+import { DatosService } from './../../shared/servicios/datos.service';
 import { AlertService } from '../../shared/Utils/Alertas/alert.service';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -8,7 +9,8 @@ import { SoporteComputacionalComponent } from '../Estados/soporte-computacional/
 import { ReglamentoComponent } from '../Estados/reglamento/reglamento.component';
 import { InicioComponent } from '../Estados/inicio/inicio.component';
 import { DocumentacionSoporteComponent } from "../Estados/documentacion-soporte/documentacion-soporte.component";
-import { TablaService } from '../../shared/servicios/tabla.service';
+import { DocumentoSoporteService } from '../../shared/servicios/modulos/documento-soporte.service';
+
 
 @Component({
   standalone: true,
@@ -28,43 +30,80 @@ import { TablaService } from '../../shared/servicios/tabla.service';
 })
 
 export class EstandarizarComponent {
+  procedimientoId!: number;
+  procedimiento: any;
+  estadoCompletos: boolean[] = [ false, false, false];
+  estado: string = '';
   hoverIndex: number | null = null;
   buttonIndex: number | null = null;
-  estadoCompletos: boolean[] = [ false, false, false];
-  estados = [
-    "Documento de Soporte",
-    "Soporte Computacional",
-    "Reglamento"
-  ];
-  procedimientoId: string = '';
-  procedimiento: any;
-  datosEstandarizacion: any = {};
-  estado: string = '';
+  documentoId!: number;
   
-  constructor(private route: ActivatedRoute, private tablaService: TablaService,
-    private alertService: AlertService, private cd:ChangeDetectorRef
-  ) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private alertService: AlertService, 
+    private cd:ChangeDetectorRef,
+    public datosService: DatosService,
+    private documentoSoporteService: DocumentoSoporteService,
+  ) {}
+
 
   ngOnInit() {
-    this.procedimientoId = this.route.snapshot.paramMap.get('id')!;
-    this.tablaService.getProcedimientos().subscribe(procs => {
-      this.procedimiento = procs.find(p => p.id == this.procedimientoId);
-      this.cargarDatosPersistentes();
-    });
+    this.procedimientoId = Number(this.route.snapshot.paramMap.get('id'));
+    console.log('Procedimiento Seleccionado:', this.procedimientoId);
+    //this.cargarDatosEstandarizacion();
   }
 
-  onButtonClick(index: number) {
-    if (index === 0 || this.estadoCompletos[index-1]) {
-      this.buttonIndex = index;
-      this.hoverIndex = null;
-      this.cd.detectChanges();
-    } 
-    else {
-      this.estado = this.estados[index-1];
-      const siguiente = this.estados[index];
-      this.alertService.info(`Debe completar todas las actividades del estado ${this.estado}  para seguir con ${siguiente}`)
+  // cargarDatosEstandarizacion(){
+  //   this.estandarizacionService.getEstandarizacionPorProcedimiento
+  //   (this.procedimientoId).subscribe({
+  //     next: (res) => {
+  //       if(res.doc?.documento_completado) this.estadoCompletos[0] = true;
+  //       // if(res.comp?.computacinal_completado) this.estadoCompletos[1] = true;
+  //       // if(res.reg?.reglamento_completado) this.estadoCompletos[2] = true;
+  //       this.cd.detectChanges();
+  //     },
+  //     error: (err) => {
+  //     console.error('Error  al cargar estandarizacion',err);
+  //   }
+  //   })
+  // }
+
+onButtonClick(index: number) {
+  if (index === 0 || this.estadoCompletos[index - 1]) {
+    this.buttonIndex = index;
+    if (index === 0) {
+      // 1️⃣ Primero obtener documento soporte si ya existe
+      this.documentoSoporteService.getPorProcedimiento(this.procedimientoId).subscribe({
+        next: (doc: any) => {
+          if (doc) {
+            // Ya existe → solo asignarlo
+            this.documentoId = doc.id;
+            this.cd.detectChanges();
+          } else {
+            // 2️⃣ No existe → crearlo
+            this.documentoSoporteService.crearDocumento(this.procedimientoId).subscribe({
+              next: (nuevo) => {
+                this.documentoId = nuevo.id;
+                this.cd.detectChanges();
+              },
+              error: (err) => {
+                console.error('Error creando documento soporte', err);
+              }
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Error obteniendo documento soporte', err);
+        }
+      });
     }
+    this.cd.detectChanges();
+  } else {
+    this.estado = this.datosService.estados[index - 1];
+    const siguiente = this.datosService.estados[index];
+    this.alertService.info(`Debe completar todas las actividades del estado ${this.estado} para seguir con ${siguiente}`);
   }
+}
 
 
   onEstadoCompleto(event: { index: number; completo: boolean }) {
@@ -72,32 +111,32 @@ export class EstandarizarComponent {
     this.cd.detectChanges()
   }
 
-  guardarDatosEstandarizacion() {
-    this.tablaService.guardarEstandarizacion(this.procedimientoId, this.datosEstandarizacion);
-  }
+  // guardarDatosEstandarizacion() {
+  //   this.tablaService.guardarEstandarizacion(this.procedimientoId, this.datosEstandarizacion);
+  // }
 
-  cargarDatosPersistentes() {
-    const guardados = this.tablaService.getEstandarizacion(this.procedimientoId);
-    this.datosEstandarizacion = guardados || {};
-    this.estadoCompletos = this.estados.map((_, i) =>
-      Array.isArray(guardados?.[i])
-        ? guardados[i].every((c: boolean) => c === true)
-        : false
-    );
-  }
+  // cargarDatosPersistentes() {
+  //   const guardados = this.tablaService.getEstandarizacion(this.procedimientoId);
+  //   this.datosEstandarizacion = guardados || {};
+  //   this.estadoCompletos = this.estados.map((_, i) =>
+  //     Array.isArray(guardados?.[i])
+  //       ? guardados[i].every((c: boolean) => c === true)
+  //       : false
+  //   );
+  // }
 marcarchecklist(index: number) {
   this.estadoCompletos[index] = true;
-  this.alertService.alertArriba(`El estado "${this.estados[index]}" ha sido completado`);
+  this.alertService.alertArriba(`El estado "${this.datosService.estados[index]}" ha sido completado`);
 
-  // 🔹 Obtener el procedimiento activo
+  //  Obtener el procedimiento activo
   const procedimientoId = sessionStorage.getItem('procedimientoActivo');
   if (!procedimientoId) return;
 
-  // 🔹 Cargar lo que ya esté en localStorage
+  //  Cargar lo que ya esté en localStorage
   const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
   guardados[procedimientoId] = guardados[procedimientoId] || {};
 
-  // 🔹 Obtener la cantidad de subopciones según el índice del estado
+  //  Obtener la cantidad de subopciones según el índice del estado
    // ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
   const opcionesPorEstado = [
    
@@ -109,10 +148,10 @@ marcarchecklist(index: number) {
   const totalChecks = opcionesPorEstado[index].length;
   guardados[procedimientoId][index] = Array(totalChecks).fill(true);
 
-  // 🔹 Guardar en localStorage
+  //  Guardar en localStorage
   localStorage.setItem('estandarizaciones', JSON.stringify(guardados));
 
-  // 🔹 Actualizar visualmente en pantalla
+  //  Actualizar visualmente en pantalla
   this.estadoCompletos[index] = true;
 }
 

@@ -13,8 +13,8 @@
     @else {
     <div>
         <app-tabla-datos
-            [data]="datosDAAC()"
-            [columns]="datosService.columnasformularioDAAC"
+            [data]="datosFiltrados"
+            [columns]="datosService.columnasDAAC"
             encabezadoGeneral="Datos Formulario DAAC"
             [accionesTemplate]="accionesPersonalizadas">
         </app-tabla-datos>
@@ -61,25 +61,20 @@
     </div>
     <div class="flex w-2/3 flex-col overflow-x-auto">
         <app-tablas-formulario
-            [columns]="columnaDocumento"
+            [columns]="columnaDocumentoBase"
             [data]="datosDocumentoBase()"
             [accionesTemplate]="accionesPersonalizadas"
             (eliminar)="eliminarDato($event)">
         </app-tablas-formulario>
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex items-center justify-center space-x-1 gap-2">
-                <div class="p-2 flex-row">
-                        <button
-                            class="flex items-center gap-1 px-3 py-2 bg-white hover:bg-gray-100 hover:scale-105 hover:brightness-115 transition duration-300"
-                            type="button"
-                            (click)="eliminarDato(dato)"
-                            class="px-1 w-6 h-6">
-                            <img src="assets/elementos/agregar.svg"
-                                alt="Agregar"
-                                class="w-5 h-5">
-                            <span>Agregar</span>
-                        </button>
-                    </div>
+                <button
+                    (click)="eliminarDato(dato)"
+                    class="px-1 w-6 h-6"
+                    title="Editar">
+                    <img src="assets/elementos/eliminar.svg" alt="editar"
+                        class=" hover:brightness-120 w-6 h-6">
+                </button>
                 <button
                     (click)="editarDato(dato)"
                     class="px-1 w-6 h-6"

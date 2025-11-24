@@ -10,9 +10,8 @@ import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/t
 import { DiagramaService } from '../../shared/servicios/diagrama.service';
 import { SoporteComputacionalService } from '../../shared/servicios/soporte-computacional.service';
 import { ProcedimientoService } from '../../shared/servicios/modulos/procedimiento.service';
-import { TablasFormularioComponent } from "../../shared/component/tablas-formulario/tablas-formulario.component";
 import { FormularioDAACService } from '../../shared/servicios/modulos/formulario-daac.service';
-import { ReglamentoBase } from '../../../../backend/dist/reglamento-base/entities/reglamento-base.entity';
+
 
 
 @Component({

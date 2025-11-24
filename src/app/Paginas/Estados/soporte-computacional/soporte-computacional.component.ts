@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, output, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, output, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SoporteComputacionalService } from '../../../shared/servicios/soporte-computacional.service';
 import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
@@ -11,6 +11,7 @@ import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
   styleUrl: './soporte-computacional.component.css'
 })
 export class SoporteComputacionalComponent implements OnInit {
+  @Input() procedimientoId!: number;
   form!: FormGroup;
 
    soporteEnviado = output<boolean>();

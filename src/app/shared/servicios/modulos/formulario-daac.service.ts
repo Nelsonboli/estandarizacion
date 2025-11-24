@@ -5,27 +5,33 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class FormularioDAACService {
 
-  private apiUrl = 'http://localhost:3000/formulariodaac';
+  private base = 'http://localhost:3000/formulariodaac';
 
   constructor(private http: HttpClient) {}
 
   getFormularioDAAC(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<any[]>(this.base);
   }
 
-  crearFormularioDAAC(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  crearFormularioConDocumento(documentoSoporteId: number, payload: any) {
+    const body = { ...payload, documento_soporte_id: documentoSoporteId };
+    return this.http.post(`${this.base}`, body);
   }
 
-  editarFormularioDAAC(id: number, data: any): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}`, data);
+  obtenerPorDocumento(documentoSoporteId: number) {
+    return this.http.get<any>(`${this.base}/por-documento/${documentoSoporteId}`);
   }
 
   eliminarFormularioDAAC(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.base}/${id}`);
   }
 
-  BuscarFormularioDAAC(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  editarFormulario(id: number, payload: any) {
+    return this.http.put(`${this.base}/${id}`, payload);
   }
+
+ BuscarFormularioDAAC(id: number): Observable<any > {
+  return this.http.get<any >(`${this.base}/por-documento/${id}`);
+}
+
 }

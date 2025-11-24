@@ -18,6 +18,8 @@ export class TablaDatosComponent {
   @Input() accionesTemplate?: TemplateRef<any>;
   @Input() mostrarOpciones: boolean = true;
 
+  // @Output() eliminar = new EventEmitter<any>();
+  // @Output() editar = new EventEmitter<any>();
 
 
   constructor(private tablaService: TablaService,

@@ -15,7 +15,9 @@ export class DocumentacionComponent implements OnInit, OnDestroy, AfterViewInit 
   private destroy$ = new Subject<void>();
   private sections: HTMLElement[] = [];
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  
+  }
 
   ngAfterViewInit(): void {
     // Guardamos las secciones del contenido

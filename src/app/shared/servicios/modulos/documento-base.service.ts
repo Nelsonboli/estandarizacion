@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DocumentoBaseService {
-  private apiUrl = 'http://localhost:3000/documento-base';
+  private apiUrl = 'http://localhost:3000/documento_soporte';
 
   constructor(private http: HttpClient) {}
 

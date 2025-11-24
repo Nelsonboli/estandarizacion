@@ -8,7 +8,7 @@
             </div>
             <div
                 class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
-                @for (estado of estados; track estado; let i = $index) {
+                @for (estado of datosService.estados; track estado; let i = $index) {
                 <div
                     class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
 
@@ -53,17 +53,21 @@
                 }  -->
                 @case (0) {
                 <app-documentacion-soporte
-                    (documentoEnviado)="marcarchecklist(1)">
+                    [procedimientoId]="procedimientoId"
+                    [documentoId]="documentoId"
+                    (documentoEnviado)="marcarchecklist(0)">
                 </app-documentacion-soporte>
                 }
                 @case (1) {
                 <app-soporte-computacional
-                    (soporteEnviado)="marcarchecklist(2)">
+                    [procedimientoId]="procedimientoId"
+                    (soporteEnviado)="marcarchecklist(1)">
                 </app-soporte-computacional>
                 }
                 @case (2) {
                 <app-reglamento
-                    (soporteEnviado)="marcarchecklist(3)">
+                    [procedimientoId]="procedimientoId"
+                    (soporteEnviado)="marcarchecklist(2)">
                 </app-reglamento>
                 }
                 @default {

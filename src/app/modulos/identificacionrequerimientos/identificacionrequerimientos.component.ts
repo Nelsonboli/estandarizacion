@@ -2,7 +2,7 @@ import { AlertService } from './../../shared/Utils/Alertas/alert.service';
 import { DatosService } from './../../shared/servicios/datos.service';
 import { Component, OnInit } from '@angular/core';
 import { TablaService } from '../../shared/servicios/tabla.service';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 import { ModalComponent } from '../../shared/component/modal/modal.component';
 import { NavegacionComponent } from '../../shared/component/navegacion/navegacion';
 import { EstadolistaService } from '../../shared/servicios/estadolista.service';
@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-identificacionrequerimientos',
-  imports: [RouterLink, ModalComponent, NavegacionComponent, TablaDatosComponent, FormsModule],
+  imports: [RouterLink, ModalComponent, NavegacionComponent, TablaDatosComponent, FormsModule,],
   templateUrl: './identificacionrequerimientos.component.html',
   styleUrl: './identificacionrequerimientos.component.css'
 })

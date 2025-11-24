@@ -11,23 +11,24 @@ export class ReglamentoBaseService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> {
+  getReglamentoBase(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  getById(id: number): Observable<any> {
+  getReglamentoBaseById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  create(data: any): Observable<any> {
+  CrearReglamentoBase(data: any): Observable<any> {
     return this.http.post(this.apiUrl, data);
   }
 
-  update(id: number, data: any): Observable<any> {
+  ActualizarReglamentoBase(id: number, data: any): Observable<any> {
+    console.log("👉 Enviando al PATCH:", data);
     return this.http.patch(`${this.apiUrl}/${id}`, data);
   }
 
-  delete(id: number): Observable<any> {
+  EliminarReglamentoBase(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 

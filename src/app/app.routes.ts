@@ -19,10 +19,9 @@ export const routes: Routes = [
                 loadComponent: () => import('./modulos/recoleccioninformacion/recoleccioninformacion.component').then(m => m.RecoleccioninformacionComponent)
             },
             {
-                path: 'identificacionrequerimientos',
-                loadComponent: () => import('./modulos/identificacionrequerimientos/identificacionrequerimientos.component').then(m => m.IdentificacionrequerimientosComponent),
-               
+                path: 'identificacionrequerimientos', loadComponent: () => import('./modulos/identificacionrequerimientos/identificacionrequerimientos.component').then(m => m.IdentificacionrequerimientosComponent),
             },
+
             {
                 path: 'socializacionprocedimientos',
                 loadComponent: () => import('./modulos/socializacionprocedimientos/socializacionprocedimientos.component').then(m => m.SocializacionprocedimientosComponent)
@@ -33,8 +32,7 @@ export const routes: Routes = [
             },
 
             {
-                path: 'estandarizar/:id',
-                loadComponent: () => import('./paginas/estandarizar/estandarizar.component').then(m => m.EstandarizarComponent)
+                path: 'identificacionrequerimientos/estandarizar/:id', loadComponent: () => import('./paginas/estandarizar/estandarizar.component').then(m => m.EstandarizarComponent)
             },
 
             {

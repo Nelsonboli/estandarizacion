@@ -13,6 +13,7 @@ export class ReglamentoComponent implements OnInit{
   seccionActiva: 'descargar' | 'validar' | null = null;
   formatoEstandarizacion = "Formato de Estandarizacion"
   fichaProcedimiento= "Ficha de Procedimiento"
+  @Input() procedimientoId!: number;
   form!: FormGroup;
 
   constructor(private fb: FormBuilder,

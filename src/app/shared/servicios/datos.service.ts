@@ -43,7 +43,7 @@ export class DatosService {
     { key: 'proveedores', label: 'proveedores', Tooltip: 'Personas o entidades que proporcionan entradas para el procedimiento.' },
     { key: 'insumos', label: 'insumos', Tooltip: 'Elementos requeridos para el desarrollo del procedimiento.' },
     { key: 'resultados', label: 'resultados', Tooltip: 'Producto o servicio obtenido del procedimiento.' },
-    { key: 'quien recibe', label: 'quien recibe', Tooltip: 'Persona o grupo que recibe el resultado.' },
+    { key: 'recibe', label: 'quien recibe', Tooltip: 'Persona o grupo que recibe el resultado.' },
     { key: 'requisitos', label: 'requisitos', Tooltip: 'Normas o actos administrativos que lo sustentan.' },
     { key: 'documentos', label: 'documentos a realizar', Tooltip: 'Documentos de soporte del procedimiento.' },
     { key: 'registros', label: 'registros a realizar', Tooltip: 'Registros o evidencias generadas.' },
@@ -53,15 +53,8 @@ export class DatosService {
   ];
 
   // --- Genera automáticamente las columnas del backend
-  get columnasformularioDAAC() {
-    return this.columnasDAAC.map(col => ({
-      key: col.key.toLowerCase().replace(/ /g, '_'), // convierte "Quien recibe el resultado" → "quien_recibe_el_resultado"
-      label: col.label
-    }));
-  }
-
    columnaDocumento = [
-    { key: 'Documento', label: 'Documento' }
+    { key: 'documento', label: 'documento' }
   ];
 
   /* Datos de la ficha tecnica */
@@ -124,6 +117,12 @@ export class DatosService {
     { Criterio: 'ESTADO', Descripcion: '', Tooltip: ' Situación actual del procedimiento dentro de la dependencia. Se pueden presentar diferentes estados para su mayor entendimiento puede ver la tabla 2' },
     { Criterio: 'ACTIVIDADES', Descripcion: '', Tooltip: 'Conjunto de acciones que se realizan para desarrollar el procedimiento, estas acciones siempre deben iniciar con un verbo en infinitivo y no nesesariamente deben tener una secuencia.' },
     { Criterio: 'REFERENTES', Descripcion: '', Tooltip: 'En esta columna se puede ubicar el consecutivo de algún procedimiento definido por la Universidad, en caso de que exista, pueden presentarse dos situaciones: i. Que sea un procedimiento similar, que puede servir de guía para la estandarización del procedimiento. ii. Que sea un procedimiento ques hace parte de alguna actividad del procedimiento a estandarizar. También se puede registrar, notas,comentarios u observaciones relevantes.' },
+  ];
+
+  estados = [
+    "Documento de Soporte",
+    "Soporte Computacional",
+    "Reglamento"
   ];
 
 }
