@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
@@ -11,41 +11,54 @@ import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular
 })
 export class CardComponent implements OnInit {
   @Input() indice: number | null = null;
-  @Input() refrescar!: boolean; 
+  @Input() refrescar!: boolean;
   @Output() estadoCompleto = new EventEmitter<{ index: number; completo: boolean }>();
-
+  @Input() valoresExternos: boolean[] | null = null;
   form!: FormGroup;
   subopciones: string[] = [];
 
-
-  // ["Actividades del procedimiento", "Roles del procedimiento", "Referencias"],
-  opciones = [ 
+  opciones = [
     ["Formulario de procedimiento DAAC", "Reglamento base", "Diagrama de procedimiento"],
     ["Soporte computacional"],
     ["Procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]
   ];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
     if (typeof this.indice === 'number') {
       this.subopciones = this.opciones[this.indice];
-
       const procedimientoId = sessionStorage.getItem('procedimientoActivo');
       const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
-      const prev = procedimientoId ? guardados?.[procedimientoId]?.[this.indice] || [] : [];
+
+      // Priorizar valoresExternos sobre localStorage
+      let valoresIniciales: boolean[];
+      if (this.valoresExternos && this.valoresExternos.length > 0) {
+        valoresIniciales = this.valoresExternos;
+        console.log('🎯 Card inicializado con valoresExternos:', valoresIniciales);
+      } else {
+        const prev = procedimientoId ? guardados?.[procedimientoId]?.[this.indice] || [] : [];
+        valoresIniciales = this.subopciones.map((_, i) => prev[i] || false);
+        console.log('💾 Card inicializado con localStorage:', valoresIniciales);
+      }
 
       this.form = this.fb.group({
         checks: this.fb.array(
-          this.subopciones.map((_, i) => this.fb.control(prev[i] || false))
+          this.subopciones.map((_, i) => this.fb.control(valoresIniciales[i] || false))
         )
+      });
+
+      // Deshabilitar checkboxes que están marcados
+      valoresIniciales.forEach((val, i) => {
+        if (val === true && this.checks.at(i)) {
+          this.checks.at(i).disable({ emitEvent: false });
+        }
       });
 
       this.listenToChanges();
       this.verificarEstadoCompleto();
     }
   }
-
   get checks(): FormArray {
     return this.form.get('checks') as FormArray;
   }
@@ -65,25 +78,47 @@ export class CardComponent implements OnInit {
 
   private verificarEstadoCompleto() {
     let completo = true;
-    if (this.indice !== 0) {
+    if (this.indice !== null) {
       completo = this.checks.controls.every(c => c.value === true);
     }
     this.estadoCompleto.emit({ index: this.indice!, completo });
   }
 
-  ngOnChanges() {
-  if (this.refrescar && typeof this.indice === 'number') {
-    const procedimientoId = sessionStorage.getItem('procedimientoActivo');
-    const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
-    const prev = procedimientoId ? guardados?.[procedimientoId]?.[this.indice] || [] : [];
+  ngOnChanges(changes: SimpleChanges) {
+    if (!this.form) return;
+    if (changes['valoresExternos'] && this.valoresExternos) {
+      console.log('🔄 Card recibió valoresExternos:', this.valoresExternos);
+      console.log('📍 Índice de card:', this.indice);
 
-    // Actualizar visualmente los checks
-    prev.forEach((val: boolean, i: number) => {
-      if (this.checks.at(i)) {
-        this.checks.at(i).setValue(val, { emitEvent: false });
-      }
-    });
+      this.valoresExternos.forEach((val, i) => {
+        if (this.checks && this.checks.at(i)) {
+          const currentValue = this.checks.at(i).value;
+          if (currentValue !== val) {
+            console.log(`✏️ Actualizando check ${i}: ${currentValue} -> ${val}`);
+            this.checks.at(i).setValue(val, { emitEvent: true });
+          }
+
+          // Deshabilitar el checkbox si está marcado (no se puede desmarcar manualmente)
+          if (val === true) {
+            this.checks.at(i).disable({ emitEvent: false });
+            console.log(`🔒 Checkbox ${i} deshabilitado (completado)`);
+          } else {
+            this.checks.at(i).enable({ emitEvent: false });
+            console.log(`🔓 Checkbox ${i} habilitado (pendiente)`);
+          }
+        }
+      });
+    }
+    if (this.refrescar && typeof this.indice === 'number') {
+      const procedimientoId = sessionStorage.getItem('procedimientoActivo');
+      const guardados = JSON.parse(localStorage.getItem('estandarizaciones') || '{}');
+      const prev = procedimientoId ? guardados?.[procedimientoId]?.[this.indice] || [] : [];
+      // Actualizar visualmente los checks   
+      prev.forEach((val: boolean, i: number) => {
+        if (this.checks && this.checks.at(i)) {
+          this.checks.at(i).setValue(val, { emitEvent: false });
+        }
+      });
+    }
   }
-}
-
 }

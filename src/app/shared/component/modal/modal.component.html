@@ -1,17 +1,11 @@
 @if (visible) {
-<div class="fixed inset-0 bg-black/50 z-[1050] overflow-y-auto"
-  (click)="onBackdropClick($event)">
+<div class="fixed inset-0 bg-black/50 z-[1050] overflow-y-auto" (click)="onBackdropClick($event)">
   <div class="min-h-screen flex flex-col items-center justify-start py-3">
-    <div
-      #formulario
-      class="bg-white p-6 rounded-lg shadow-md w-full max-w-3xl transform transition-transform duration-300 ease-out"
+    <div #formulario
+      class="bg-white p-6 rounded-lg shadow-md w-full max-w-4xl transform transition-transform duration-300 ease-out"
       [ngClass]="{ 'scale-105': escalar, 'scale-100': !escalar }">
-      <app-formreutilizable
-        [campos]="datosService.camposFormularioFTP"
-        [titulo]="datosService.encabezadoFichaTecnica"
-        [datoEditar]="datoEditar"
-        (guardar)="Guardar($event)"
-        (cerrar)="Cancelar()">
+      <app-formreutilizable [campos]="datosService.camposFormularioFTP" [titulo]="datosService.encabezadoFichaTecnica"
+        [datoEditar]="datoEditar" (guardar)="Guardar($event)" (cerrar)="Cancelar()">
       </app-formreutilizable>
     </div>
   </div>

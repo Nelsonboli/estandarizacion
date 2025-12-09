@@ -17,7 +17,7 @@ import { DiagramaService } from '../../../shared/servicios/diagrama.service';
   styleUrl: './diagrama.css'
 })
 export class Diagrama implements AfterViewInit {
-  @Output () diagramaEnviado = new EventEmitter<boolean>()
+  @Output() diagramaEnviado = new EventEmitter<boolean>()
   @ViewChild('canvas') canvasRef!: ElementRef;
   textoNodo: string = '';
   private graph = new joint.dia.Graph();
@@ -30,7 +30,7 @@ export class Diagrama implements AfterViewInit {
 
   constructor(private diagramaService: DiagramaService,
     private alertService: AlertService,
-  ){
+  ) {
 
   }
 
@@ -115,7 +115,7 @@ export class Diagrama implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
-     this.eliminarElementoConTecla();
+    this.eliminarElementoConTecla();
     this.paper = new joint.dia.Paper({
       el: this.canvasRef.nativeElement,
       model: this.graph,
@@ -169,13 +169,13 @@ export class Diagrama implements AfterViewInit {
             }
             this.nodoOrigen = null;
             this.modoConexion = false;
-           
+
           }
 
           return;
         }
 
-       if (!firstElement) {
+        if (!firstElement) {
           firstElement = model;
           lastClickedElement = model;
         } else {
@@ -219,7 +219,7 @@ export class Diagrama implements AfterViewInit {
         this.limpiarSeleccion(this.selectedElement);
         this.popoverVisible.set(false);
 
-         // Reseteo de referencias
+        // Reseteo de referencias
         this.currentElement = null;
         this.selectedElement = null;
         this.nodoOrigen = null;
@@ -256,8 +256,8 @@ export class Diagrama implements AfterViewInit {
   private seleccionDobleClic(element: joint.dia.Element) {
     element.attr({
       body: {
-        stroke: '#2563eb',       
-        strokeWidth: 2           
+        stroke: '#2563eb',
+        strokeWidth: 2
       }
     });
   }
@@ -265,8 +265,8 @@ export class Diagrama implements AfterViewInit {
   private seleccionElemento(element: joint.dia.Element) {
     element.attr({
       body: {
-        stroke: '#ff0000',        
-        strokeWidth: 2            
+        stroke: '#ff0000',
+        strokeWidth: 2
       }
     });
   }
@@ -274,7 +274,7 @@ export class Diagrama implements AfterViewInit {
   private limpiarSeleccion(element: joint.dia.Element) {
     element.attr({
       body: {
-        stroke: '#000',           
+        stroke: '#000',
         strokeWidth: 1
       }
     });
@@ -288,39 +288,39 @@ export class Diagrama implements AfterViewInit {
       y: bbox.y + paperOffset.top - 80
     });
   }
-private eliminarelemento() {
-  if (this.selectedElement) {
-    this.selectedElement.remove();
+  private eliminarelemento() {
+    if (this.selectedElement) {
+      this.selectedElement.remove();
 
-    if (this.currentElement === this.selectedElement) {
-      this.currentElement = null;
-      this.popoverVisible.set(false);
-      this.popoverText.set('');
+      if (this.currentElement === this.selectedElement) {
+        this.currentElement = null;
+        this.popoverVisible.set(false);
+        this.popoverText.set('');
+      }
+
+      this.selectedElement = null;
+      this.nodoOrigen = null;
     }
-
-    this.selectedElement = null;
-    this.nodoOrigen = null;
   }
-}
 
-// 👉 Escucha teclas globales
-eliminarElementoConTecla() {
-  window.addEventListener('keydown', (event: KeyboardEvent) => {
-    const target = event.target as HTMLElement;
+  // 👉 Escucha teclas globales
+  eliminarElementoConTecla() {
+    window.addEventListener('keydown', (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
 
-    // 👉 No borrar si estoy escribiendo en input/textarea
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
+      // 👉 No borrar si estoy escribiendo en input/textarea
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
-    if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedElement) {
-      this.eliminarelemento();
-    }
-  });
-}
+      if ((event.key === 'Delete' || event.key === 'Backspace') && this.selectedElement) {
+        this.eliminarelemento();
+      }
+    });
+  }
 
-// 👉 Método que se llama desde el botón del popover
-eliminarConBoton() {
-  this.eliminarelemento();
-}
+  // 👉 Método que se llama desde el botón del popover
+  eliminarConBoton() {
+    this.eliminarelemento();
+  }
   guardarPopover() {
     if (this.currentElement) {
       this.currentElement.attr('label/text', this.popoverText());
@@ -480,15 +480,15 @@ eliminarConBoton() {
     return this.textoNodo.trim() || `${defaultLabel} ${this.contador}`;
   }
 
-guardarDiagrama() {
-  htmlToImage.toPng(this.canvasRef.nativeElement).then((dataUrl) => {
-    this.diagramaService.guardarImagen(dataUrl);
-    this.alertService.alertArriba('Diagrama de Flujo Guardado');
-    this.diagramaEnviado.emit(true)
+  guardarDiagrama() {
+    htmlToImage.toPng(this.canvasRef.nativeElement).then((dataUrl) => {
+      this.diagramaService.guardarImagen(dataUrl);
+      this.alertService.alertExitoArriba('Diagrama de Flujo Guardado');
+      this.diagramaEnviado.emit(true)
 
-    
-  }).catch(err => {
-    console.error('Error al guardar diagrama:', err);
-  });
-}
+
+    }).catch(err => {
+      console.error('Error al guardar diagrama:', err);
+    });
+  }
 }

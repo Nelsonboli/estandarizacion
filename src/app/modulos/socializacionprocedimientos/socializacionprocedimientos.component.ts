@@ -8,9 +8,10 @@ import { EstadolistaService } from '../../shared/servicios/estadolista.service';
 import { ListaDesplegableComponent } from '../../shared/component/lista-desplegable/lista-desplegable.component';
 import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
 import { DiagramaService } from '../../shared/servicios/diagrama.service';
-import { SoporteComputacionalService } from '../../shared/servicios/soporte-computacional.service';
+
 import { ProcedimientoService } from '../../shared/servicios/modulos/procedimiento.service';
 import { FormularioDAACService } from '../../shared/servicios/modulos/formulario-daac.service';
+import { SoporteComputacionalService } from '../../shared/servicios/modulos/soporte-computacional.service';
 
 
 
@@ -39,18 +40,13 @@ export class SocializacionprocedimientosComponent implements OnInit {
     public tablaService: TablaService,
     private listaService: EstadolistaService,
     private diagramaService: DiagramaService,
-    private soporteService: SoporteComputacionalService,
+    private soporteComputacionalService: SoporteComputacionalService,
     private procedimientoService: ProcedimientoService,
   ) { }
 
   ngOnInit() {
     this.imagenDiagrama = this.diagramaService.cargarImagen();
 
-    this.soporteService.soporteComputacional$.subscribe(data => {
-      if (data) {
-        this.soporteComputacional = data
-      }
-    })
 
     this.procedimientoService.getProcedimientos().subscribe({
       next: (data) => {
@@ -95,7 +91,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
 
   onSocializar(procedimiento: any) {
     this.procedimientoSeleccionado = procedimiento;
-    
+
     // Transformar el objeto seleccionado en filas para la tabla
     this.filasProcedimiento = Object.keys(procedimiento).map(key => ({
       Criterio: key.toUpperCase(),
@@ -107,7 +103,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
   }
 
 
-    mapearDatosDAAC(formulario: any) {
+  mapearDatosDAAC(formulario: any) {
     this.datosDAAC = this.datosTablaService.columnasDAAC.map(columna => {
       const valor = formulario[columna.key] || formulario[columna.label] || '';
       return {

@@ -25,14 +25,6 @@ export class DatosService {
     { col1: 'C', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
   ];
 
-  ProcesoEstandarizado = [
-    { col1: 'i', col2: 'inicial', col3: ' ', col4: ' ', col5: ' ', col6: ' ' },
-    { col1: 'i1', col2: 'intermedio 1', col3: '  ', col4: '  ', col5: '', col6: '' },
-    { col1: 'i2', col2: 'intermedio 2', col3: '  ', col4: ' ', col5: '  ', col6: ' ' },
-    { col1: 'i3', col2: 'intermedio 3', col3: ' ', col4: ' ', col5: ' ', col6: ' ' },
-    { col1: 'C', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
-  ]
-
   //Datos Formulario DAAC
   DescripcionDAAC = ["Formulario División de Autoevaluación y Acreditación de la Calidad"];
 
@@ -53,7 +45,7 @@ export class DatosService {
   ];
 
   // --- Genera automáticamente las columnas del backend
-   columnaDocumento = [
+  columnaDocumento = [
     { key: 'documento', label: 'documento' }
   ];
 

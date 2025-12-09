@@ -55,7 +55,7 @@ export class FormreutilizableComponent implements OnInit {
 
   // Campos que aceptan múltiples valores
   camposMultiples = ['roles', 'actividades', 'referencias'];
-  camposMultiplesDAAC = ['responsables', 'proveedores', 'insumos', 'resultados', 'recibe', 'requisitos', 'documentos', 'registros'];
+  camposMultiplesDAAC = ['responsable', 'proveedores', 'insumos', 'resultados', 'recibe', 'requisitos', 'documentos', 'registros'];
   todosMultiples = [...this.camposMultiples, ...this.camposMultiplesDAAC];
 
   cargarDatoEditar(dato: any) {
@@ -176,7 +176,7 @@ export class FormreutilizableComponent implements OnInit {
           control.markAsTouched();
           control.markAsDirty();
         }
-       
+
       });
 
       // Mostrar alerta con los campos faltantes

@@ -9,29 +9,29 @@ import jsPDF from 'jspdf';
   templateUrl: './reglamento.component.html',
   styleUrl: './reglamento.component.css'
 })
-export class ReglamentoComponent implements OnInit{
+export class ReglamentoComponent implements OnInit {
   seccionActiva: 'descargar' | 'validar' | null = null;
   formatoEstandarizacion = "Formato de Estandarizacion"
-  fichaProcedimiento= "Ficha de Procedimiento"
+  fichaProcedimiento = "Ficha de Procedimiento"
   @Input() procedimientoId!: number;
   form!: FormGroup;
 
   constructor(private fb: FormBuilder,
-    private diagramaService: DiagramaService 
-  ) {}
+    private diagramaService: DiagramaService
+  ) { }
 
- ngOnInit() {
+  ngOnInit() {
     this.form = this.fb.group({
       respuesta1: ['', Validators.required],
       detalle1: [''],
     });
-    }
+  }
 
-    onSubmit(){
+  onSubmit() {
 
-    }
+  }
 
-    descargarDocumento() {
+  descargarDocumento() {
     const doc = new jsPDF();
 
     // Agregar título
@@ -48,7 +48,5 @@ export class ReglamentoComponent implements OnInit{
     // Guardar PDF
     doc.save('procedimiento.pdf');
   }
-
-
 
 }

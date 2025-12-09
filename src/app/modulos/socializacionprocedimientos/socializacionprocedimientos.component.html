@@ -29,7 +29,6 @@
     }
 
     <div class="px-4">
-
       <!-- Mostrar el formulario DAAC -->
       <h3 class=" text-grande font-bold m-3 text-center justify-center">
         Formulario DAAC</h3>
@@ -39,19 +38,11 @@
       </app-tabla-criterios>
 
       <!-- Documento base -->
-      <h3
-        class="text-grande font-bold m-3 text-center justify-center">Documento
-        Base</h3>
-
-      <!-- <app-tablas-formulario
-        [data]="documentoBaseService.documentosBase$()"
-        [columns]="datosTablaService.columnaDocumento"
-        [mostrarOpciones]="false">
-      </app-tablas-formulario> -->
+      <h3 class="text-grande font-bold m-3 text-center justify-center">Documento Base</h3>
 
       <!-- Mostrar Diagrama de flujo -->
       <h3 class="text-grande font-bold m-3 text-center justify-center"> Diagrama
-        de Flujo procedimiento {{procedimientoSeleccionado.Procedimiento}}</h3>
+         de Flujo procedimiento {{procedimientoSeleccionado.Procedimiento}}</h3>
       @if (imagenDiagrama) {
       <img [src]="imagenDiagrama"
         alt="Diagrama de flujo de procedimiento {{procedimientoSeleccionado.Procedimiento}}"

@@ -1,6 +1,6 @@
-<div class="flex flex-col min-h-screen">
+<div class="flex flex-col h-screen overflow-hidden">
   <!-- HEADER FIJO -->
-  <header class="w-full z-50 bg-white shadow-md">
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
     <app-header
       (toggleMenu)="toggleSidebar()"
       [esMenuPrincipal]="esMenuPrincipal">
@@ -8,11 +8,11 @@
   </header>
 
   <!-- CONTENIDO PRINCIPAL CON SIDEBAR -->
-  <div class="flex-1 flex overflow-hidden">
-    <!-- MENU LATERAL -->
+  <div class="flex flex-1 pt-32 overflow-hidden">
+    <!-- MENU LATERAL FIJO -->
     @if (!esMenuPrincipal) {
     <aside
-      class="bg-azul-fondo z-40 shadow-lg transition-all duration-500 ease-in-out hidden md:block"
+      class="fixed left-0 top-32 bottom-0 bg-azul-fondo z-40 shadow-lg transition-all duration-500 ease-in-out hidden md:block overflow-y-auto"
       [ngClass]="{
         'md:w-56': !colapsar,  
         'md:w-0': colapsar
@@ -23,15 +23,23 @@
     </aside>
     }
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main
-      class="flex-1 w-full h-full bg-white overflow-y-auto transition-all duration-500 ease-in-out delay-100">
-      <router-outlet></router-outlet>
-    </main>
+    <!-- CONTENIDO PRINCIPAL CON SCROLL -->
+    <div
+      class="flex flex-col flex-1 w-full h-full overflow-y-auto transition-all duration-500 ease-in-out"
+      [ngClass]="{
+        'md:ml-56': !colapsar && !esMenuPrincipal,
+        'md:ml-0': colapsar || esMenuPrincipal
+      }">
+      <main class="flex-1 bg-white">
+        <router-outlet></router-outlet>
+      </main>
+      
+      <!-- FOOTER dentro del scroll -->
+      <footer class="bg-white border-t border-gray-200 mt-auto">
+        <app-footer></app-footer>
+      </footer>
+    </div>
   </div>
-
-  <!-- FOOTER -->
-  <footer class="bg-white border-t border-gray-200 transition-all duration-500 ease-in-out delay-100">
-    <app-footer></app-footer>
-  </footer>
 </div>
+
+

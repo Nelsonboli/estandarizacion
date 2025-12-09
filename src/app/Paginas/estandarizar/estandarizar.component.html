@@ -2,40 +2,43 @@
     <div class="font-sans text-gray-800 bg-white bor p-1 m-1">
         <div
             class="mb-2 space-x-0.5 min-h-screen bg-white text-med px-1 py-1 rounded-lg shadow-sm max-w-screen mx-auto">
-            <div
-                class="bg-azul-oscuro text-white p-2 border-2 text-right m-2 uperlowercase rounded-sm">
+            <!-- DEBUG INFO -->
+            <div class="bg-yellow-100 p-2 m-2 text-xs">
+                <strong>DEBUG:</strong><br>
+                estadoCompletos: {{ estadoCompletos | json }}<br>
+                actividadesDocumentoSoporte: {{ actividadesDocumentoSoporte| json }}
+            </div>
+            <div class="bg-yellow-100 p-2 m-2 text-xs">
+                <strong>DEBUG:</strong><br>
+                estadoCompletos: {{ estadoCompletos | json }}<br>
+                actividadesSoporteComputacional: {{ actividadesSoporteComputacional| json }}
+            </div>
+
+            <div class="bg-azul-oscuro text-white p-2 border-2 text-right m-2 uperlowercase rounded-sm">
                 Estandarización de procedimientos
             </div>
-            <div
-                class="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
+            <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
                 @for (estado of datosService.estados; track estado; let i = $index) {
-                <div
-                    class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
-
+                <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
                     <!-- Botón -->
-                    <button
-                        class="w-full h-24 flex flex-col items-center justify-center rounded-xl border hover:text-white border-gray-700 transition-all duration-200 ease-in-out hover:shadow-sm shadow-gray-400 hover:scale-[1.05]
-                        hover:bg-gradient-to-r from-green-700 to-green-800 m-2"
-                        [ngClass]="[(hoverIndex === i) ? 'shadow-sm ring-2 scale-105 bg-gradient-to-r from-green-700 to-green-800 text-white border border-gray-400 hover:text-white'  : 'border border-gray-500',
-                         (buttonIndex === i) ? ' inset-shadow-sm inset-shadow-gray-300':'border border-gray-500',
-                         estadoCompletos[i] ? 'bg-gradient-to-r from-green-700 to-green-800 text-white border border-gray-500 shadow shadow-gray-400' : 'border border-gray-500' ]"
-                        (click)="onButtonClick(i)">
-                        <span class="text-lg font-semibold">
-                            {{ i + 1 }}
-                        </span>
-                        <h6 class="leading-tight text-center mt-1">
-                            {{ estado }}
-                        </h6>
+                    <button class="w-full h-24 flex flex-col items-center justify-center rounded-xl 
+                        transition-all duration-200 ease-in-out m-2 border" [ngClass]="{
+                            'border-gray-700 bg-white text-gray-800': !estadoCompletos[i] && hoverIndex !== i && buttonIndex !== i,
+                            'border-gray-400 bg-white text-gray-800': !estadoCompletos[i] && hoverIndex === i && buttonIndex !== i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white': estadoCompletos[i] && hoverIndex === i && buttonIndex !==i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white shadow-sm scale-102': estadoCompletos[i] && hoverIndex === i && buttonIndex ===i || estadoCompletos[i] && hoverIndex !== i && buttonIndex !== i || estadoCompletos[i] && buttonIndex === i && hoverIndex !==i, 
+                            'ring-2 ring-gray-600 bg-white ': !estadoCompletos[i] && buttonIndex === i && hoverIndex !== i || !estadoCompletos[i] && buttonIndex === i && hoverIndex === i,
+                            'hover:scale-[1.05]': hoverIndex !== i && buttonIndex !== i
+                        }" (click)="onButtonClick(i)" (mouseenter)="onHoverState(i)" (mouseleave)="hoverIndex = null">
+                        <span class="text-lg font-semibold">{{ i + 1 }} </span>
+                        <h6 class="leading-tight text-center mt-1">{{ estado }} </h6>
                     </button>
-
-                    <!-- Card cuando el estado está activo -->
-                    @if (buttonIndex === i) {
+                    <!-- Card cuando el estado está activo O en hover -->
+                    @if (buttonIndex === i || hoverIndex === i) {
                     <div class="w-full flex justify-center">
-                        <div
-                            class="w-[400px] bg-amber-50 rounded transition-all duration-200">
-                            <app-card [indice]="i"
-                            [refrescar]="estadoCompletos[i]"
-                                (estadoCompleto)="onEstadoCompleto($event)" />
+                        <div class="w-full bg-amber-50 rounded transition-all duration-200 animate-fade-in">
+                            <app-card [indice]="i" [refrescar]="estadoCompletos[i]"
+                                [valoresExternos]="i === 0 ? actividadesDocumentoSoporte: (i === 1 ? actividadesSoporteComputacional : null)" />
                         </div>
                     </div>
                     }
@@ -43,31 +46,22 @@
                 }
             </div>
             <!-- Sección dinámica-->
-            <div
-                class="bg-white/80 border-1 border-gray-300 rounded-lg p-1 m-1">
+            <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-1 m-1">
                 @switch (buttonIndex) {
-                <!--@case (0) {
-                <app-unificacion-criterios
-                    (unifiacionEnviado)="marcarchecklist(0)">
-                </app-unificacion-criterios>
-                }  -->
                 @case (0) {
-                <app-documentacion-soporte
-                    [procedimientoId]="procedimientoId"
-                    [documentoId]="documentoId"
+                <app-documentacion-soporte [procedimientoId]="procedimientoId" [documentoId]="documentoId"
+                    (cambioEstadoActividades)="actualizarChecklistDocumentoSoporte($event)"
                     (documentoEnviado)="marcarchecklist(0)">
                 </app-documentacion-soporte>
                 }
                 @case (1) {
-                <app-soporte-computacional
-                    [procedimientoId]="procedimientoId"
+                <app-soporte-computacional [procedimientoId]="procedimientoId"
+                    (cambioEstadoActividades)="actualizarChecklistSoporteComputacional($event)"
                     (soporteEnviado)="marcarchecklist(1)">
                 </app-soporte-computacional>
                 }
                 @case (2) {
-                <app-reglamento
-                    [procedimientoId]="procedimientoId"
-                    (soporteEnviado)="marcarchecklist(2)">
+                <app-reglamento [procedimientoId]="procedimientoId" (soporteEnviado)="marcarchecklist(2)">
                 </app-reglamento>
                 }
                 @default {

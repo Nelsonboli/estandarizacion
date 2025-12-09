@@ -1,4 +1,4 @@
-<div class="grid grid-cols-2 md:flex-row justify-center items-center gap-4 m-4">
+<div class="sm:grid-cols-1 grid-cols-2 justify-center items-center gap-4 m-4">
 
   <!-- 🔹 Ficha de Procedimiento -->
   <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4">
@@ -13,14 +13,13 @@
 
     @if (seccionActiva === 'descargar') {
     <ng-container>
-      <div
-        class="flex flex-col justify-center items-center text-center space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
+      <div class="flex flex-col justify-center items-center text-center space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
         <strong>Descargar la Ficha de Procedimiento para la DAAC</strong>
         <p class="text-med m-2 pt-2 mb-4">
           <span class="text-med text-blue-600 font-semibold">Información:</span>
           Descargue la Ficha de Procedimiento y envíe el documento a la División
           de Autoevaluación, Acreditación y Certificación (DAAC) de la Universidad
-          de Nariño para su aprobación.  
+          de Nariño para su aprobación.
           Envíelo al correo:
           <span class="text-med text-blue-600">
             acreditacioninstitucional&#64;udenar.edu.co
@@ -64,8 +63,7 @@
 
     @if (seccionActiva === 'validar') {
     <ng-container>
-      <div
-        class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
+      <div class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-2 w-full">
 
           <!-- Pregunta centrada -->
@@ -92,8 +90,7 @@
             </p>
             <button
               class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
-              <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato"
-                class="w-6 h-6" />
+              <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato" class="w-6 h-6" />
               {{ formatoEstandarizacion }}
             </button>
             <p class="text-med m-2 pt-2">
@@ -110,9 +107,9 @@
             <p class="text-med m-2 pt-2 mb-4">
               <span class="text-blue-600 font-semibold">Recuerde:</span>
               Descargar la Ficha de Procedimiento y envíar el documento a la División
-            de Autoevaluación, Acreditación y Certificación (DAAC) de la Universidad
-            de Nariño para su aprobación y subir el documento aprobrado. para continuar 
-            con el Formato de Estandarización.
+              de Autoevaluación, Acreditación y Certificación (DAAC) de la Universidad
+              de Nariño para su aprobación y subir el documento aprobrado. para continuar
+              con el Formato de Estandarización.
             </p>
             <button
               class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">

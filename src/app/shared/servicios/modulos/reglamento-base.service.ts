@@ -9,22 +9,22 @@ export class ReglamentoBaseService {
 
   private apiUrl = 'http://localhost:3000/reglamento_base';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getReglamentoBase(): Observable<any[]> {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  getReglamentoBaseById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  crearReglamentoBasePorDocumento(documentoSoporteId: number, data: any) {
+    const body = { ...data, documento_soporte_id: documentoSoporteId };
+    return this.http.post(this.apiUrl, body);
   }
 
-  CrearReglamentoBase(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  obtenerReglamentoBasePorDocumento(documentoSoporteId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/por-documento/${documentoSoporteId}`);
   }
 
   ActualizarReglamentoBase(id: number, data: any): Observable<any> {
-    console.log("👉 Enviando al PATCH:", data);
     return this.http.patch(`${this.apiUrl}/${id}`, data);
   }
 

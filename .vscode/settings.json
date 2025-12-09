@@ -2,7 +2,6 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-
   "angular-schematics.schematicsDefaultOptions": {
     "angular-*": {
       "externalTemplate": true
@@ -14,8 +13,5 @@
       "skipChangeDetectionOnPush": true
     }
   },
-
+  "workbench.colorTheme": "Visual Studio Dark",
 }
-
-
-

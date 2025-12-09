@@ -45,27 +45,27 @@ export class AlertService {
     );
   }
 
-alertArriba(titulo: string) {
-  const Toast = Swal.mixin({
-    toast: true,
-    position: "top-end",
-    showConfirmButton: false,
-    timer: 2000,
-    background: "#ffffff", // verde (Tailwind: green-600)
-    color: "16a34a",       // texto blanco
-    showClass: {
-      popup: ''             // sin animación al mostrar
-    },
-    hideClass: {
-      popup: ''             // sin animación al ocultar
-    }
-  });
+  alertExitoArriba(titulo: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2000,
+      background: "#ffffff", // verde (Tailwind: green-600)
+      color: "16a34a",       // texto blanco
+      showClass: {
+        popup: ''             // sin animación al mostrar
+      },
+      hideClass: {
+        popup: ''             // sin animación al ocultar
+      }
+    });
 
-  Toast.fire({
-    icon: "success",
-    title: titulo
-  });
-}
+    Toast.fire({
+      icon: "success",
+      title: titulo
+    });
+  }
 
 
 

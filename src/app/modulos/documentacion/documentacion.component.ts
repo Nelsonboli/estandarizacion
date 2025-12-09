@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { NavegacionComponent } from "../../shared/component/navegacion/navegacion";
@@ -16,34 +16,58 @@ export class DocumentacionComponent implements OnInit, OnDestroy, AfterViewInit 
   private sections: HTMLElement[] = [];
 
   ngOnInit(): void {
-  
+
   }
 
-  ngAfterViewInit(): void {
-    // Guardamos las secciones del contenido
-    this.sections = Array.from(document.querySelectorAll('section'));
-    this.onScroll(); // Inicializa el activo al cargar
-  }
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLElement>;
+
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+
+  ngAfterViewInit(): void {
+    this.sections = Array.from(
+      this.scrollContainer.nativeElement.querySelectorAll('section')
+    );
+
+    this.scrollContainer.nativeElement.addEventListener('scroll', () => {
+      this.onScroll();
+    });
+
+    this.onScroll();
+  }
+
+
   /** Detecta el scroll y actualiza la sección activa */
-  @HostListener('window:scroll', [])
   onScroll(): void {
+    if (!this.sections.length) return;
+
+    const scrollPosition = this.scrollContainer.nativeElement.scrollTop;
+    const offset = 150; // Offset desde el top del contenedor
+
     let currentSection = '';
 
+    // Recorrer las secciones de arriba hacia abajo
     for (const section of this.sections) {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= 120 && rect.bottom >= 120) { // posición visible en viewport
+      const sectionTop = section.offsetTop;
+      const sectionBottom = sectionTop + section.offsetHeight;
+
+      // Si el scroll está dentro de esta sección (con offset)
+      if (scrollPosition + offset >= sectionTop && scrollPosition + offset < sectionBottom) {
         currentSection = section.id;
         break;
       }
     }
 
-    if (currentSection && this.activeSection !== currentSection) {
+    // Si no encontramos ninguna sección, verificar si estamos al inicio
+    if (!currentSection && scrollPosition < 100) {
+      currentSection = '';
+    }
+
+    if (this.activeSection !== currentSection) {
       this.activeSection = currentSection;
     }
   }
@@ -59,7 +83,19 @@ export class DocumentacionComponent implements OnInit, OnDestroy, AfterViewInit 
 
   /** Vuelve al inicio */
   scrollToTop(): void {
-    window.scrollTo({ top: 20, behavior: 'smooth' });
-    this.activeSection = '';
+    if (this.scrollContainer && this.scrollContainer.nativeElement) {
+      const firstChild = this.scrollContainer.nativeElement.firstElementChild;
+      if (firstChild) {
+        firstChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        // Fallback: scroll directo al contenedor
+        this.scrollContainer.nativeElement.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+      this.activeSection = '';
+    }
   }
+
 }
