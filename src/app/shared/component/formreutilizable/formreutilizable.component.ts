@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AlertService } from '../../Utils/Alertas/alert.service';
 import { MatIconModule } from '@angular/material/icon';
 import { TablasFormularioComponent } from "../tablas-formulario/tablas-formulario.component";
-import { FormUtils } from '../../Utils/Formulario/formulario';
 import { TitleCasePipe, NgClass } from '@angular/common';
 
 
@@ -18,7 +17,14 @@ import { TitleCasePipe, NgClass } from '@angular/common';
 export class FormreutilizableComponent implements OnInit {
   // Inputs y outputs
   @Input() titulo: string[] | undefined;
-  @Input() campos: { key: string; label: string; Tooltip?: string; required?: boolean }[] = [];
+  @Input() campos: {
+    key: string;
+    label: string;
+    Tooltip?: string;
+    required?: boolean;
+    type?: 'input' | 'select' | 'textarea';
+    options?: { label: string; value: any }[];
+  }[] = [];
   @Input() datoEditar: any = null;
   @Output() guardar = new EventEmitter<any>();
   @Output() cerrar = new EventEmitter<void>();
@@ -27,7 +33,6 @@ export class FormreutilizableComponent implements OnInit {
   form!: FormGroup;
   listaDatos = signal<any[]>([]);
   editIndex = signal<number | null>(null);
-  formUtils = FormUtils
 
   constructor(private fb: FormBuilder,
     private alertService: AlertService,
@@ -50,6 +55,14 @@ export class FormreutilizableComponent implements OnInit {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['datoEditar'] && this.datoEditar && this.form) {
       this.cargarFormulario(this.datoEditar);
+    }
+  }
+
+  cambiarColorSelect(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    if (select.value) {
+      select.classList.remove('text-gray-400');
+      select.classList.add('text-black');
     }
   }
 
@@ -115,6 +128,14 @@ export class FormreutilizableComponent implements OnInit {
         // 🔄 Reemplazar en la posición editada
         this.listaDatos.update(lista => {
           const copia = [...lista];
+          const valorAnterior = copia[this.editIndex()!][campo];
+          const valorNuevo = control.value;
+
+          // Si el valor ha cambiado, mostrar alerta de éxito
+          if (valorAnterior !== valorNuevo) {
+            this.alertService.infoExito('Campo actualizado');
+          }
+
           copia[this.editIndex()!] = nuevoRegistro;
           return copia;
         });
@@ -146,6 +167,7 @@ export class FormreutilizableComponent implements OnInit {
   //  Eliminar un dato de la tabla
   eliminarDato(item: any) {
     this.listaDatos.update(lista => lista.filter(p => p !== item));
+    this.alertService.infoEliminar('Campo eliminado');
   }
 
   // Cancelar formulario
@@ -166,7 +188,6 @@ export class FormreutilizableComponent implements OnInit {
         const tieneDatos = this.tieneDatosEnTabla(campo.key)
         return !tieneDatos;
       });
-
     // Si hay campos faltantes...
     if (camposFaltantes.length > 0) {
       // Marcar solo los campos faltantes como "touched" 

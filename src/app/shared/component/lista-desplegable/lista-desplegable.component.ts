@@ -18,38 +18,43 @@ export class ListaDesplegableComponent implements OnInit {
   @ViewChild('formulario') formularioRef!: ElementRef;
   escalar = false;
   procedimientos: any[] = [];
-  selectedProcedimiento: any = '';
+  selectedProcedimiento: number | null = null;
 
   constructor(
-     private router: Router,
-     private listaService: EstadolistaService) { }
+    private router: Router,
+    private listaService: EstadolistaService) { }
 
   ngOnInit() {
-
     this.listaService.visible$.subscribe(valor => {
-    this.visible = valor;
-  });
+      this.visible = valor;
+    });
   }
 
   ngOnChanges() {
-    // ✅ Si el padre pasa datos (items), los usamos directamente
     if (this.items && this.items.length > 0) {
       this.procedimientos = this.items;
     }
   }
 
-  onCancel() {
+  Cancelar() {
     this.cerrar.emit();
     this.router.navigate(['/']);
   }
 
-  onGuardar() {
+  Guardar() {
+    console.log('Guardar clicked. Selected ID:', this.selectedProcedimiento);
+    console.log('Available procedimientos:', this.procedimientos);
+
     const procedimiento = this.procedimientos.find(
-      p => p.Procedimiento === this.selectedProcedimiento
+      p => p.id === Number(this.selectedProcedimiento)
     );
+
     if (procedimiento) {
+      console.log('Procedimiento found:', procedimiento);
       this.guardar.emit(procedimiento);
       this.cerrar.emit();
+    } else {
+      console.log('No se encontró el procedimiento seleccionado');
     }
   }
 
@@ -60,7 +65,7 @@ export class ListaDesplegableComponent implements OnInit {
 
       setTimeout(() => {
         this.escalar = false;
-      }, 300);
+      }, 320);
     }
   }
 

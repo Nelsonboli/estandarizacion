@@ -101,7 +101,7 @@ export class SoporteComputacionalComponent implements OnInit, OnChanges {
         next: (data) => {
           this.soporteId = data.id;
           this.modoEdicion = false;
-          this.alertService.alertExitoArriba('Soporte computacional creado correctamente');
+          this.alertService.infoExito('Soporte computacional creado correctamente');
         },
         error: (err) => {
           console.error('Error al crear soporte computacional:', err);
@@ -130,7 +130,7 @@ export class SoporteComputacionalComponent implements OnInit, OnChanges {
     this.soporteComputacionalService.actualizarSoporteComputacional(this.soporteId, formData)
       .subscribe({
         next: () => {
-          this.alertService.alertExitoArriba('Soporte computacional actualizado correctamente');
+          this.alertService.infoExito('Soporte computacional actualizado correctamente');
           // Verificar actividades después de guardar
           setTimeout(() => this.verificarActividadesSoporteComputacional(), 300);
         },
@@ -139,6 +139,25 @@ export class SoporteComputacionalComponent implements OnInit, OnChanges {
           this.alertService.error('Error al guardar el soporte computacional');
         }
       });
+  }
+
+  private verificarFormulario(soporte: any) {
+    // El formulario está completo si tiene todos los campos requeridos
+    let completado = false;
+    if (soporte.tiene_soporte === true) {
+      // Si tiene soporte, debe tener nombre y descripción
+      completado = !!(soporte.nombre && soporte.descripcion);
+    } else if (soporte.tiene_soporte === false) {
+      // Si no tiene soporte, debe tener requiere_soporte
+      completado = soporte.requiere_soporte !== null && soporte.requiere_soporte !== undefined;
+    }
+    const estadoActual = this.estadoSoporteComputacional();
+    if (estadoActual.formularioCompleto !== completado) {
+      this.estadoSoporteComputacional.update(state => ({ ...state, formularioCompleto: completado }));
+      console.log('� Formulario Soporte Computacional:', completado ? 'Completado' : 'Pendiente');
+      this.actualizarActividadesSoporteComputacional();
+    }
+    this.cambioEstadoActividades.emit([completado]);
   }
 
   // Verificar y marcar actividades del soporte computacional
@@ -159,25 +178,6 @@ export class SoporteComputacionalComponent implements OnInit, OnChanges {
         this.cambioEstadoActividades.emit([false]);
       }
     });
-  }
-
-  private verificarFormulario(soporte: any) {
-    // El formulario está completo si tiene todos los campos requeridos
-    let completado = false;
-    if (soporte.tiene_soporte === true) {
-      // Si tiene soporte, debe tener nombre y descripción
-      completado = !!(soporte.nombre && soporte.descripcion);
-    } else if (soporte.tiene_soporte === false) {
-      // Si no tiene soporte, debe tener requiere_soporte
-      completado = soporte.requiere_soporte !== null && soporte.requiere_soporte !== undefined;
-    }
-    const estadoActual = this.estadoSoporteComputacional();
-    if (estadoActual.formularioCompleto !== completado) {
-      this.estadoSoporteComputacional.update(state => ({ ...state, formularioCompleto: completado }));
-      console.log('� Formulario Soporte Computacional:', completado ? 'Completado' : 'Pendiente');
-      this.actualizarActividadesSoporteComputacional();
-    }
-    this.cambioEstadoActividades.emit([completado]);
   }
 
   // Actualizar actividades en el backend (optimizado - una sola llamada HTTP)

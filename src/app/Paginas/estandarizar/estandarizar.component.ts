@@ -43,6 +43,7 @@ export class EstandarizarComponent {
 
   actividadesDocumentoSoporte: boolean[] = [false, false, false];
   actividadesSoporteComputacional: boolean[] = [false];
+  actividadesReglamento: boolean[] = [false];
 
   constructor(
     private route: ActivatedRoute,
@@ -64,15 +65,13 @@ export class EstandarizarComponent {
 
   onButtonClick(index: number) {
     if (index === 0 || this.estadoCompletos[index - 1]) {
-      this.buttonIndex = index;
       if (index === 0) {
-        // 1️⃣ Primero obtener documento soporte si ya existe
+        // Primero obtener o crear el documento de soporte
         this.documentoSoporteService.getPorProcedimiento(this.procedimientoId).subscribe({
           next: (doc: any) => {
             if (doc) {
-              // Ya existe → solo asignarlo
+              // Ya existe → asignarlo y mostrar
               this.documentoId = doc.id;
-              // Cargar el estado de actividades completadas
               if (doc.actividades_completadas) {
                 this.actividadesDocumentoSoporte = [
                   doc.actividades_completadas.formulario,
@@ -80,32 +79,38 @@ export class EstandarizarComponent {
                   doc.actividades_completadas.diagramaFlujo
                 ];
               }
-              // Verificar si el documento está completado
               if (doc.documento_completado) {
                 this.estadoCompletos[0] = true;
-                console.log('✅ Documento de soporte completado');
               }
+              // Ahora sí, mostrar el componente
+              this.buttonIndex = index;
               this.cd.detectChanges();
-              console.log('id-de_documento_ya_existe', this.documentoId)
             } else {
-              // 2️⃣ No existe → crearlo
+              // No existe → crearlo primero
               this.documentoSoporteService.crearDocumento(this.procedimientoId).subscribe({
                 next: (nuevo) => {
                   this.documentoId = nuevo.id;
+                  // Ahora sí, mostrar el componente
+                  this.buttonIndex = index;
                   this.cd.detectChanges();
                 },
                 error: (err) => {
                   console.error('Error creando documento soporte', err);
+                  this.alertService.error('Error al crear el documento de soporte');
                 }
               });
             }
           },
           error: (err) => {
             console.error('Error obteniendo documento soporte', err);
+            this.alertService.error('Error al obtener el documento de soporte');
           }
         });
+      } else {
+        // Para otros estados, mostrar inmediatamente
+        this.buttonIndex = index;
+        this.cd.detectChanges();
       }
-      this.cd.detectChanges();
     } else {
       this.estado = this.datosService.estados[index - 1];
       const siguiente = this.datosService.estados[index];
@@ -268,7 +273,7 @@ export class EstandarizarComponent {
   marcarchecklist(index: number) {
     this.estadoCompletos[index] = true;
     console.log('el estado completo es el', this.estadoCompletos)
-    this.alertService.alertExitoArriba(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
+    this.alertService.infoExito(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
     //  Obtener el procedimiento activo
     const procedimientoId = sessionStorage.getItem('procedimientoActivo');
     if (!procedimientoId) return;
@@ -277,5 +282,22 @@ export class EstandarizarComponent {
     if (index === 0) {
       setTimeout(() => this.cargarEstadoDocumentoSoporte(), 300);
     }
+  }
+
+  // Helper methods para validaciones en el template
+  todosEstadosCompletos(): boolean {
+    return this.estadoCompletos.every(estado => estado === true);
+  }
+
+  todasActividadesDocumentoSoporteCompletas(): boolean {
+    return this.actividadesDocumentoSoporte.every(actividad => actividad === true);
+  }
+
+  todasActividadesSoporteComputacionalCompletas(): boolean {
+    return this.actividadesSoporteComputacional.every(actividad => actividad === true);
+  }
+
+  todasActividadesReglamentoCompletas(): boolean {
+    return this.actividadesReglamento.every(actividad => actividad === true);
   }
 }

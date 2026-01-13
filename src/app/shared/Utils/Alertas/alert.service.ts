@@ -4,12 +4,7 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 @Injectable({ providedIn: 'root' })
 
 export class AlertService {
-
-  /**
-   * Confirmación genérica
-   */
   confirmar(
-
     titulo: string,
     texto: string,
     icono: SweetAlertIcon = 'question',
@@ -45,29 +40,73 @@ export class AlertService {
     );
   }
 
-  alertExitoArriba(titulo: string) {
+  infoExito(titulo: string) {
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
       showConfirmButton: false,
-      timer: 2000,
-      background: "#ffffff", // verde (Tailwind: green-600)
-      color: "16a34a",       // texto blanco
+      timer: 2500,
+      background: "#16a34a",
+      color: "#ffffff",
+      iconColor: "#ffffff",
       showClass: {
-        popup: ''             // sin animación al mostrar
+        popup: ''   // sin animación al mostrar
       },
       hideClass: {
-        popup: ''             // sin animación al ocultar
+        popup: ''   // sin animación al ocultar
       }
     });
-
     Toast.fire({
       icon: "success",
       title: titulo
     });
   }
 
+  infoInformacion(titulo: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2500,
+      background: "#f3f4f7",
+      color: "#2f3551",
+      iconColor: "#f7ba85",
+      showClass: {
+        popup: ''
+      },
+      hideClass: {
+        popup: ''
+      }
+    });
+    Toast.fire({
+      icon: "info",
+      title: titulo,
+    });
+  }
 
+
+  infoEliminar(titulo: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2500,
+      background: "#e55353",
+      color: "#ffffff",
+      iconColor: "#ffffff",
+      showClass: {
+        popup: ''
+      },
+      hideClass: {
+        popup: ''
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: titulo,
+
+    });
+  }
 
   /**
    * Confirmación para eliminar

@@ -1,24 +1,19 @@
 <h1 class="text-grande font-medium p-2 m-2 flex items-center gap-3 ">
-    <img src="https://sapiens.udenar.edu.co:3026/cdn/images/crear.svg" class="icono_titulos w-6 h-6">{{titulo}}
+    <img src="https://sapiens.udenar.edu.co:3026/cdn/images/crear.svg"
+        class=" text-2xl icono_titulos w-6 h-6">{{titulo}}
 </h1>
 <hr>
 <form [formGroup]="form" class="space-y-4">
     @for (col of campos; track col) {
     <div class="bg-white/80 border border-gray-400 rounded-lg p-3 m-2">
-        <!-- sm: vertical | lg: horizontal -->
         <div class="flex flex-col lg:flex-row gap-4 lg:items-start ">
-            <!-- Grupo: Input + Botón -->
-
             <div class="flex flex-col gap-3 items-stretch lg:flex-none lg:w-105">
-                <!-- Label con tooltip -->
                 <label class="flex items-center text-sm text-gray-700 relative group cursor-pointer ">
                     <mat-icon fontIcon="help" class="text-sm w-3 h-3 pl-1 text-gray-700" aria-hidden="true"></mat-icon>
                     {{ col.label | titlecase }}
-                    <!-- Popover -->
                     @if (col.Tooltip ) {
                     <div class="absolute bottom-full -translate-x-1 left-0 mb-1 hidden group-hover:flex flex-col 
                         min-w-70 max-w-70 pl-1 pt-1 bg-black text-white rounded-lg shadow-lg text-sm z-30">
-                        <!-- Triángulo -->
                         <div class="absolute top-full left-2 w-0 h-0 
                             border-l-4 border-l-transparent
                             border-r-4 border-r-transparent
@@ -33,13 +28,27 @@
 
                 <!-- Input y Botón -->
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
-                    <!-- Input -->
+                    <!-- Input/Select -->
+                    @if (col.type === 'select') {
+                    <select [formControlName]="col.key" [ngClass]="{'border-red-500': form.get(col.key)?.invalid || form.get(col.key)?.touched,
+                                    'border-gray-300': !(form.get(col.key)?.invalid || form.get(col.key)?.touched) }"
+                        class="flex-1 w-full min-w-0 p-2 border rounded transition-all duration-200 text-gray-400
+                             hover:bg-gray-100/25 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-500"
+                        (change)="cambiarColorSelect($event)">
+                        <option class="text-gray-200" value="" disabled selected>Seleccione {{ col.label.toLowerCase()
+                            }}</option>
+                        @for (opt of col.options; track opt.value) {
+                        <option [value]="opt.value">{{ opt.label }}</option>
+                        }
+                    </select>
+                    } @else {
                     <input type="text" [formControlName]="col.key"
                         (keydown.enter)="agregarCampo(col.key); $event.preventDefault()"
-                        [placeholder]="'Ingrese ' + col.label.toLowerCase()" [ngClass]="{'border-red-500': form.get(col.key)?.invalid && form.get(col.key)?.touched,
-                                    'border-gray-300': !(form.get(col.key)?.invalid && form.get(col.key)?.touched) }"
-                        class="flex-1 p-2 border rounded placeholder-gray-400 transition-all duration-200
+                        [placeholder]="'Ingrese ' + col.label.toLowerCase()" [ngClass]="{'border-red-500': form.get(col.key)?.invalid || form.get(col.key)?.touched,
+                                    'border-gray-300': !(form.get(col.key)?.invalid || form.get(col.key)?.touched) }"
+                        class="flex-1 w-full min-w-0 p-2 border rounded placeholder-gray-400 transition-all duration-200
                          hover:bg-gray-100/25 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-blue-500" />
+                    }
 
                     <!-- Botón -->
                     <div class="flex items-end justify-center sm:justify-start">
@@ -59,11 +68,11 @@
                 <!-- Campo vacío y sin datos en tabla -->
                 <span class="text-rojo-btn">{{col.key}} es obligatorio</span>
                 }
-                @else if(tieneDatosEnTabla(col.key) &&
+                }
+                @if(tieneDatosEnTabla(col.key) &&
                 !todosMultiples.includes(col.key) && form.get(col.key)?.valid) {
                 <!-- Campo no múltiple con validacion de valor -->
                 <span class="text-amber-600">Solo se permite un valor para este campo</span>
-                }
                 }
             </div>
 

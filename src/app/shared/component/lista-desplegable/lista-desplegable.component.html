@@ -1,58 +1,44 @@
 @if (visible) {
-<div
-  class="fixed inset-0 bg-black/50 z-[9999] overflow-y-auto flex items-center justify-center"
+<div class="fixed inset-0 bg-black/50 z-[9999] overflow-y-auto flex items-center justify-center"
   (click)="onBackdropClick($event)">
-  
-  <div
-    #formulario
-    class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-2xl">
-    
+  <div #formulario class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-3xl">
     <h2 class="text-xl font-semibold mb-6 text-center text-gray-800">
-     Procedimiento a socializar
+      Procedimiento a socializar
     </h2>
 
-    <form (ngSubmit)="onGuardar()" #formulario>
-      <!-- Contenedor horizontal -->
-      <div class="flex flex-row items-center gap-4">
-        
-        <!-- Select estilizado -->
-        <select
-          [(ngModel)]="selectedProcedimiento"
-          name="procedimiento"
-          class="flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm 
-                 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition 
+    <form (ngSubmit)="Guardar()" #formulario>
+      <!-- CONTENEDOR RESPONSIVE -->
+      <div class="flex flex-col md:flex-row md:items-center gap-4">
+
+        <!-- SELECT -->
+        <select [(ngModel)]="selectedProcedimiento" name="procedimiento" class="w-full md:flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white shadow-sm
+                 focus:ring-2 focus:ring-blue-400 focus:border-blue-500 transition
                  text-gray-700">
-          
-          <!-- Placeholder -->
-          <option value="" disabled>
-            Seleccionar un procedimiento.
+          <option [value]="null" disabled>
+            Seleccionar un procedimiento...
           </option>
 
-          <!-- Opciones -->
-          @for (proc of procedimientos; track $index) {
-            <option [value]="proc.procedimiento" class="py-2">
-              {{ proc.procedimiento | titlecase  }}
-            </option>
+          @for (proc of procedimientos; track proc.id) {
+          <option [value]="proc.id">
+            {{ proc.procedimiento | titlecase }}
+          </option>
           }
         </select>
 
-        <!-- Botones al lado del select -->
-        <div class="flex flex-row gap-2">
-          <button
-            type="button"
-            (click)="onCancel()"
-            class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg shadow-sm 
-                   hover:bg-gray-400 transition">
+        <!-- BOTONES -->
+        <div class="flex flex-col sm:flex-row gap-3
+                 justify-center md:justify-end
+                 w-full md:w-auto">
+          <button type="button" (click)="Cancelar()" class="w-full sm:w-auto px-4 py-2 bg-gray-100 border border-gray-200 text-gray-800 rounded-lg shadow-sm
+                   hover:bg-gray-200 transition">
             Cancelar
           </button>
-
-          <button
-            type="submit"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow-md 
+          <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-blue-600 border border-blue-700 text-white rounded-lg shadow-md
                    hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 transition">
             Guardar
           </button>
         </div>
+
       </div>
     </form>
   </div>

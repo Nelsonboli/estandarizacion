@@ -10,21 +10,20 @@ import { Component, EventEmitter, Input, Output, TemplateRef } from '@angular/co
 export class TablasFormularioComponent {
 
 
-@Input() encabezadoGeneral?: string;
-@Input() columns: { key: string, label: string }[] = [];
-@Input() data: any[] = [];
-@Input() accionesTemplate?: TemplateRef<any>;
+  @Input() encabezadoGeneral?: string;
+  @Input() columns: { key: string, label: string }[] = [];
+  @Input() data: any[] = [];
+  @Input() accionesTemplate?: TemplateRef<any>;
 
-@Input() mostrarOpciones: boolean = true;
+  @Input() mostrarOpciones: boolean = true;
 
-@Output() eliminar = new EventEmitter<any>();
-@Output() editar = new EventEmitter<any>();
-Array: any;
+  @Output() eliminar = new EventEmitter<any>();
+  @Output() editar = new EventEmitter<any>();
+  Array: any;
 
 
-ngOnChanges() {
-
-  console.log('Datos recibidos en tabla:', this.data);
-}
+  ngOnChanges() {
+    console.log('Datos recibidos en tabla:', this.data);
+  }
 
 }

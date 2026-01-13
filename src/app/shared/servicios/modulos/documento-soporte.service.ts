@@ -8,6 +8,14 @@ export class DocumentoSoporteService {
 
   constructor(private http: HttpClient) { }
 
+  getDocumentos(): Observable<any[]> {
+    return this.http.get<any[]>(this.base);
+  }
+
+  getDocumento(id: number): Observable<any> {
+    return this.http.get<any>(`${this.base}/${id}`);
+  }
+
   crearDocumento(procedimientoId: number) {
     return this.http.post<any>(`${this.base}/crear-documento/${procedimientoId}`, {});
   }

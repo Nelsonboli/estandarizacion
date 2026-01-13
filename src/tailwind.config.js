@@ -8,7 +8,7 @@ module.exports = {
   ],
   // ...otros settings
 
- 
+
   content: [
     "./src/**/*.{html,js,ts,tsx}", // Ajusta según tu estructura
   ],
@@ -18,11 +18,11 @@ module.exports = {
         helveticaMedium: ['HelveticaMedium', 'sans-serif'],
       },
       fontSize: {
-        '14': '14px',
+        '12': '12px',
       },
     },
   },
   plugins: [],
 
-  
+
 }

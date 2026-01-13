@@ -62,7 +62,12 @@ export class DatosService {
       key: 'categoria',
       label: 'categoría',
       Tooltip: 'Seleccione la categoría a la cual pertenece el procedimiento.',
-      required: true
+      required: true,
+      type: 'select' as const,
+      options: [
+        { label: 'Procesos Misionales - Formacion Academica', value: 'Procesos Misionales - Formacion Academica' },
+        { label: 'Procesos Misionales - Formacion Continua', value: 'Procesos Misionales - Formacion Continua' }
+      ]
     },
     {
       key: 'roles',
@@ -74,7 +79,15 @@ export class DatosService {
       key: 'estado',
       label: 'estado',
       Tooltip: 'Especifique el estado actual del procedimiento (Inicial, Intermedio 1, Intermedio 2, Intermedio 3).',
-      required: true
+      required: true,
+      type: 'select' as const,
+      options: [
+        { label: 'Inicial (I)', value: 'Inicial' },
+        { label: 'Intermedio 1 (I1)', value: 'Intermedio 1' },
+        { label: 'Intermedio 2 (I2)', value: 'Intermedio 2' },
+        { label: 'Intermedio 3 (I3)', value: 'Intermedio 3' },
+        { label: 'Completo (C)', value: 'Completo' }
+      ]
     },
     {
       key: 'actividades',

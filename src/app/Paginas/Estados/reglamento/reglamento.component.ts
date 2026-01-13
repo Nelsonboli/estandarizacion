@@ -1,23 +1,28 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, Input, OnInit, } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DiagramaService } from '../../../shared/servicios/diagrama.service';
 import jsPDF from 'jspdf';
+import { SubirArchivoComponent } from "../../../shared/component/subir-archivo/subir-archivo.component";
+import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
 
 @Component({
   selector: 'app-reglamento',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, SubirArchivoComponent],
   templateUrl: './reglamento.component.html',
   styleUrl: './reglamento.component.css'
 })
 export class ReglamentoComponent implements OnInit {
-  seccionActiva: 'descargar' | 'validar' | null = null;
+  descargaActiva: 'descargarProcedimiento' | 'descargarEstandarizacion' | null = null;
+  subidaActiva: 'subirProcedimiento' | 'subirEstandarizacion' | null = null;
   formatoEstandarizacion = "Formato de Estandarizacion"
   fichaProcedimiento = "Ficha de Procedimiento"
   @Input() procedimientoId!: number;
   form!: FormGroup;
+  subiendo = false;
 
   constructor(private fb: FormBuilder,
-    private diagramaService: DiagramaService
+    private diagramaService: DiagramaService,
+    private alertService: AlertService
   ) { }
 
   ngOnInit() {
@@ -36,7 +41,6 @@ export class ReglamentoComponent implements OnInit {
 
     // Agregar título
     doc.text('Ficha de Procedimiento', 10, 10);
-
     // Cargar diagrama
     const imgData = this.diagramaService.cargarImagen();
     if (imgData) {
@@ -48,5 +52,28 @@ export class ReglamentoComponent implements OnInit {
     // Guardar PDF
     doc.save('procedimiento.pdf');
   }
+
+  subirArchivoEstandarizacion(file: File) {
+
+  }
+
+  subirArchivoProcedimiento(file: File) {
+
+  }
+
+  //  subirArchivo(file: File) {
+  //   this.subiendo = true;
+
+  //   this.reglamentoService.subirArchivo(file).subscribe({
+  //     next: () => {
+  //       this.subiendo = false;
+  //       this.alertService.alertExitoArriba('Archivo subido correctamente');
+  //     },
+  //     error: () => {
+  //       this.subiendo = false;
+  //       this.alertService.alertExitoArriba('Error subiendo el archivo');
+  //     }
+  //   });
+  // }
 
 }

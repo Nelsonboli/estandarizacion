@@ -1,132 +1,180 @@
-<div class="font-sans text-gray-800 bg-white p-1 ">
-  <!-- Título superior -->
-  <div
-    class="mb-2  bg-white text-med py-2 px-3 rounded-xl shadow-sm max-w-screen mx-auto">
-    <div
-      class="bg-azul-oscuro font-medium text-white p-2 border-2 rounded mb-2 uppercase">
-      4. Socialización de procedimientos</div>
-
-    <!-- Modal de lista desplegable  -->
-    <app-lista-desplegable
-      [visible]="abrir"
-      [items]="procedimientos"
-      (cerrar)="cerrarModal()"
-      (guardar)="onSocializar($event)">
-    </app-lista-desplegable>
-
-    @if (procedimientoSeleccionado) {
-    <h4 class="font-normal"> <strong>Procedimiento:</strong>
-      {{procedimientoSeleccionado.Procedimiento}}</h4>
-
-    <!-- tabla de procedimiento  -->
-    @if (procedimientoSeleccionado) {
-    <h3 class=" text-grande font-bold m-3 text-center justify-center"> Ficha
-      Tecnica del Procedimiento </h3>
-    <app-tabla-criterios
-      [columnas]="datosTablaService.encabezadoFichaTecnica"
-      [filas]="filasProcedimiento">
-    </app-tabla-criterios>
-    }
-
+<div class="p-2 bg-white">
+  <div class="text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
+    4. Socialización de procedimientos
+  </div>
+  <!-- Modal de lista desplegable  -->
+  <app-lista-desplegable [visible]="abrir" [items]="procedimientos" (cerrar)="cerrarModal()"
+    (guardar)="onSocializar($event)">
+  </app-lista-desplegable>
+  @if (procedimientoSeleccionado) {
+  <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+    <div class="bg-gray-100 border-b border-gray-200 px-4 py-3 mb-3">
+      <h4 class="font-normal text-center"> <strong>Procedimiento: </strong>
+        {{procedimientoSeleccionado.procedimiento | titlecase}}
+      </h4>
+    </div>
     <div class="px-4">
+      <!-- Mostrar Ficha tecnica del procedimiento -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Ficha Técnica del Procedimiento
+          </h1>
+        </div>
+        <div class="p-4">
+          <app-tabla-criterios [columnas]="datosTablaService.encabezadoFichaTecnica" [filas]="datosProcedimiento">
+          </app-tabla-criterios>
+        </div>
+      </div>
+
       <!-- Mostrar el formulario DAAC -->
-      <h3 class=" text-grande font-bold m-3 text-center justify-center">
-        Formulario DAAC</h3>
-      <app-tabla-criterios
-        [columnas]="datosTablaService.DescripcionDAAC"
-        [filas]="datosDAAC">
-      </app-tabla-criterios>
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Formulario División de Autoevaluación y Acreditación de la Calidad
+          </h1>
+        </div>
+        <div class="p-4">
+          @if (FormularioDAAC.length > 0) {
+          <app-tabla-criterios [columnas]="datosTablaService.DescripcionDAAC" [filas]="FormularioDAAC">
+          </app-tabla-criterios>
+          }
+          @else {
+          <p class="text-gray-500 text-center font-bold">
+            El procedimiento {{ procedimientoSeleccionado.procedimiento | titlecase }}
+            no tiene el Formulario DAAC creado
+          </p>
+          }
+        </div>
+      </div>
 
       <!-- Documento base -->
-      <h3 class="text-grande font-bold m-3 text-center justify-center">Documento Base</h3>
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Documento Base
+          </h1>
+        </div>
+        <div class="p-4">
+          @if (documentosBase && documentosBase.length > 0) {
+          <app-tablas-formulario [columns]="columnaDocumentoBase" [data]="documentosBase" [mostrarOpciones]="false">
+          </app-tablas-formulario>
+          }
+          @else {
+          <p class="text-gray-500 text-center font-bold">
+            El procedimiento {{ procedimientoSeleccionado.procedimiento | titlecase }}
+            no tiene Documento Base creado
+          </p>
+          }
+        </div>
+      </div>
 
       <!-- Mostrar Diagrama de flujo -->
-      <h3 class="text-grande font-bold m-3 text-center justify-center"> Diagrama
-         de Flujo procedimiento {{procedimientoSeleccionado.Procedimiento}}</h3>
-      @if (imagenDiagrama) {
-      <img [src]="imagenDiagrama"
-        alt="Diagrama de flujo de procedimiento {{procedimientoSeleccionado.Procedimiento}}"
-        class="max-w-full mx-auto  " />
-      } @else {
-      <p class="text-gray-500 italic">el procedimiento no tiene un diagrama de
-        flujo creado</p>
-      }
-
-      <!-- Sorporte documental -->
-      <h3 class="text-grande font-bold m-3 text-center justify-center">Soporte
-        Computacional</h3>
-      <!-- Muestra los datos guardados -->
-      @if(soporteComputacional){
-      <div
-        class=" flex flex-1 w-1/2 text-center items-center justify-center borde rounded-lg border-gray-100 p-3 shadow-sm m-3 ">
-        <ul class="list-disc list-inside text-gray-700">
-          <li><strong>¿Cuenta con soporte?:</strong> {{
-            soporteComputacional.respuesta1 }}</li>
-          @if (soporteComputacional.detalle1) {
-          <li><strong>Nombre del soporte:</strong> {{
-            soporteComputacional.detalle1 }}</li>
-          <li><strong>Descripción:</strong> {{ soporteComputacional.detalle2
-            }}</li>
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Diagrama de Flujo {{ procedimientoSeleccionado.procedimiento | titlecase }}
+          </h1>
+        </div>
+        <div class="p-4 text-center">
+          @if (imagenDiagrama) {
+          <Button (click)="descargarPDFDiagrama()" class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
+               text-gray-700 px-4 py-2 rounded hover:bg-gray-200">
+            <img src="assets/elementos/descargarDocumentoGris.svg" class="w-6 h-6" />
+            Descargar PDF del Diagrama
+          </Button>
           }
-          @if (soporteComputacional.respuesta2) {
-          <li><strong>¿Requiere soporte?:</strong> {{
-            soporteComputacional.respuesta2 }}</li>
+          @else {
+          <p class="text-gray-500 font-bold">
+            El procedimiento no tiene Diagrama de Flujo creado
+          </p>
           }
-        </ul>
+        </div>
       </div>
-      } @else(){
-      <p class="text-gray-500 italic">el procedimiento no tiene un soporte
-        computacional registrado</p>
 
-      }
+      <!-- Soporte computacional -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Soporte Computacional
+          </h1>
+        </div>
+        <div class="p-4">
+          @if (soporteComputacional) {
+          <div class="border rounded-lg p-4 shadow-sm max-w-xl mx-auto">
+            <ul class="list-none list-inside text-gray-700 items-center text-center">
+              <li><strong>Cuenta con soporte computacional:</strong> {{
+                soporteComputacional.tiene_soporte ? 'Sí' : 'No' }}</li>
+              @if (soporteComputacional.nombre) {
+              <li><strong>Nombre del soporte computacional:</strong> {{
+                soporteComputacional.nombre }}</li>
+              }
+              @if (soporteComputacional.descripcion) {
+              <li><strong>Descripción del soporte computacional:</strong> {{ soporteComputacional.descripcion
+                }}</li>
+              }
+              @if (soporteComputacional.requiere_soporte !== undefined && soporteComputacional.requiere_soporte !==
+              null)
+              {
+              <li><strong>Requiere soporte computacional:</strong> {{
+                soporteComputacional.requiere_soporte ? 'Sí' : 'No' }}</li>
+              }
+            </ul>
+          </div>
+          }
+          @else {
+          <p class="text-gray-500 text-center font-bold">
+            No existe soporte computacional registrado
+          </p>
+          }
+        </div>
+      </div>
 
-      <ng-template #sinSoporte>
-        <p class="italic text-gray-500 m-3">Aún no se ha registrado información
-          de soporte computacional.</p>
-      </ng-template>
+      <!-- Formato de Estandarización -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Formato de Estandarización
+          </h1>
+        </div>
+        <div class="p-4 text-center">
+          <Button class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
+             text-gray-700 px-4 py-2 rounded hover:bg-gray-200">
+            <img src="assets/elementos/descargarDocumentoGris.svg" class="w-6 h-6" />
+            Descargar PDF del Procedimiento
+          </Button>
+        </div>
+      </div>
 
-      <!-- Encabezado del procedimiento -->
-      <h2 class="text-xl font-semibold text-azul-fondo m-3"> Formato de
-        Estandarización </h2>
-      <ul class="list-disc list-inside text-blue-600">
-        <li><a href="#" class="hover:underline">Descargar Procedimiento
-            PDF</a></li>
-      </ul>
-
+      <!-- Registro de socialización -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
+        <div class="bg-gray-50 border-b border-gray-200 px-4">
+          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+            Registro de Socialización
+          </h1>
+        </div>
+        <div class="p-4">
+          @if (!socializado) {
+          <form (ngSubmit)="registrarSocializacion()" class="flex flex-wrap gap-4 justify-center">
+            <input type="date" [(ngModel)]="fecha" name="fecha" class="p-2 border rounded w-full md:w-1/4" required>
+            <input type="time" [(ngModel)]="lugar" name="hora" class="p-2 border rounded w-full md:w-1/4" required>
+            <input type="text" [(ngModel)]="lugar" name="lugar" placeholder="Lugar"
+              class="p-2 border rounded w-full md:w-1/4" required>
+            <button class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-600">
+              Registrar
+            </button>
+          </form>
+          }
+        </div>
+      </div>
     </div>
-
-    <!-- Registro de socialización -->
-    <h1 class="text-xl font-semibold text-gray-800 mb-2"> Registro de
-      socialización</h1>
-    <div class="p-4">
-
-      @if (!socializado) {
-      <form (ngSubmit)="registrarSocializacion()"
-        class="flex flex-col md:flex-row items-center gap-2">
-        <label for> Fecha: </label>
-        <input [(ngModel)]="fecha" name="fecha" type="date"
-          placeholder="fecha"
-          class="p-2 rounded border w-full md:w-1/3" required>
-        <label for> Hora: </label>
-        <input [(ngModel)]="lugar" name="hora" type="time"
-          placeholder="hora"
-          class="p-2 rounded border w-full md:w-1/3" required>
-        <label for> Lugar: </label>
-        <input [(ngModel)]="lugar" name="lugar" type="text"
-          placeholder="lugar"
-          class="p-2 rounded border w-full md:w-1/3" required>
-        <button type="submit"
-          class="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-500">Registrar</button>
-      </form>
-      }
-    </div>
-    <div>
-      <app-navegacion
-        [rutaAnterior]="'/recoleccioninformacion'"
-        [rutaSiguiente]="'/socializacionprocedimientos'"
+    <div class=" p-2">
+      <app-navegacion [rutaAnterior]="'/identificacionrequerimientos'" [rutaSiguiente]="'/manualusuario'"
         (siguiente)="abrirListaSocializacion()">
       </app-navegacion>
     </div>
-    }
   </div>
+  <div>
+  </div>
+  }
 </div>

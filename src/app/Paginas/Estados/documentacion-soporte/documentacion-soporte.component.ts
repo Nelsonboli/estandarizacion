@@ -1,10 +1,10 @@
 import { DatosService } from '../../../shared/servicios/datos.service';
 import { Diagrama } from '../../../paginas/diagrama/diagrama/diagrama';
 import { FormularioDAACService } from './../../../shared/servicios/modulos/formulario-daac.service';
-import { Component, signal, ChangeDetectorRef, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, signal, ChangeDetectorRef, Input, Output, EventEmitter, OnChanges, SimpleChanges, effect } from '@angular/core';
 import { FormreutilizableComponent } from '../../../shared/component/formreutilizable/formreutilizable.component';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
@@ -17,7 +17,7 @@ import { DocumentoSoporteService } from '../../../shared/servicios/modulos/docum
 
 @Component({
   selector: 'app-documentacion-soporte',
-  imports: [FormreutilizableComponent, CommonModule, FormsModule, Diagrama, TablasFormularioComponent, TablaDatosComponent],
+  imports: [FormreutilizableComponent, CommonModule, FormsModule, ReactiveFormsModule, TablasFormularioComponent, TablaDatosComponent, Diagrama],
   templateUrl: './documentacion-soporte.component.html',
   styleUrl: './documentacion-soporte.component.css'
 })
@@ -28,6 +28,7 @@ export class DocumentacionSoporteComponent implements OnChanges {
   @Output() documentoEnviado = new EventEmitter<void>();
   @Output() cambioEstadoActividades = new EventEmitter<boolean[]>();
   form: FormGroup;
+  formDocumentoBase!: FormGroup;
 
   //Variables con signals
   datosDAAC = signal<any[]>([]);
@@ -69,10 +70,21 @@ export class DocumentacionSoporteComponent implements OnChanges {
       id_diagrama: [''],
       documento_completado: [false],
     });
+
+    this.formDocumentoBase = this.fb.group({
+      tieneReglamento: [null, Validators.required]
+    });
+
+    // Escuchar cambios en el radio button
+    this.formDocumentoBase.get('tieneReglamento')?.valueChanges.subscribe(val => {
+      if (val === 'no') {
+        this.guardarDecisionReglamento(false);
+      }
+    });
   }
 
   columnaDocumentoBase = [
-    { key: 'documento', label: 'documento' }
+    { key: 'documento', label: 'Documentos Base' }
   ];
 
   ngOnChanges(changes: SimpleChanges) {
@@ -81,32 +93,24 @@ export class DocumentacionSoporteComponent implements OnChanges {
       // Verificar actividades cuando cambie el documentoId
       this.verificarActividadesDocumentoSoporte()
     }
-
   }
 
   ngOnInit() {
     this.cargarDocumentosBase();
     console.log('el documento es:', this.documentoId);
+
     if (this.documentoId) {
       this.cargarFormularioPorDocumento(this.documentoId);
-      // Verificar actividades al inicializar
-      this.verificarActividadesDocumentoSoporte()
+      this.verificarActividadesDocumentoSoporte();
     } else {
-      // intentar obtener documento por procedimiento (por si se creó en otro flujo)
-      this.estandarizacionService.obtenerDocumentoPorProcedimiento(this.procedimientoId)
-        .subscribe({
-          next: (doc) => {
-            this.documentoId = doc.id;
-            this.cargarFormularioPorDocumento(this.documentoId);
-            // Verificar actividades después de obtener el documento
-            this.verificarActividadesDocumentoSoporte()
-          },
-          error: () => {
-            // no existe: mostrará el formulario normal y el botón en UI creará el documento.
-            console.log('No existe documento para este procedimiento, se mostrará formulario normalmente');
-          }
-        });
+      console.log('⚠️ No hay documentoId disponible aún');
     }
+    // effect removed to allow button control
+
+  }
+
+  onSubmit() {
+
   }
 
   //Este metodo se encarga de cargar el formulario por documento
@@ -235,15 +239,65 @@ export class DocumentacionSoporteComponent implements OnChanges {
         const datosArray = Array.isArray(data) ? data : (data ? [data] : []);
         const normalizados = datosArray.map(d => ({
           id: d.id,
-          documento: d.documento ?? d.Documento ?? ''   //<- tolerancia por si backend varía
+          documento: d.documento ?? d.Documento ?? null   //<- null si no hay documento
         }));
         this.datosDocumentoBase.set(normalizados);
-        console.log('📄 Documentos base cargados para documento', this.documentoId, ':', normalizados);
+
+        // Determinar estado del radio button basado en datos
+        if (normalizados.length > 0) {
+          const tieneDocumentoReal = normalizados.some(d => d.documento !== null && d.documento !== '');
+          if (tieneDocumentoReal) {
+            this.formDocumentoBase.patchValue({ tieneReglamento: 'si' }, { emitEvent: false });
+          } else {
+            // Si hay registro pero documento es null, es un "No"
+            this.formDocumentoBase.patchValue({ tieneReglamento: 'no' }, { emitEvent: false });
+          }
+        } else {
+          this.formDocumentoBase.patchValue({ tieneReglamento: null }, { emitEvent: false });
+        }
+
+        console.log('📄 Documentos Base cargados para documento', this.documentoId, ':', normalizados);
+        if (normalizados.length > 0) {
+          this.realizarDiagrama.set(true);
+        }
       },
       error: () => {
         this.datosDocumentoBase.set([]);
         console.log('⚠️ No hay documentos base para este documento de soporte');
       }
+    });
+  }
+
+  // Guardar decisión de NO tiene reglamento (crea o actualiza registro con documento null/vacío)
+  guardarDecisionReglamento(tiene: boolean) {
+    if (tiene) return; // Si es 'si', no hace nada automático, espera a que el usuario agregue documentos
+
+    // Si es 'no', guardar un registro vacío/null
+    // Primero verificar si ya existe algun registro para editar
+    const existentes = this.datosDocumentoBase();
+    if (existentes.length > 0) {
+      // Si ya hay registros y el usuario cambia a NO, preguntamos si quiere borrar los existentes y dejar marcado como NO
+      // O si simplemente actualizamos el primero a null si solo habia uno vacio.
+      // Simplificación: Si hay registros con texto y pone No, debería borrar? 
+      // Asumiremos lógica simple: Crear registro null si no existe, o actualizar. 
+      // El requerimiento dice: "se llene como null".
+
+      // Si ya existe un registro "null", no hacemos nada.
+      const yaExisteNull = existentes.some(d => d.documento === null || d.documento === '');
+      if (yaExisteNull && existentes.length === 1) return;
+
+      // Si hay documentos reales, advertir o limpiar? 
+      // Por ahora, creamos el null.
+    }
+
+    const nuevoReglamentoBase = { documento: null }; // Enviar null
+    this.ReglamentoBaseService.crearReglamentoBasePorDocumento(this.documentoId, nuevoReglamentoBase).subscribe({
+      next: () => {
+        // this.alertService.exito('Reglamento base marcado como NO');
+        this.cargarDocumentosBase();
+        setTimeout(() => this.verificarActividadesDocumentoSoporte(), 300);
+      },
+      error: (e) => console.error(e)
     });
   }
 
@@ -260,7 +314,7 @@ export class DocumentacionSoporteComponent implements OnChanges {
       console.log("el id es:", id);
       this.ReglamentoBaseService.ActualizarReglamentoBase(id, nuevoReglamentoBase).subscribe({
         next: () => {
-          this.alertService.alertExitoArriba('Documento Base actualizado correctamente');
+          this.alertService.infoExito('Documento Base actualizado correctamente');
           this.cargarDocumentosBase();// Cargar por id relacionado con documento de soporte 
           this.documentoEditando.set(null);
           this.nuevoDato.set('');
@@ -273,7 +327,7 @@ export class DocumentacionSoporteComponent implements OnChanges {
       // Si es nuevo
       this.ReglamentoBaseService.crearReglamentoBasePorDocumento(this.documentoId, nuevoReglamentoBase).subscribe({
         next: () => {
-          this.alertService.alertExitoArriba('Documento Base agregado correctamente');
+          this.alertService.infoExito('Documento Base agregado correctamente');
           this.cargarDocumentosBase();// Cargar por id relacionado con documento de soporte 
           this.nuevoDato.set('');
           // Verificar actividades después de agregar documento base
@@ -292,7 +346,7 @@ export class DocumentacionSoporteComponent implements OnChanges {
   eliminarDato(item: any) {
     this.ReglamentoBaseService.EliminarReglamentoBase(item.id).subscribe({
       next: () => {
-        this.alertService.exito('Documento eliminado correctamente');
+        this.alertService.infoEliminar('Documento Base eliminado correctamente');
         this.cargarDocumentosBase();
       },
       error: () => this.alertService.error('Error al eliminar documento')
@@ -457,7 +511,7 @@ export class DocumentacionSoporteComponent implements OnChanges {
 
   descargarPDF() {
     const doc = new jsPDF();
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.text(this.datosService.DescripcionDAAC, 10, 10);
 
     const campos = Object.keys(this.ultimoRegistro() || {});
@@ -493,6 +547,12 @@ export class DocumentacionSoporteComponent implements OnChanges {
     // No activar descargarDocumento aquí - se activará cuando el usuario guarde el diagrama
   }
 
+  cancelarDiagrama() {
+    this.mostrarDiagrama.set(false);
+    this.realizarDiagrama.set(true);
+    this.descargarDocumento.set(false);
+  }
+
   recibirvalor(valor: boolean) {
     if (valor) {
       this.descargarDocumento.set(true);
@@ -511,64 +571,5 @@ export class DocumentacionSoporteComponent implements OnChanges {
       error: () => this.alertService.error('Error al recargar datos')
     });
   }
-
-  // guardarDatosFormularioDAAC(nuevoDato: any) {
-  //   if (this.editarformulario()) {
-  //     // Actualizar registro existente
-  //     const id = this.editarformulario().id;
-  //     this.formularioDAACService.editarFormularioDAAC(id, nuevoDato).subscribe({
-  //       next: () => {
-  //         this.formularioDAACService.getFormularioDAAC().subscribe(data => {
-  //           this.tablaFormularioDAACService.setDatosFormularioDAAC(data);
-  //           this.alertService.exito('Formulario actualizado correctamente');
-  //         })
-  //         this.actualizarLista();
-  //         console.log(this.actualizarLista)
-  //       },
-  //       error: () => this.alertService.error('Error al actualizar el formulario')
-  //     });
-  //     this.editarformulario.set(null);
-  //   } else {
-  //     // Crear nuevo registro
-  //     this.formularioDAACService.crearFormularioDAAC(nuevoDato).subscribe({
-  //       next: () => {
-  //         this.alertService.exito('Formulario guardado correctamente');
-  //         this.formularioDAACService.getFormularioDAAC().subscribe(data => {
-  //           this.tablaFormularioDAACService.setDatosFormularioDAAC(data);
-  //         })
-  //         this.actualizarLista();
-  //       }, error: (err) => {
-
-  //         console.error('Error al guardar procedimiento', err);
-  //         this.alertService.error('Error al guardar el formulario');
-  //       }
-  //     });
-  // }
-
-  //   this.mostrarFormulario.set(false);
-  //   this.mostrarbase.set(true);
-  // }
-
-  //   ObtenerDatosTablaDAAC() {
-  //   this.formularioDAACService.obtenerPorDocumento(this.documentoId).subscribe({
-  //     next: (data) => {
-  //       this.datosDAAC.set(data);
-  //       this.tablaFormularioDAACService.setDatosFormularioDAAC(data);
-  //       console.log("datos de la tabla de formulario", data)
-  //       if (data.length > 0) {
-  //         this.mostrarFormulario.set(false);
-  //         this.mostrarbase.set(true);
-  //         this.mostrarDiagrama.set(false);
-  //       } else {
-  //         this.cargarFormularioPorDocumento(data.length)
-  //         this.tablaFormularioDAACService.setDatosFormularioDAAC(data)
-  //         this.mostrarFormulario.set(true);
-  //         this.mostrarbase.set(false);
-  //         this.mostrarDiagrama.set(false);
-  //       }
-  //     },
-  //     error: () => this.alertService.error('Error al cargar formularios DAAC')
-  //   });
-  // }
 
 }

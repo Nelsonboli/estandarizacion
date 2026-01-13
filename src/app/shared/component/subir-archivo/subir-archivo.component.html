@@ -1,0 +1,43 @@
+<div class="w-full border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center
+         flex flex-col items-center justify-center gap-4 cursor-pointer
+         hover:border-gray-500 transition" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)" [class.bg-gray-300]="isDragging">
+    <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-400"></i>
+    <h6 class="text-gray-600">
+        Arrastra el archivo aquí o
+    </h6>
+    <!-- Botón elegante -->
+    <button class="px-4 py-2 bg-gray-100 text-black hover:bg-gray-200 rounded-lg shadow-md transition
+           inline-flex items-center gap-2" (click)="fileInput.click()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
+            class="w-6 h-6 mr-2 fill-gray-500 group-hover:fill-gray-600 transition-colors duration-300">
+            <path
+                d="M444-336v-342L339-573l-51-51 192-192 192 192-51 51-105-105v342h-72ZM263.72-192Q234-192 213-213.15T192-264v-72h72v72h432v-72h72v72q0 29.7-21.16 50.85Q725.68-192 695.96-192H263.72Z" />
+        </svg>
+        Seleccionar archivo
+    </button>
+    <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" />
+
+    <!-- Vista previa -->
+    @if (selectedFileName) {
+    <p class="text-sm text-gray-700 mt-3">
+        Archivo seleccionado: <strong>{{ selectedFileName }}</strong>
+    </p>
+    }
+</div>
+<div class="flex justify-end gap-2 m-2 pt-3">
+    <div class="flex ">
+        <button type="submit" (click)="guardarDocumento()"
+            class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 rounded hover:brightness-110 transition-colors duration-300">
+            <img src="assets/elementos/guardar.svg" alt="Guardar formulario" class="w-6 h-6" />
+            Guardar
+        </button>
+    </div>
+    <div class="flex ">
+        <button type="button" (click)="cancelarDocumento()"
+            class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 rounded hover:brightness-150 transition-colors duration-300">
+            <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
+            Cancelar
+        </button>
+    </div>
+</div>

@@ -1,6 +1,5 @@
-<h5 class="text-center"> Documentoid : {{documentoId}}</h5>
-
 <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4">
+
     @if (mostrarFormulario()) {
     <div class="w-full">
         <app-formreutilizable [campos]=" datosService.columnasDAAC" [titulo]="this.datosService.DescripcionDAAC"
@@ -13,7 +12,6 @@
         <app-tabla-datos [data]="datosFiltrados" [columns]="datosService.columnasDAAC"
             encabezadoGeneral="Datos Formulario DAAC" [accionesTemplate]="accionesPersonalizadas">
         </app-tabla-datos>
-
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex items-center justify-center space-x-1">
                 <button (click)="eliminarDatoFormularioDAAC(dato)" class="px-1 h-6 w-6" title="Eliminar">
@@ -29,33 +27,42 @@
 </div>
 
 @if (mostrarbase()) {
+
 <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2">
     <div class="flex flex-col lg:flex-row gap-4 lg:items-start">
-        <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end lg:flex-none">
-            <!-- Input -->
-            <div class="flex-1 md:w-80 lg:w-80">
-                <label class="block text-sm font-medium text-gray-700 py-1">
-                    Documento base
-                </label>
-                <input [(ngModel)]="nuevoDato" (keyup.enter)="agregarReglamentoBase(); $event.preventDefault()"
-                    class="w-full p-2 border rounded placeholder-gray-400"
-                    placeholder="Escribe el nombre del documento" />
+        <div class="flex flex-col gap-3">
+            <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end lg:flex-none">
+                <!-- Input -->
+                <div class="flex-1 md:w-80 lg:w-80">
+                    <label class="block text-sm font-medium text-gray-700 py-1">
+                        Documento base
+                    </label>
+                    <input [(ngModel)]="nuevoDato" (keyup.enter)="agregarReglamentoBase(); $event.preventDefault()"
+                        class="w-full p-2 border rounded placeholder-gray-400"
+                        placeholder="Escribe el nombre del documento" />
+                </div>
+                <!-- Botón agregar -->
+                <div class="flex items-end justify-center md:justify-start">
+                    <button (click)="agregarReglamentoBase()"
+                        class="text-black px-4 py-2 flex items-center justify-center gap-2 whitespace-nowrap">
+                        <img src="assets/elementos/agregar.svg" alt="Agregar" class="hover:brightness-120 w-6 h-6">
+                        Agregar
+                    </button>
+                </div>
             </div>
-            <!-- Botón agregar -->
-            <div class="flex items-end justify-center md:justify-start">
-                <button (click)="agregarReglamentoBase()"
-                    class="text-black px-4 py-2 flex items-center justify-center gap-2 whitespace-nowrap">
-                    <img src="assets/elementos/agregar.svg" alt="Agregar" class="hover:brightness-120 w-6 h-6">
-                    Agregar
+            <div class="flex flex-row px-5 py-2 justify-center md:justify-start">
+                <button
+                    class="bg-encabezado-tabla text-white px-3 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-50">
+                    No tiene Reglamento Base
                 </button>
             </div>
         </div>
         <!-- Tabla (debajo en md, al lado en lg) -->
         <div class="flex flex-1 flex-col overflow-x-auto">
             <app-tablas-formulario [columns]="columnaDocumentoBase" [data]="datosDocumentoBase()"
-                [accionesTemplate]="accionesPersonalizadas" (eliminar)="eliminarDato($event)">
+                [accionesTemplate]="accionesDocumentoBase" (eliminar)="eliminarDato($event)">
             </app-tablas-formulario>
-            <ng-template #accionesPersonalizadas let-dato>
+            <ng-template #accionesDocumentoBase let-dato>
                 <div class="flex items-center justify-center space-x-1 gap-2">
                     <button (click)="eliminarDato(dato)" class="px-1 w-6 h-6" title="Eliminar">
                         <img src="assets/elementos/eliminar.svg" alt="eliminar" class="hover:brightness-120 w-6 h-6">
@@ -73,13 +80,14 @@
 <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4 ">
     @if(realizarDiagrama()){
     <div class="flex items-center justify-center">
-        <button (click)="abrirDiagrama()" class="bg-verde-btn hover:bg-verde-btn/90 text-white px-4 py-2 rounded">
+        <button (click)="abrirDiagrama()
+        " class="bg-verde-btn hover:bg-verde-btn/90 text-white px-4 py-2 rounded">
             Realizar Diagrama de Procedimiento
         </button>
     </div>
     }
-    @if(mostrarDiagrama()){
-    <app-diagrama (diagramaEnviado)="recibirvalor($event)">
+    @if(mostrarDiagrama()) {
+    <app-diagrama (diagramaEnviado)="recibirvalor($event)" (cancelarDiagrama)="cancelarDiagrama()">
     </app-diagrama>
     }
 </div>
