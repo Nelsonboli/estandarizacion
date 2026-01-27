@@ -16,6 +16,7 @@ import { DocumentoSoporteService } from '../../../shared/servicios/modulos/docum
 
 
 @Component({
+  standalone: true,
   selector: 'app-documentacion-soporte',
   imports: [FormreutilizableComponent, CommonModule, FormsModule, ReactiveFormsModule, TablasFormularioComponent, TablaDatosComponent, Diagrama],
   templateUrl: './documentacion-soporte.component.html',
@@ -36,6 +37,7 @@ export class DocumentacionSoporteComponent implements OnChanges {
   ultimoRegistro = signal<any>({});
   editarformulario = signal<any | null>(null);
   mensajedeDiagrama: boolean = false;
+  nombreProcedimiento = signal('');
 
   //Input y edición de documentos base
   nuevoDato = signal('');
@@ -105,8 +107,6 @@ export class DocumentacionSoporteComponent implements OnChanges {
     } else {
       console.log('⚠️ No hay documentoId disponible aún');
     }
-    // effect removed to allow button control
-
   }
 
   onSubmit() {
@@ -117,8 +117,16 @@ export class DocumentacionSoporteComponent implements OnChanges {
   cargarFormularioPorDocumento(documentoId: number) {
     console.log('🔍 Cargando formulario para documentoId:', documentoId);
     this.formularioDAACService.obtenerPorDocumento(documentoId).subscribe({
-      next: (form) => {
+      next: (form: any) => {
         console.log('📦 Respuesta del backend:', form);
+
+        // Extraer nombre del procedimiento si viene en la respuesta
+        if (form && form.documentoSoporte && form.documentoSoporte.procedimiento) {
+          this.nombreProcedimiento.set(form.documentoSoporte.procedimiento.procedimiento);
+        } else if (form && form.procedimiento) {
+          this.nombreProcedimiento.set(form.procedimiento.procedimiento);
+        }
+
         // Normalizar respuesta a array
         const datos = Array.isArray(form) ? form : (form ? [form] : []);
         console.log('📊 Datos normalizados:', datos);
@@ -272,22 +280,13 @@ export class DocumentacionSoporteComponent implements OnChanges {
   guardarDecisionReglamento(tiene: boolean) {
     if (tiene) return; // Si es 'si', no hace nada automático, espera a que el usuario agregue documentos
 
-    // Si es 'no', guardar un registro vacío/null
-    // Primero verificar si ya existe algun registro para editar
     const existentes = this.datosDocumentoBase();
     if (existentes.length > 0) {
-      // Si ya hay registros y el usuario cambia a NO, preguntamos si quiere borrar los existentes y dejar marcado como NO
-      // O si simplemente actualizamos el primero a null si solo habia uno vacio.
-      // Simplificación: Si hay registros con texto y pone No, debería borrar? 
-      // Asumiremos lógica simple: Crear registro null si no existe, o actualizar. 
-      // El requerimiento dice: "se llene como null".
 
       // Si ya existe un registro "null", no hacemos nada.
       const yaExisteNull = existentes.some(d => d.documento === null || d.documento === '');
       if (yaExisteNull && existentes.length === 1) return;
 
-      // Si hay documentos reales, advertir o limpiar? 
-      // Por ahora, creamos el null.
     }
 
     const nuevoReglamentoBase = { documento: null }; // Enviar null
@@ -463,12 +462,18 @@ export class DocumentacionSoporteComponent implements OnChanges {
   private verificarDiagrama() {
     this.documentoSoporteService.getPorProcedimiento(this.procedimientoId).subscribe({
       next: (documento) => {
-        const completado = !!documento.id_diagrama;
+        // Usar id_diagrama para verificar si existe
+        const completado = !!documento?.id_diagrama;
+
+        if (documento && documento.procedimiento) {
+          this.nombreProcedimiento.set(documento.procedimiento.procedimiento);
+          console.log(' Nombre del procedimiento extraído:', documento.procedimiento.procedimiento);
+        }
 
         const estadoActual = this.estadoDocumentoSoporte();
         if (estadoActual.diagramaFlujo !== completado) {
           this.estadoDocumentoSoporte.update(state => ({ ...state, diagramaFlujo: completado }));
-          console.log('📊 Diagrama:', completado ? 'Completado' : 'Pendiente');
+          console.log('Diagrama:', completado ? 'Completado' : 'Pendiente');
           this.actualizarActividadesDocumentoSoporte();
         }
         this.cambioEstadoActividades.emit(Object.values(this.estadoDocumentoSoporte()));

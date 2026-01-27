@@ -15,6 +15,7 @@ html {
 
 @theme {
   --font-roboto: "Roboto", sans-serif; 
+  --font-sans: "Roboto", sans-serif;
 }
 
 .transition-all {

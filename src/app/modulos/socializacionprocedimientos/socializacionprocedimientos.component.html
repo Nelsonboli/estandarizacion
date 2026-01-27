@@ -17,7 +17,7 @@
       <!-- Mostrar Ficha tecnica del procedimiento -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Ficha Técnica del Procedimiento
           </h1>
         </div>
@@ -30,7 +30,7 @@
       <!-- Mostrar el formulario DAAC -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Formulario División de Autoevaluación y Acreditación de la Calidad
           </h1>
         </div>
@@ -51,7 +51,7 @@
       <!-- Documento base -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Documento Base
           </h1>
         </div>
@@ -72,12 +72,12 @@
       <!-- Mostrar Diagrama de flujo -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Diagrama de Flujo {{ procedimientoSeleccionado.procedimiento | titlecase }}
           </h1>
         </div>
         <div class="p-4 text-center">
-          @if (imagenDiagrama) {
+          @if (procedimientoSeleccionado.id_diagrama) {
           <Button (click)="descargarPDFDiagrama()" class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
                text-gray-700 px-4 py-2 rounded hover:bg-gray-200">
             <img src="assets/elementos/descargarDocumentoGris.svg" class="w-6 h-6" />
@@ -95,13 +95,13 @@
       <!-- Soporte computacional -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Soporte Computacional
           </h1>
         </div>
         <div class="p-4">
           @if (soporteComputacional) {
-          <div class="border rounded-lg p-4 shadow-sm max-w-xl mx-auto">
+          <div class="border rounded-lg p-4 max-w-xl mx-auto">
             <ul class="list-none list-inside text-gray-700 items-center text-center">
               <li><strong>Cuenta con soporte computacional:</strong> {{
                 soporteComputacional.tiene_soporte ? 'Sí' : 'No' }}</li>
@@ -133,7 +133,7 @@
       <!-- Formato de Estandarización -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Formato de Estandarización
           </h1>
         </div>
@@ -149,7 +149,7 @@
       <!-- Registro de socialización -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white">
         <div class="bg-gray-50 border-b border-gray-200 px-4">
-          <h1 class="text-lg font-semibold text-azul-fondo text-center">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
             Registro de Socialización
           </h1>
         </div>

@@ -1,60 +1,5 @@
 <div class="font-sans text-gray-800 bg-white p-2 m-2">
     <div class="mb-2 space-x-0.5 min-h-screen bg-white text-med px-2 py-2 max-w-screen mx-auto">
-        <!-- DEBUG INFO -->
-        <div class="grid grid-cols-4 gap-2">
-            <div>
-                <h6 class="px-2">Estados</h6>
-                <div class="bg-yellow-100 p-1 m-1 text-xs">
-                    <strong>DEBUG :</strong><br>
-                    @if(todosEstadosCompletos()){
-                    <h6 class="text-green-600 text-sm"> estadoCompletos: {{ estadoCompletos | json }}</h6>
-                    }
-                    @else{
-                    estadoCompletos: {{ estadoCompletos | json }}
-                    }
-                </div>
-            </div>
-            <div>
-                <h6 class="px-2">Documentación Soporte</h6>
-                <div class="bg-yellow-100 p-1 m-1 text-xs">
-                    <strong>DEBUG :</strong><br>
-                    @if(todasActividadesDocumentoSoporteCompletas()){
-                    <h6 class="text-green-600 text-sm">actividadesDocumentoSoporte: {{ actividadesDocumentoSoporte|
-                        json }}
-                    </h6>
-                    }
-                    @else{
-                    actividadesDocumentoSoporte: {{ actividadesDocumentoSoporte| json }}
-                    }
-                </div>
-            </div>
-            <div>
-                <h6 class="px-2">Soporte computacional</h6>
-                <div class="bg-yellow-100 p-1 m-1 text-xs">
-                    <strong>DEBUG :</strong><br>
-                    @if(todasActividadesSoporteComputacionalCompletas()){
-                    <h6 class="text-green-600 text-sm">actividadesSoporteComputacional: {{
-                        actividadesSoporteComputacional|
-                        json }}</h6>
-                    }
-                    @else{
-                    actividadesSoporteComputacional: {{ actividadesSoporteComputacional| json }}
-                    }
-                </div>
-            </div>
-            <div>
-                <h6 class="px-2">Reglamento</h6>
-                <div class="bg-yellow-100 p-1 m-1 text-xs">
-                    <strong>DEBUG :</strong><br>
-                    @if(todasActividadesReglamentoCompletas()){
-                    <h6 class="text-green-600 text-sm">actividadesReglamento: {{ actividadesReglamento| json }}</h6>
-                    }
-                    @else{
-                    actividadesReglamento: {{ actividadesReglamento| json }}
-                    }
-                </div>
-            </div>
-        </div>
         <div class=" text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
             Estandarización de procedimientos
         </div>
@@ -72,7 +17,7 @@
                             'ring-2 ring-gray-600 bg-white ': !estadoCompletos[i] && buttonIndex === i && hoverIndex !== i || !estadoCompletos[i] && buttonIndex === i && hoverIndex === i,
                             'hover:scale-[1.05]': hoverIndex !== i && buttonIndex !== i
                         }" (click)="onButtonClick(i)" (mouseenter)="onHoverState(i)" (mouseleave)="hoverIndex = null">
-                        <span class="text-lg font-semibold">{{ i + 1 }} </span>
+                        <span class="text-lg font-medium">{{ i + 1 }} </span>
                         <h6 class="leading-tight text-center mt-1">{{ estado }} </h6>
                     </button>
                     <!-- Card cuando el estado está activo O en hover -->
@@ -114,3 +59,4 @@
             </div>
         </div>
     </div>
+</div>

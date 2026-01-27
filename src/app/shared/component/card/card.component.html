@@ -1,19 +1,14 @@
 <form [formGroup]="form">
-  <div class="max-w-full mx-auto bg-white shadow-lg rounded-lg p-3 space-y-2 text-sm">
-    <h2 class="text-med font-semibold text-gray-800 text-center">Actividades:</h2>
-    <div formArrayName="checks" class="space-y-2">
-      @for (opcion of subopciones; track opcion; let i = $index) {
-        <label 
-          class="flex items-center space-x-2 mx-1 p-1"
-          [ngClass]="{'opacity-60 cursor-not-allowed': checks.at(i).disabled}">
-          <input
-            type="checkbox"
-            [formControlName]="i"
-            class="accent-blue-700"
-          />
-          <span class="text-gray-700 text-xs px-1">{{ opcion }}</span>
-        </label>
-      }
+    <div class="max-w-full mx-auto bg-white shadow-lg rounded-lg p-3 space-y-2 text-sm">
+        <h2 class="text-med font-medium text-gray-800 text-center">Actividades:</h2>
+        <div formArrayName="checks" class="space-y-2">
+            @for (opcion of subopciones; track opcion; let i = $index) {
+            <label class="flex items-center space-x-2 mx-1 p-1"
+                [ngClass]="{'opacity-60 cursor-not-allowed': checks.at(i).disabled}">
+                <input type="checkbox" [formControlName]="i" class="accent-blue-700" />
+                <span class="text-gray-700 text-xs px-1">{{ opcion }}</span>
+            </label>
+            }
+        </div>
     </div>
-  </div>
 </form>

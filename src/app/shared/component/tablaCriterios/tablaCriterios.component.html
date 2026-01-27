@@ -1,16 +1,16 @@
 <div class="p-2">
   <table class="border border-gray-300 text-med w-full max-w-[600px] mx-auto">
-    <thead class="bg-encabezado-tabla text-white text-med font-semibold">
+    <thead class="bg-encabezado-tabla text-white text-med font-medium">
       <tr>
         @for (col of columnas; track col) {
         @if(columnas.length > 1) {
-        <th class="px-2 py-1 text-left col span-2 uppercase tracking-wider border border-gray-300">
+        <th class="px-2 py-1 text-left col span-2 uppercase tracking-wider border font-medium border-gray-300">
           {{ col }}
 
         </th>
         }
         @if(columnas.length === 1) {
-        <th colspan="2" class=" text-med font-semibold px-1 py-0.5 uppercase tracking-wider text-center ">
+        <th colspan="2" class=" text-med font-medium px-1 py-0.5 uppercase tracking-wider text-center ">
           {{ col }}
         </th>
         }
@@ -20,7 +20,7 @@
     <tbody class="bg-white divide-y divide-gray-200">
       @for (fila of filas; track fila) {
       <tr class="hover:bg-gray-100">
-        <td class="w-[30%] px-3 py-2 border border-gray-300 font-semibold uppercase relative group cursor-pointer">
+        <td class="w-[30%] px-3 py-2 border border-gray-300 font-medium uppercase relative group cursor-pointer">
           {{fila.Criterio}}
           <!-- Tooltip -->
           @if(fila.Tooltip){

@@ -1,11 +1,12 @@
 import { Component, Input, OnInit, } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DiagramaService } from '../../../shared/servicios/diagrama.service';
+import { DiagramaFlujoService } from '../../../shared/servicios/modulos/diagrama-flujo.service';
 import jsPDF from 'jspdf';
 import { SubirArchivoComponent } from "../../../shared/component/subir-archivo/subir-archivo.component";
 import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
 
 @Component({
+  standalone: true,
   selector: 'app-reglamento',
   imports: [ReactiveFormsModule, SubirArchivoComponent],
   templateUrl: './reglamento.component.html',
@@ -21,7 +22,7 @@ export class ReglamentoComponent implements OnInit {
   subiendo = false;
 
   constructor(private fb: FormBuilder,
-    private diagramaService: DiagramaService,
+    private diagramaFlujoService: DiagramaFlujoService,
     private alertService: AlertService
   ) { }
 
@@ -42,7 +43,7 @@ export class ReglamentoComponent implements OnInit {
     // Agregar título
     doc.text('Ficha de Procedimiento', 10, 10);
     // Cargar diagrama
-    const imgData = this.diagramaService.cargarImagen();
+    const imgData = this.diagramaFlujoService.cargarImagen();
     if (imgData) {
       doc.addImage(imgData, 'PNG', 10, 20, 180, 100); // posición y tamaño
     } else {

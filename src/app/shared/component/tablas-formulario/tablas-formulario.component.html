@@ -5,7 +5,7 @@
   @for (col of columns; track col.label) {
   <div [ngClass]="{'w-full':mostrarOpciones,
         'w-1/4':!mostrarOpciones
-       }" class="p-1 flex gap-2 mx-auto bg-encabezado-tabla text-white text-med font-semibold">
+       }" class="p-1 flex gap-2 mx-auto bg-encabezado-tabla text-white text-med font-medium">
     <img src="assets/elementos/lista.svg" alt="" class="ml-2 w-4 h-4">
     Lista de {{ col.label }}
   </div>
@@ -18,14 +18,14 @@
       <tr>
         @for (col of columns; track col.key) {
         <th
-          class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
+          class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-medium text-black w-[150px]">
           {{ col.label | titlecase }}
         </th>
         }
         <!-- ✅ Mostrar solo si mostrarOpciones es true -->
         @if (mostrarOpciones) {
         <th
-          class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[100px]">
+          class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-medium text-black w-[100px]">
           Opciones
         </th>
         }

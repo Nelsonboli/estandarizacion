@@ -1,37 +1,39 @@
-<div class="w-full max-w-full overflow-x-hidden">
-    <div class="flex flex-col md:flex-row w-full items-start">
-        <!-- Sidebar -->
+<div class="w-full max-w-full">
+    <div class="flex flex-col xl:flex-row w-full items-start">
+        <!-- Sidebar / Top Menu -->
         <aside
-            class="w-full md:w-56 p-4 sticky top-0 h-auto md:h-screen border-b md:border-b-0 md:border-r border-gray-200 bg-white z-20 flex-shrink-0">
+            class="w-full xl:w-64 p-4 sticky top-0 xl:self-start h-auto xl:max-h-[calc(100vh-150px)] overflow-y-auto bg-white z-30 flex-shrink-0 custom-scrollbar">
             <h2 class="text-grande font-bold">Diagrama de flujo</h2>
             <hr class="my-2">
             <div class="relative group">
-                <!-- contenedor que mantiene botones + card -->
-                <nav class="mt-2 sticky">
-                    <div class="flex flex-row md:flex-col gap-2 flex-wrap">
+                <!-- contenedor que tiene botones + card -->
+                <nav class="mt-2">
+                    <div class="flex flex-row xl:flex-col gap-2 flex-wrap">
                         @for (boton of botones; track $index) {
                         <button (click)="boton.accion()" (mouseenter)="mostrarTooltip($event, boton)"
                             (mouseleave)="ocultarTooltip()"
-                            class="flex-1 bg-gray-100 border border-gray-500 hover:bg-gray-200 hover:border-gray-700 text-black px-4 py-2 rounded text-semigrande md:text-semigrande">
+                            class="flex-1 min-w-[120px] bg-gray-100 border border-gray-500 hover:bg-gray-200 hover:border-gray-700 text-black px-3 py-2 rounded text-semigrande transition-all duration-200">
                             {{ boton.nombre }}
                         </button>
                         }
                         <button type="button" (click)="agregarPagina()"
-                            class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-3 py-2 rounded transition-colors duration-300 border border-gray-300 w-full justify-center text-semigrande md:text-semigrande">
+                            class="flex-1 min-w-[120px] flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-3 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande">
                             Agregar Página
                         </button>
-
-                        <hr class="hidden md:block w-full my-2 border-gray-600">
-
-                        <div class="flex flex-col md:flex-col gap-2 w-full">
+                        <button type="button" (click)="EliminarUltimaPagina()"
+                            class="flex-1 min-w-[120px] flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-3 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande">
+                            Eliminar Ultima Página
+                        </button>
+                        <hr class="hidden xl:block w-full my-2 border-gray-600">
+                        <div class="flex flex-row xl:flex-col gap-2 w-full flex-wrap">
                             <button type="submit" (click)="exportar()"
-                                class="flex-1 flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande md:text-semigrande">
+                                class="flex-1 min-w-[110px] flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande">
                                 <img src="assets/elementos/descargarDocumentoGris.svg" alt="Descargar"
                                     class="w-5 h-5" />
                                 <span class="hidden sm:inline">Descargar</span>
                             </button>
                             <button type="button" (click)="exportarPDF()"
-                                class="flex-1 flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande md:text-semigrande">
+                                class="flex-1 min-w-[110px] flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande">
                                 <img src="assets/elementos/descargar.svg" alt="PDF" class="w-5 h-5" />
                                 <span class="hidden sm:inline">Exportar PDF</span>
                             </button>
@@ -40,9 +42,10 @@
                 </nav>
             </div>
         </aside>
-        <main class="flex-1 min-w-0 px-4 py-6 bg-white overflow-x-hidden max-w-full">
+
+        <main class="flex-1 min-w-0 px-4 py-6 bg-white xl:border-l border-gray-200 overflow-x-hidden max-w-full">
             <div class="flex flex-row gap-2 justify-center items-center">
-                <label class="text-grande font-semibold justify-center">
+                <label class="text-grande font-medium justify-center">
                     Texto para simbolo:
                 </label>
                 <input [(ngModel)]="textoNodo" placeholder="Texto del simbolo" type="text" class="flex-1 p-1 border border-gray-300 rounded placeholder-gray-400 transition-all duration-200 
@@ -50,72 +53,68 @@
             </div>
 
             <!-- Contenedor con Scroll Horizontal (Confined) y Fondo de Lienzo -->
-            <!-- sm: vertical interno | md+: vertical libre -->
-            <div
-                class="w-full max-w-full overflow-x-auto bg-gray-100 p-2 sm:p-8 border rounded-lg shadow-inner flex justify-center custom-scrollbar">
-                <div class="relative bg-white shadow-md border border-gray-300 min-w-[825px] w-[825px] overflow-hidden"
-                    style="height: fit-content;">
-                    <div #canvas></div>
+            <div class="w-full max-w-full overflow-x-auto bg-gray-100 border rounded-md custom-scrollbar">
+                <div class="flex justify-center items-center min-w-fit p-4 sm:p-8">
+                    <div class="relative bg-white shadow-sm border border-gray-300 min-w-[825px] w-[825px] overflow-hidden"
+                        style="height: fit-content;">
+                        <div #canvas></div>
 
-                    <!-- Popover flotante -->
-                    @if (popoverVisible()) {
-                    <div class="absolute z-50 bg-white border border-gray-300 shadow-sm rounded-lg py-2 px-4 flex flex-col gap-1 custom-popover"
-                        [style.left.px]="popoverPos().x-16" [style.top.px]="popoverPos().y-20">
-                        <!-- Campo editable -->
-                        <label class="mt-2 text-center text-sm font-medium">Texto para el símbolo:</label>
-                        <input type="text" [(ngModel)]="popoverText"
-                            class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            (keydown.enter)="guardarPopover()" autofocus />
+                        <!-- Popover flotante -->
+                        @if (popoverVisible()) {
+                        <div class="absolute z-50 bg-white border border-gray-300 shadow-sm rounded-lg py-2 px-4 flex flex-col gap-1 custom-popover"
+                            [style.left.px]="popoverPos().x-16" [style.top.px]="popoverPos().y-20">
+                            <!-- Campo editable -->
+                            <label class="mt-2 text-center text-sm font-medium">Texto para el símbolo:</label>
+                            <input type="text" [(ngModel)]="popoverText"
+                                class="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                (keydown.enter)="guardarPopover()" autofocus />
+                            <!-- Botones -->
+                            <div class="flex flex-row gap-2 justify-center mt-1">
+                                <button
+                                    class="bg-blue-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-blue-600 transition-colors"
+                                    (click)="guardarPopover()"> Guardar
+                                </button>
+                                <button
+                                    class="bg-gray-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-gray-600 transition-colors"
+                                    (click)="popoverVisible.set(false)"> Cerrar
+                                </button>
+                            </div>
+                            <!-- Flechita hacia abajo -->
+                            <div
+                                class="absolute left-1/2 -bottom-2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-t-6 border-t-gray-300">
+                            </div>
+                            <div
+                                class="absolute left-1/2 -bottom-1 transform -translate-x-1/2 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-t-6 border-t-white">
+                            </div>
+                        </div>
+                        }
 
-                        <!-- Botones -->
-                        <div class="flex flex-row gap-2 justify-center mt-1">
-                            <button
-                                class="bg-blue-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-blue-600 transition-colors"
-                                (click)="guardarPopover()">
-                                Guardar
+                        <!-- 🖱️ Menú Contextual (Custom) -->
+                        @if (contextMenuVisible()) {
+                        <div class="absolute z-[100] bg-white border border-gray-300 shadow-md rounded overflow-hidden flex flex-col min-w-[150px]"
+                            [style.left.px]="contextMenuPos().x" [style.top.px]="contextMenuPos().y">
+                            <button (click)="copiarElementos(); contextMenuVisible.set(false)"
+                                class="px-2 py-2 text-sm text-left hover:bg-gray-100 flex items-center gap-2">
+                                <span>📋</span> Copiar <span class="text-gray-500 text-xs pl-4"> Ctrl+C </span>
                             </button>
-                            <button
-                                class="bg-gray-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-gray-600 transition-colors"
-                                (click)="popoverVisible.set(false)">
-                                Cerrar
+                            <button (click)="pegarElementos(); contextMenuVisible.set(false)"
+                                class="px-2 py-2 text-sm text-left border-b border-gray-200 hover:bg-gray-100 flex items-center gap-2">
+                                <span>📥</span> Pegar <span class="text-gray-500 text-xs pl-5"> Ctrl+V </span>
+                            </button>
+                            <button (click)="eliminarConBoton(); contextMenuVisible.set(false)"
+                                class="px-2 py-2 text-sm text-left hover:bg-gray-100 text-red-600 flex items-center gap-2">
+                                <span>🗑️</span> Eliminar <span class="text-gray-500 text-xs pl-2"> Eliminar </span>
                             </button>
                         </div>
-
-                        <!-- Flechita hacia abajo -->
-                        <div
-                            class="absolute left-1/2 -bottom-2 transform -translate-x-1/2 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-t-6 border-t-gray-300">
-                        </div>
-                        <div
-                            class="absolute left-1/2 -bottom-1 transform -translate-x-1/2 w-0 h-0 border-l-6 border-l-transparent border-r-6 border-r-transparent border-t-6 border-t-white">
-                        </div>
+                        }
                     </div>
-                    }
-
-                    <!-- 🖱️ Menú Contextual (Custom) -->
-                    @if (contextMenuVisible()) {
-                    <div class="absolute z-[100] bg-white border border-gray-300 shadow-md rounded overflow-hidden flex flex-col min-w-[150px]"
-                        [style.left.px]="contextMenuPos().x" [style.top.px]="contextMenuPos().y">
-                        <button (click)="copiarElementos(); contextMenuVisible.set(false)"
-                            class="px-2 py-2 text-sm text-left hover:bg-gray-100 flex items-center gap-2">
-                            <span>📋</span> Copiar <span class="text-gray-500 text-xs pl-4"> Ctrl+C </span>
-                        </button>
-                        <button (click)="pegarElementos(); contextMenuVisible.set(false)"
-                            class="px-2 py-2 text-sm text-left border-b border-gray-200 hover:bg-gray-100 flex items-center gap-2">
-                            <span>📥</span> Pegar <span class="text-gray-500 text-xs pl-5"> Ctrl+V </span>
-                        </button>
-                        <button (click)="eliminarConBoton(); contextMenuVisible.set(false)"
-                            class="px-2 py-2 text-sm text-left hover:bg-gray-100 text-red-600 flex items-center gap-2">
-                            <span>🗑️</span> Eliminar <span class="text-gray-500 text-xs pl-2"> Eliminar </span>
-                        </button>
-                    </div>
-                    }
                 </div>
             </div>
+
             <div class="flex justify-end gap-2 pt-2">
                 <button type="submit" (click)="guardarDiagrama()"
                     class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-110 transition-colors duration-300">
-                    <img src="assets/elementos/guardar.svg" alt="Guardar diagrama" class="w-6 h-6" /> Guardar
-                    diagrama
+                    <img src="assets/elementos/guardar.svg" alt="Guardar diagrama" class="w-6 h-6" /> Guardar diagrama
                 </button>
                 <button (click)="cancelarDiagrama.emit(true)"
                     class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-150 transition-colors duration-300">

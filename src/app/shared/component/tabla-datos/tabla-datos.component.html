@@ -3,7 +3,7 @@
   <table>
     <thead>
       <tr>
-        <div class="flex gap-2 p-2 bg-encabezado-tabla text-white text-med font-semibold w-full">
+        <div class="flex gap-2 p-2 bg-encabezado-tabla text-white text-med font-medium w-full">
           <img src="assets/elementos/lista.svg" alt class="ml-2 w-4 h-4">
           {{ encabezadoGeneral }}
         </div>
@@ -16,14 +16,14 @@
           <tr>
             @for (col of columns; track col.key) {
             <th
-              class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[150px]">
+              class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-medium text-black w-[150px]">
               {{ col.label | titlecase}}
             </th>
             }
             <!-- ✅ Mostrar solo si mostrarOpciones es true -->
             @if (mostrarOpciones) {
             <th
-              class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-semibold text-black w-[120px]">
+              class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-medium text-black w-[120px]">
               Opciones
             </th>
             }

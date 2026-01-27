@@ -12,8 +12,12 @@ export class DocumentoSoporteService {
     return this.http.get<any[]>(this.base);
   }
 
-  getDocumento(id: number): Observable<any> {
+  findOne(id: number): Observable<any> {
     return this.http.get<any>(`${this.base}/${id}`);
+  }
+
+  getDocumento(id: number): Observable<any> {
+    return this.findOne(id);
   }
 
   crearDocumento(procedimientoId: number) {
@@ -31,4 +35,5 @@ export class DocumentoSoporteService {
   eliminarDocumento(id: number): Observable<any> {
     return this.http.delete(`${this.base}/${id}`);
   }
+
 }

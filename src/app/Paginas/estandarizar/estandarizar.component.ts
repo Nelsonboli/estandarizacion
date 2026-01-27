@@ -17,7 +17,6 @@ import { SoporteComputacionalService } from '../../shared/servicios/modulos/sopo
   selector: 'app-estandarizar',
   imports: [
     CardComponent,
-    SoporteComputacionalComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,

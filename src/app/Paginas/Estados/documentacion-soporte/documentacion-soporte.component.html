@@ -87,7 +87,8 @@
     </div>
     }
     @if(mostrarDiagrama()) {
-    <app-diagrama (diagramaEnviado)="recibirvalor($event)" (cancelarDiagrama)="cancelarDiagrama()">
+    <app-diagrama [procedimiento]="nombreProcedimiento()" [documentoId]="documentoId"
+        (diagramaEnviado)="recibirvalor($event)" (cancelarDiagrama)="cancelarDiagrama()">
     </app-diagrama>
     }
 </div>

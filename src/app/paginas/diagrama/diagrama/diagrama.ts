@@ -1,5 +1,5 @@
 import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
-import { Component, AfterViewInit, ViewChild, ElementRef, signal, Output, EventEmitter, } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, signal, Output, EventEmitter, Input, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as joint from 'jointjs';
 import * as htmlToImage from 'html-to-image';
@@ -7,7 +7,8 @@ import { jsPDF } from 'jspdf';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BotonInfo } from '../../../interfaces/botonesInfo';
-import { DiagramaService } from '../../../shared/servicios/diagrama.service';
+import { DocumentoSoporteService } from '../../../shared/servicios/modulos/documento-soporte.service';
+import { DiagramaFlujoService } from '../../../shared/servicios/modulos/diagrama-flujo.service';
 
 
 @Component({
@@ -20,6 +21,8 @@ import { DiagramaService } from '../../../shared/servicios/diagrama.service';
 export class Diagrama implements AfterViewInit {
   @Output() diagramaEnviado = new EventEmitter<boolean>()
   @Output() cancelarDiagrama = new EventEmitter<boolean>()
+  @Input() procedimiento: string = '';
+  @Input() documentoId: number | null = null;
   @ViewChild('canvas') canvasRef!: ElementRef;
   textoNodo: string = '';
   private graph = new joint.dia.Graph();
@@ -37,43 +40,55 @@ export class Diagrama implements AfterViewInit {
   private startSelectionPos = { x: 0, y: 0 };
 
 
-  constructor(private diagramaService: DiagramaService,
+  constructor(
     private alertService: AlertService,
+    private documentoSoporteService: DocumentoSoporteService,
+    private diagramaFlujoService: DiagramaFlujoService
   ) { }
 
-  // 👇 Propiedades para nuevas funcionalidades
+  // Propiedades para nuevas funcionalidades
   private selectedElements: joint.dia.Element[] = [];
 
-
-  // 👇 Control del popover
+  //  Control del popover
   popoverVisible = signal(false);
   popoverPos = signal({ x: 0, y: 0 });
   popoverText = signal('');
   currentElement: joint.dia.Element | null = null;
 
-  // 👇 Propiedades para Copiar/Pegar
+  // Propiedades para Copiar/Pegar
   private clipboard: any = null;
   contextMenuVisible = signal(false);
   contextMenuPos = signal({ x: 0, y: 0 });
 
 
-  // 👇 signal para el botón activo
+  // signal para el botón activo
   botonActivo = signal<BotonInfo | null>(null);
 
-  // 👇 Control de posicionamiento secuencial
+  // Control de posicionamiento secuencial
   private sequentialAdditionCount = 0;
   private lastAdditionTime = 0;
 
-  // 👇 Control del tooltip del sidebar
+  // Control del tooltip del sidebar
   sidebarPopoverPos = signal({ x: 0, y: 0 });
 
   mostrarTooltip(event: MouseEvent, boton: BotonInfo) {
     const target = event.target as HTMLElement;
     const rect = target.getBoundingClientRect();
-    this.sidebarPopoverPos.set({
-      x: rect.right + 30, // 10px a la derecha del botón
-      y: rect.top
-    });
+    const isTopMenu = window.innerWidth < 1280;
+
+    if (isTopMenu) {
+      // Si el menú está arriba, mostrar el tooltip debajo
+      this.sidebarPopoverPos.set({
+        x: rect.left - 20,
+        y: rect.bottom + 10
+      });
+    } else {
+      // Si el menú está al lado (sidebar), mostrar el tooltip a la derecha
+      this.sidebarPopoverPos.set({
+        x: rect.right + 30,
+        y: rect.top
+      });
+    }
     this.botonActivo.set(boton);
   }
 
@@ -81,7 +96,7 @@ export class Diagrama implements AfterViewInit {
     this.botonActivo.set(null);
   }
 
-  // 👇 lista de botones con metadata
+  // lista de botones
   botones: BotonInfo[] = [
     {
       nombre: 'Actividad',
@@ -151,6 +166,14 @@ export class Diagrama implements AfterViewInit {
 
 
   ngAfterViewInit(): void {
+    // REGISTRO GLOBAL DE FIGURAS: Asegurar que standard.* esté disponible en joint.shapes
+    if (joint.shapes.standard) {
+      Object.keys(joint.shapes.standard).forEach(key => {
+        const shape = (joint.shapes.standard as any)[key];
+        (joint.shapes as any)[`standard.${key}`] = shape;
+      });
+    }
+
     this.currentPaperHeight = this.obtenerPageHeight();
     this.eliminarElementoConTecla();
     this.paper = new joint.dia.Paper({
@@ -165,7 +188,7 @@ export class Diagrama implements AfterViewInit {
       },
       defaultRouter: { name: 'manhattan' },
       defaultConnector: { name: 'rounded' },
-
+      cellViewNamespace: joint.shapes
     });
 
     // Eventos de interacción (Selection & Connection)
@@ -371,6 +394,104 @@ export class Diagrama implements AfterViewInit {
     this.paper.on('blank:pointerdown', () => {
       this.contextMenuVisible.set(false);
     });
+
+    // Cargar diagrama si ya existe
+    if (this.documentoId) {
+      this.diagramaFlujoService.obtenerPorDocumento(this.documentoId).subscribe({
+        next: (diag) => {
+          if (diag && diag.json_diagrama) {
+            try {
+              let jsonData = diag.json_diagrama;
+              if (typeof jsonData === 'string') {
+                jsonData = JSON.parse(jsonData);
+              }
+
+              console.log('📊 Iniciando carga de diagrama con sincronización de vista:', jsonData);
+
+              // 1. CONSTRUIR NAMESPACE SEGURO
+              const cellNamespace: any = { ...joint.shapes };
+              if (joint.shapes.standard) {
+                Object.keys(joint.shapes.standard).forEach(key => {
+                  const shape = (joint.shapes.standard as any)[key];
+                  cellNamespace[`standard.${key}`] = shape;
+                });
+              }
+
+              // 2. SINCRONIZAR PAPER Y GRUPO
+              if (this.paper) {
+                this.paper.options.cellViewNamespace = cellNamespace;
+                this.paper.freeze();
+              }
+
+              this.graph.clear();
+
+              // 3. PRE-PROCESAMIENTO: Asegurar markup y atributos críticos
+              if (jsonData.cells && Array.isArray(jsonData.cells)) {
+                jsonData.cells.forEach((cell: any) => {
+                  if (cell.type && !cell.type.includes('Link')) {
+                    const constructor = cellNamespace[cell.type] || (joint.shapes as any)[cell.type];
+                    if (!cell.markup || cell.markup.length === 0) {
+                      if (constructor) {
+                        const markup = constructor.prototype?.markup || constructor.markup;
+                        if (markup) cell.markup = markup;
+                      }
+                    }
+                    if (cell.type.includes('Polygon')) {
+                      if (!cell.attrs) cell.attrs = {};
+                      if (!cell.attrs.body) cell.attrs.body = {};
+                      if (!cell.attrs.body.refPoints && constructor?.prototype?.defaults?.attrs?.body?.refPoints) {
+                        cell.attrs.body.refPoints = constructor.prototype.defaults.attrs.body.refPoints;
+                      }
+                      if (!cell.attrs.body.fill || cell.attrs.body.fill === 'black') {
+                        cell.attrs.body.fill = '#FFFFFF';
+                        cell.attrs.body.stroke = '#000000';
+                      }
+                    }
+                  }
+                });
+              }
+
+              // 4. CARGAR EN EL GRAFO
+              this.graph.fromJSON(jsonData, { cellNamespace });
+
+              // 5. RESTAURAR DIMENSIONES Y DESCONGELAR
+              setTimeout(() => {
+                let maxContentY = 0;
+                this.graph.getCells().forEach(cell => {
+                  const bbox = cell.getBBox();
+                  const y = bbox.y + bbox.height;
+                  if (y > maxContentY) maxContentY = y;
+                  if (cell.isLink()) {
+                    const link = cell as joint.dia.Link;
+                    const labels = link.labels();
+                    if (labels && labels.length > 0) link.labels(labels);
+                  }
+                });
+
+                const pageHeight = this.obtenerPageHeight();
+                const finalHeight = Math.max(pageHeight, Math.ceil((maxContentY + 50) / pageHeight) * pageHeight);
+                this.paper.setDimensions(825, finalHeight);
+                this.currentPaperHeight = finalHeight;
+
+                if (this.paper) {
+                  this.paper.unfreeze();
+                  this.paper.updateViews();
+                }
+              }, 300);
+
+              this.alertService.infoInformacion('Diagrama cargado correctamente');
+            } catch (e) {
+              console.error('❌ Error crítico en la carga del diagrama:', e);
+              if (this.paper) this.paper.unfreeze();
+              this.alertService.error('Error al reconstruir el diagrama');
+            }
+          }
+        },
+        error: (err) => {
+          console.error('❌ Error al obtener el diagrama:', err);
+        }
+      });
+    }
   }
 
   private seleccionarElemento(element: joint.dia.Element, tipo: 'click' | 'dblclick' | 'target' | 'right-click') {
@@ -769,43 +890,65 @@ export class Diagrama implements AfterViewInit {
   }
 
   // 📏 Ajuste dinámico de tamaño según texto
-  // 📏 Ajuste dinámico de tamaño según texto
   private ajustarTamanoElemento(element: joint.dia.Element, texto: string) {
     const isObservacion = element.prop('tipo') === 'observacion';
+    const type = (element as any).get('type');
 
-    // Configuración base
+    // Configuración base más ajustada
     const minHeight = isObservacion ? 40 : 60;
-    const padding = 20;
-    const charWidth = 8;
-    const lineHeight = 16;
+    const paddingVertical = 8; // Margen vertical mínimo (4px arriba, 4px abajo aprox)
+    const charWidth = 7.8; // Un poco más generoso para evitar desbordes
+    const lineHeight = 14.5; // Altura de línea más compacta
 
-    // Cálculo aproximado de altura basado en el texto
-    // Para la observación, el ancho del texto es fijo (250px aprox)
-    const textWidth = isObservacion ? 250 : Math.max(100, (Math.sqrt(texto.length) * 15));
+    // Límite de ancho estricto: 300px
+    const maxWidth = 300;
+    const targetTextWidth = isObservacion ? maxWidth : Math.max(140, Math.min(maxWidth, Math.sqrt(texto.length) * 25));
 
-    const lines = texto.split('\n');
-    let estimatedHeight = 0;
-    lines.forEach(line => {
-      // Si la línea es más larga que el ancho, se envolverá
-      const lineWraps = Math.ceil((line.length * charWidth) / textWidth);
-      estimatedHeight += lineWraps * lineHeight;
+    // Dividir en párrafos manuales
+    const paragraphs = texto.split('\n');
+    let totalLinesNeeded = 0;
+
+    paragraphs.forEach(p => {
+      // Calcular líneas necesarias con el ancho objetivo real
+      // Consideramos que el ancho real utilizable es un poco menor según la forma
+      let shapeWidthEfficiency = 1.0;
+      if (type === 'standard.Circle' || type === 'standard.Ellipse') shapeWidthEfficiency = 0.8;
+      if (type === 'standard.Polygon' && !isObservacion) shapeWidthEfficiency = 0.7; // Rombo es el menos eficiente
+
+      const usableWidth = targetTextWidth * shapeWidthEfficiency;
+      const pLines = Math.max(1, Math.ceil((p.length * charWidth) / usableWidth));
+      totalLinesNeeded += pLines;
     });
 
-    const finalHeight = Math.max(minHeight, estimatedHeight + padding);
+    // Altura final estimada muy ceñida al texto
+    const estimatedHeight = (totalLinesNeeded * lineHeight) + paddingVertical + 4;
+    const finalHeight = Math.max(minHeight, estimatedHeight);
 
     if (isObservacion) {
-      // El corchete mantiene su ancho fijo de 10px, solo crece en alto
       element.resize(10, finalHeight);
       element.attr('label/textWrap', {
-        width: 250,
+        width: maxWidth,
         height: null,
         ellipsis: true
       });
     } else {
-      const finalWidth = textWidth + padding;
+      // Ancho final con margen extra lateral
+      const finalWidth = targetTextWidth + 20;
       element.resize(finalWidth, finalHeight);
+
+      // Márgenes internos ajustados para evitar desbordamiento visual
+      let wrapWidthOffset = -10;
+
+      if (type === 'standard.Circle') {
+        wrapWidthOffset = -30;
+      } else if (type === 'standard.Polygon' && !isObservacion) {
+        wrapWidthOffset = -40; // Rombo necesita más margen
+      } else if (type === 'standard.Ellipse') {
+        wrapWidthOffset = -30;
+      }
+
       element.attr('label/textWrap', {
-        width: -10,
+        width: wrapWidthOffset,
         height: null,
         ellipsis: true
       });
@@ -817,45 +960,39 @@ export class Diagrama implements AfterViewInit {
     this.nodoOrigen = null;
   }
 
-  // 🎯 Obtener el centro visible del viewport del paper
-  // 🎯 Obtener el centro visible del viewport del paper
+  // Obtener el centro visible del viewport del paper
   private obtenerCentroVisible(): { x: number, y: number } {
-    const parentContainer = this.canvasRef.nativeElement.closest('.overflow-x-auto');
-    if (!parentContainer) return { x: 250, y: 300 };
+    const container = this.canvasRef.nativeElement.closest('.overflow-x-auto');
+    if (!container) return { x: 400, y: 300 };
 
-    const rect = parentContainer.getBoundingClientRect();
     const now = Date.now();
-
-    // Si han pasado más de 3 segundos desde la última adición, reseteamos el contador secuencial
-    if (now - this.lastAdditionTime > 3000) {
+    if (now - this.lastAdditionTime > 4000) {
       this.sequentialAdditionCount = 0;
     }
 
-    // El "centro" relativo al contenedor que tiene el scroll
-    // Desplazamos más a la izquierda (30% en lugar de 50%) y un poco más abajo del centro (50%)
-    const viewCenterX = rect.width * 0.30;
-    const viewCenterY = window.innerHeight * 0.5;
+    // El centro de la PANTALLA (viewport del navegador)
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
 
-    // Obtener la posición real del canvas dentro del área de scroll
+    // Posición del canvas respecto a la pantalla
     const canvasRect = this.canvasRef.nativeElement.getBoundingClientRect();
 
-    // Calcular x, y locales al paper considerando el centro de lo que el usuario ve
-    let localX = viewCenterX - canvasRect.left;
-    let localY = viewCenterY - canvasRect.top;
+    // Mapear el centro de la pantalla a coordenadas locales del canvas
+    let localX = centerX - canvasRect.left;
+    let localY = centerY - canvasRect.top;
 
-    // Requerimiento: Si agrego otro simbolo se agreue un poco mas abajo y a la DERECHA (cascada)
-    localY += (this.sequentialAdditionCount * 40);
-    localX += (this.sequentialAdditionCount * 40);
+    // Aplicar cascada (30px cada vez)
+    localX += (this.sequentialAdditionCount * 30);
+    localY += (this.sequentialAdditionCount * 30);
 
-    // Clamping para que no se salga de los bordes del diagrama (ancho fijo 825)
-    // Minimizado a la izquierda a 50px y derecha a 750px
-    localX = Math.max(80, Math.min(750, localX));
+    // Clamping Horizontal (Diagrama tiene 825px de ancho)
+    // Dejamos margen de 100px a la izquierda y 150 a la derecha
+    localX = Math.max(100, Math.min(700, localX));
 
-    // Obtener altura actual del paper
-    const paperH = this.paper.options.height as number || 2000;
+    // Clamping Vertical (según altura actual del paper)
+    const paperH = this.paper.options.height as number || 1000;
     localY = Math.max(50, Math.min(paperH - 100, localY));
 
-    // Actualizar estados para la siguiente adición
     this.lastAdditionTime = now;
     this.sequentialAdditionCount++;
 
@@ -865,34 +1002,40 @@ export class Diagrama implements AfterViewInit {
   agregarResponsable() {
     const centro = this.obtenerCentroVisible();
     const circle = new joint.shapes.standard.Circle();
-    circle.resize(60, 60);
-    circle.position(centro.x - 30, centro.y - 30);
+    const texto = this.obtenerTexto('Responsable');
+    circle.resize(80, 80);
+    circle.position(centro.x - 40, centro.y - 40);
     circle.attr({
-      body: {
-        fill: '#fff',
-        stroke: '#000',
-        strokeWidth: 1
-      },
+      body: { fill: '#fff', stroke: '#000', strokeWidth: 1 },
       label: {
-        text: this.obtenerTexto('Responsable'),
+        text: texto,
         fill: 'black',
-        fontSize: 10
+        fontSize: 10,
+        textWrap: { width: -25, height: null, ellipsis: true }
       }
     });
     circle.addTo(this.graph);
+    this.ajustarTamanoElemento(circle, texto);
     this.contador++;
   }
 
   agregarInicioFin() {
     const centro = this.obtenerCentroVisible();
     const ellipse = new joint.shapes.standard.Ellipse();
-    ellipse.resize(120, 50);
-    ellipse.position(centro.x - 60, centro.y - 25);
+    const texto = this.obtenerTexto('Inicio/Fin');
+    ellipse.resize(130, 60);
+    ellipse.position(centro.x - 65, centro.y - 30);
     ellipse.attr({
       body: { fill: '#fff', stroke: '#000', strokeWidth: 1 },
-      label: { text: this.obtenerTexto('Inicio/Fin'), fill: 'black' }
+      label: {
+        text: texto,
+        fill: 'black',
+        fontSize: 10,
+        textWrap: { width: -30, height: null, ellipsis: true }
+      }
     });
     ellipse.addTo(this.graph);
+    this.ajustarTamanoElemento(ellipse, texto);
     this.contador++;
   }
 
@@ -967,25 +1110,33 @@ export class Diagrama implements AfterViewInit {
   agregarDocumento() {
     const centro = this.obtenerCentroVisible();
     const doc = new joint.shapes.standard.Polygon();
-    doc.resize(140, 60);
-    doc.position(centro.x - 70, centro.y - 30);
+    const texto = this.obtenerTexto('Documento');
+    doc.resize(140, 70);
+    doc.position(centro.x - 70, centro.y - 35);
     doc.attr({
       body: {
-        refPoints: '0,0 140,0 140,50 100,60 0,60', // borde inferior en curva simulada
+        refPoints: '0,0 140,0 140,55 100,70 0,70',
         fill: '#fff',
         stroke: '#000',
         strokeWidth: 1
       },
-      label: { text: this.obtenerTexto('Documento'), fill: 'black' }
+      label: {
+        text: texto,
+        fill: 'black',
+        fontSize: 10,
+        textWrap: { width: -20, height: null, ellipsis: true }
+      }
     });
     doc.addTo(this.graph);
+    this.ajustarTamanoElemento(doc, texto);
     this.contador++;
   }
 
   agregarActividad() {
     const centro = this.obtenerCentroVisible();
     const rect = new joint.shapes.standard.Rectangle();
-    rect.resize(130, 60); // Un poco más alto para texto envuelto
+    const texto = this.obtenerTexto('Actividad');
+    rect.resize(130, 60);
     rect.position(centro.x - 65, centro.y - 30);
     rect.attr({
       body: {
@@ -994,21 +1145,22 @@ export class Diagrama implements AfterViewInit {
         strokeWidth: 1
       },
       label: {
-        text: this.obtenerTexto('Actividad'),
+        text: texto,
         fill: 'black',
         fontSize: 10,
-        textWrap: { width: -10, height: null, ellipsis: true }
+        textWrap: { width: -15, height: null, ellipsis: true }
       }
     });
     rect.addTo(this.graph);
-    this.ajustarTamanoElemento(rect, this.obtenerTexto('Actividad'));
+    this.ajustarTamanoElemento(rect, texto);
     this.contador++;
   }
 
   agregarDecision() {
     const centro = this.obtenerCentroVisible();
     const diamond = new joint.shapes.standard.Polygon();
-    diamond.resize(120, 80); // Más alargado horizontalmente como en la imagen
+    const texto = this.obtenerTexto('Decisión');
+    diamond.resize(120, 80);
     diamond.position(centro.x - 60, centro.y - 40);
     diamond.attr({
       body: {
@@ -1018,13 +1170,14 @@ export class Diagrama implements AfterViewInit {
         strokeWidth: 1
       },
       label: {
-        text: this.obtenerTexto('Decisión'),
+        text: texto,
         fill: 'black',
-        fontSize: 10
+        fontSize: 10,
+        textWrap: { width: -40, height: null, ellipsis: true }
       }
     });
     diamond.addTo(this.graph);
-    this.ajustarTamanoElemento(diamond, this.obtenerTexto('Decisión'));
+    this.ajustarTamanoElemento(diamond, texto);
     this.contador++;
   }
 
@@ -1053,17 +1206,19 @@ export class Diagrama implements AfterViewInit {
 
     separator.attr({
       body: {
-        d: 'M 0 0 H 2000',
+        d: `M 0 0 H 825`,
         stroke: '#9ca3af',
         strokeWidth: 1,
         strokeDasharray: '5,5',
         fill: 'none'
       },
       label: {
-        text: ' Fin de Página ',
+        text: ' --- Fin de Página --- ',
         fill: '#6b7280',
-        fontSize: 10,
-        textVerticalAnchor: 'bottom'
+        fontSize: 12,
+        fontWeight: 'bold',
+        textVerticalAnchor: 'bottom',
+        refY: -5
       }
     });
     separator.attr('body/pointer-events', 'none');
@@ -1080,10 +1235,10 @@ export class Diagrama implements AfterViewInit {
 
   exportar() {
     this.toggleSeparadores(false);
-    htmlToImage.toPng(this.canvasRef.nativeElement).then(dataUrl => {
+    htmlToImage.toPng(this.canvasRef.nativeElement, { fontEmbedCSS: '' }).then(dataUrl => {
       const a = document.createElement('a');
       a.href = dataUrl;
-      a.download = 'diagrama.png';
+      a.download = 'diagrama de flujo ' + this.procedimiento + '.png';
       a.click();
       this.toggleSeparadores(true);
     }).catch(err => {
@@ -1092,27 +1247,40 @@ export class Diagrama implements AfterViewInit {
     });
   }
 
-  async exportarPDF() {
+  EliminarUltimaPagina() {
+    const separadores = this.graph.getElements().filter(el => el.prop('tipo') === 'separador');
+    if (separadores.length > 0) {
+      // Obtener el último separador basado en su posición Y
+      const ultimoSeparador = separadores.reduce((prev, current) => (prev.position().y > current.position().y) ? prev : current);
+      ultimoSeparador.remove();
+
+      // Reducir la altura del paper
+      const pageHeight = this.obtenerPageHeight();
+      const newHeight = Math.max(pageHeight, (this.paper.options.height as number) - pageHeight);
+      this.paper.setDimensions(825, newHeight);
+      this.currentPaperHeight = newHeight;
+
+      this.alertService.infoExito('Última página eliminada');
+    } else {
+      this.alertService.infoInformacion('No hay páginas adicionales para eliminar');
+    }
+  }
+
+  async exportarPDF(guardarSolo = false): Promise<string | null> {
     try {
       this.toggleSeparadores(false);
-      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement);
+      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, { fontEmbedCSS: '' });
       const imgWidth = canvas.width;
       const totalHeight = canvas.height;
 
-      // Calculamos el pageHeight basado en el ancho real del canvas generado
-      // para mantener la proporción A4 exacta
       const pageHeight = Math.floor(imgWidth * 1.4142);
-
       const pdf = new jsPDF('p', 'pt', 'a4');
-      const pdfPageWidth = 595.28; // Ancho A4 en pt
-
-      // Calculamos el scale para ajustar el ancho del canvas al ancho del PDF
+      const pdfPageWidth = 595.28;
       const scale = pdfPageWidth / imgWidth;
 
       let heightLeft = totalHeight;
       let currentPage = 0;
 
-      // Crear canvas temporal para slice
       const sliceCanvas = document.createElement('canvas');
       sliceCanvas.width = imgWidth;
       sliceCanvas.height = pageHeight;
@@ -1120,39 +1288,33 @@ export class Diagrama implements AfterViewInit {
 
       while (heightLeft > 0) {
         if (currentPage > 0) pdf.addPage();
-
-        // Limpiar canvas temporal
         if (ctx) ctx.clearRect(0, 0, imgWidth, pageHeight);
-        // Calcular altura de este slice (puede ser menor si es el último trozo)
         const currentSliceHeight = Math.min(pageHeight, heightLeft);
-        // Dibujar el trozo correspondiente del canvas original en el sliceCanvas
         if (ctx) {
-          ctx.drawImage(
-            canvas,
-            0, currentPage * pageHeight, // Source X, Y
-            imgWidth, currentSliceHeight, // Source W, H
-            0, 0, // Dest X, Y
-            imgWidth, currentSliceHeight // Dest W, H
-          );
+          ctx.drawImage(canvas, 0, currentPage * pageHeight, imgWidth, currentSliceHeight, 0, 0, imgWidth, currentSliceHeight);
         }
-
         const sliceData = sliceCanvas.toDataURL('image/png');
-
-        // Añadir al PDF
         const currentScaledHeight = currentSliceHeight * scale;
         pdf.addImage(sliceData, 'PNG', 0, 0, pdfPageWidth, currentScaledHeight);
-
         heightLeft -= pageHeight;
         currentPage++;
       }
 
-      pdf.save('diagrama_paginado.pdf');
       this.toggleSeparadores(true);
-      this.alertService.infoExito('PDF exportado correctamente');
+      const nombreArchivo = 'diagrama de flujo ' + this.procedimiento + '.pdf';
+
+      if (!guardarSolo) {
+        pdf.save(nombreArchivo);
+        this.alertService.infoExito('PDF exportado correctamente');
+      }
+
+      // Retornar base64 sin el prefijo data:application/pdf;base64,
+      return pdf.output('datauristring').split(',')[1];
     } catch (error) {
       this.toggleSeparadores(true);
       console.error('Error exportando PDF', error);
       alert('Error al exportar PDF');
+      return null;
     }
   }
 
@@ -1160,15 +1322,59 @@ export class Diagrama implements AfterViewInit {
     return this.textoNodo.trim() || `${defaultLabel} ${this.contador}`;
   }
 
-  guardarDiagrama() {
-    htmlToImage.toPng(this.canvasRef.nativeElement).then((dataUrl) => {
-      this.diagramaService.guardarImagen(dataUrl);
-      this.alertService.infoExito('Diagrama de Flujo Guardado');
-      this.diagramaEnviado.emit(true)
+  async guardarDiagrama() {
+    const pdfBase64 = await this.exportarPDF(true);
+    if (!pdfBase64 || !this.documentoId) {
+      this.alertService.error('No se pudo generar el PDF o no hay documento asociado');
+      return;
+    }
 
+    // Sanitizar el nombre del procedimiento para evitar caracteres inválidos en el nombre del archivo
+    const procedimientoSanitizado = this.procedimiento.replace(/[/\\?%*:|"<>]/g, '-');
+    const nombreArchivo = 'diagrama de flujo ' + procedimientoSanitizado + '.pdf';
 
-    }).catch(err => {
-      console.error('Error al guardar diagrama:', err);
+    console.log('🚀 Intentando guardar diagrama:', {
+      documentoId: this.documentoId,
+      procedimiento: this.procedimiento,
+      nombreArchivo: nombreArchivo
+    });
+
+    const jsonDiagrama = this.graph.toJSON();
+
+    // Asegurar que el markup se guarde en el JSON para evitar errores de carga en el futuro
+    if (jsonDiagrama.cells && Array.isArray(jsonDiagrama.cells)) {
+      jsonDiagrama.cells.forEach((cell: any) => {
+        if (cell.type && !cell.type.includes('Link') && (!cell.markup || cell.markup.length === 0)) {
+          const element = this.graph.getCell(cell.id) as joint.dia.Element;
+          if (element) {
+            const constructor = (element.constructor as any);
+            const markup = constructor.prototype?.markup || constructor.markup;
+            if (markup) {
+              cell.markup = markup;
+            }
+          }
+        }
+      });
+    }
+
+    const data = {
+      pdf_diagrama: pdfBase64,
+      json_diagrama: jsonDiagrama,
+      id_diagrama: nombreArchivo
+    };
+
+    // Compartir imagen localmente para otros componentes (ej: Reglamento)
+    this.diagramaFlujoService.guardarImagen(pdfBase64);
+
+    this.diagramaFlujoService.guardarDiagramaCompleto(this.documentoId, data).subscribe({
+      next: (res) => {
+        this.alertService.infoExito('Diagrama de Flujo Guardado y persistido localmente');
+        this.diagramaEnviado.emit(true);
+      },
+      error: (err) => {
+        console.error('Error al guardar diagrama:', err);
+        this.alertService.error('Error al guardar el diagrama en el servidor');
+      }
     });
   }
 }

@@ -5,6 +5,7 @@ import { SoporteComputacionalService } from '../../../shared/servicios/modulos/s
 import { AlertService } from '../../../shared/Utils/Alertas/alert.service';
 
 @Component({
+  standalone: true,
   selector: 'app-soporte-computacional',
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './soporte-computacional.component.html',

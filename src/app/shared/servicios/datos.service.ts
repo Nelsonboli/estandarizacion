@@ -44,6 +44,10 @@ export class DatosService {
     { key: 'frecuencia', label: 'frecuencia', Tooltip: 'Periodo de aplicación del indicador.' },
   ];
 
+
+
+
+
   // --- Genera automáticamente las columnas del backend
   columnaDocumento = [
     { key: 'documento', label: 'documento' }
@@ -130,6 +134,33 @@ export class DatosService {
     "Reglamento"
   ];
 
+
+  Estado_actual_procedimiento = [
+    {
+      Inicial: 'Inicial ',
+      Descripcion: 'Teniendo en cuenta que este procedimiento se encuentra en un estado inicial, se ha identificado que para llegar'
+        + 'al estado completo se requiere definir y establecer los soportes documentales, soporte computacional y reglamentar el procedimiento.'
+    },
+    {
+      Intermedio1: 'Intermedio 1',
+      Descripcion: 'El procedimiento se encuentra en un estado intermedio I1, para llegar a un estado completo'
+        + 'se requiere definir el soporte computacional y reglamentar el procedimiento'
+    },
+    {
+      Intermedio2: 'Intermedio 2',
+      Descripcion: 'El procedimiento se encuentra en un estado intermedio I2, para llegar a un estado'
+        + 'completo se requiere definir y establecer los soportes documentales y la reglamentación del procedimiento.'
+    },
+    {
+      Intermedio3: 'Intermedio 3',
+      Descripcion: 'El procedimiento se encuentra en un estado intermedio I3, para llegar a un estado completo'
+        + 'se requiere definir y establecer la unificacion de criterios y definir si se requiere o no un soporte computacional.'
+    },
+    {
+      Completo: 'Completo',
+      Descripcion: 'El procedimiento se encuentra en un estado completo,'
+    },
+  ];
 }
 
 

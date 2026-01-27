@@ -14,4 +14,7 @@
     }
   },
   "workbench.colorTheme": "Visual Studio Dark",
+  "java.project.referencedLibraries": [
+    "backend/jasper/lib/*.jar"
+  ]
 }

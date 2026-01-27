@@ -7,12 +7,12 @@ import { TablaService } from '../../shared/servicios/tabla.service';
 import { EstadolistaService } from '../../shared/servicios/estadolista.service';
 import { ListaDesplegableComponent } from '../../shared/component/lista-desplegable/lista-desplegable.component';
 import { TablaCriteriosComponent } from '../../shared/component/tablaCriterios/tablaCriterios.component';
-import { DiagramaService } from '../../shared/servicios/diagrama.service';
 import { ProcedimientoService } from '../../shared/servicios/modulos/procedimiento.service';
 import { FormularioDAACService } from '../../shared/servicios/modulos/formulario-daac.service';
 import { SoporteComputacionalService } from '../../shared/servicios/modulos/soporte-computacional.service';
 import { ReglamentoBaseService } from '../../shared/servicios/modulos/reglamento-base.service';
 import { DocumentoSoporteService } from '../../shared/servicios/modulos/documento-soporte.service';
+import { DiagramaFlujoService } from '../../shared/servicios/modulos/diagrama-flujo.service';
 import { TablasFormularioComponent } from "../../shared/component/tablas-formulario/tablas-formulario.component";
 import { jsPDF } from 'jspdf';
 import { AlertService } from '../../shared/Utils/Alertas/alert.service';
@@ -44,17 +44,16 @@ export class SocializacionprocedimientosComponent implements OnInit {
     public datosTablaService: DatosService,
     public tablaService: TablaService,
     private listaService: EstadolistaService,
-    private diagramaService: DiagramaService,
     private procedimientoService: ProcedimientoService,
     private reglamentoBaseService: ReglamentoBaseService,
     private formularioDAACService: FormularioDAACService,
     private soporteComputacionalService: SoporteComputacionalService,
     private documentoSoporteService: DocumentoSoporteService,
+    private diagramaFlujoService: DiagramaFlujoService,
     private alertService: AlertService,
   ) { }
 
   ngOnInit() {
-    this.imagenDiagrama = this.diagramaService.cargarImagen();
     this.ObtenerProcedimientos();
     this.listaService.visible$.subscribe(valor => {
       this.abrir = valor;
@@ -103,7 +102,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
         Criterio: key.toUpperCase(),
         Descripcion: procedimiento[key] // Pasamos el valor tal cual (array o string)
       }));
-
     // Cargar todos los datos relacionados con el procedimiento
     if (procedimiento.id) {
       this.cargarDatosProcedimiento(procedimiento.id);
@@ -127,18 +125,22 @@ export class SocializacionprocedimientosComponent implements OnInit {
           this.cargarFormularioDAAC(documentoSoporte.id);
           // 3. Cargar documentos base (reglamentos)
           this.cargarDocumentosBase(documentoSoporte.id);
+          // 4. Cargar diagrama de flujo
+          this.CargarDiagramaFlujo(documentoSoporte.id);
         } else {
           this.FormularioDAAC = [];
           this.documentosBase = [];
+          this.imagenDiagrama = null;
         }
       },
       error: (err) => {
         console.error('Error al obtener documento soporte:', err);
         this.FormularioDAAC = [];
         this.documentosBase = [];
+        this.imagenDiagrama = null;
       }
     });
-    // 4. Cargar soporte computacional (usa procedimientoId directamente)
+    // 5. Cargar soporte computacional (usa procedimientoId directamente)
     this.cargarSoporteComputacional(procedimientoId);
   }
 
@@ -170,6 +172,22 @@ export class SocializacionprocedimientosComponent implements OnInit {
     });
   }
 
+  CargarDiagramaFlujo(documentoSoporteId: number) {
+    this.diagramaFlujoService.getDiagramaPdf(documentoSoporteId).subscribe({
+      next: (data) => {
+        if (data && data.pdfBase64) {
+          this.imagenDiagrama = data.pdfBase64;
+        } else {
+          this.imagenDiagrama = null;
+        }
+      },
+      error: (err) => {
+        console.error('Error al cargar diagrama de flujo:', err);
+        this.imagenDiagrama = null;
+      }
+    });
+  }
+
   cargarSoporteComputacional(procedimientoId: number) {
     this.soporteComputacionalService.getSoporteComputacional(procedimientoId).subscribe({
       next: (soporte) => {
@@ -185,57 +203,18 @@ export class SocializacionprocedimientosComponent implements OnInit {
 
   descargarPDFDiagrama() {
     if (!this.imagenDiagrama) {
-      alert('No hay imagen de diagrama disponible para exportar.');
+      this.alertService.error('No hay diagrama disponible para descargar.');
       return;
     }
 
-    const img = new Image();
-    img.src = this.imagenDiagrama;
-    img.onload = () => {
-      const imgWidth = img.width;
-      const totalHeight = img.height;
-      const pageHeight = 1122; // Altura de corte similar al DiagramaComponent
+    const linkSource = `data:application/pdf;base64,${this.imagenDiagrama}`;
+    const downloadLink = document.createElement("a");
+    const fileName = `diagrama_${this.procedimientoSeleccionado?.procedimiento || 'export'}.pdf`;
 
-      const pdf = new jsPDF('p', 'pt', 'a4');
-      const pdfPageWidth = 595.28;
-      const pdfPageHeight = 841.89;
-
-      const scale = pdfPageWidth / imgWidth;
-      let heightLeft = totalHeight;
-      let currentPage = 0;
-
-      const sliceCanvas = document.createElement('canvas');
-      sliceCanvas.width = imgWidth;
-      sliceCanvas.height = pageHeight;
-      const ctx = sliceCanvas.getContext('2d');
-
-      while (heightLeft > 0) {
-        if (currentPage > 0) pdf.addPage();
-
-        if (ctx) {
-          ctx.clearRect(0, 0, imgWidth, pageHeight);
-          const currentSliceHeight = Math.min(pageHeight, heightLeft);
-
-          ctx.drawImage(
-            img,
-            0, currentPage * pageHeight,
-            imgWidth, currentSliceHeight,
-            0, 0,
-            imgWidth, currentSliceHeight
-          );
-
-          const sliceData = sliceCanvas.toDataURL('image/png');
-          const currentScaledHeight = currentSliceHeight * scale;
-
-          pdf.addImage(sliceData, 'PNG', 0, 0, pdfPageWidth, currentScaledHeight);
-        }
-
-        heightLeft -= pageHeight;
-        currentPage++;
-      }
-
-      pdf.save(`diagrama_${this.procedimientoSeleccionado?.procedimiento || 'export'}.pdf`);
-    };
+    downloadLink.href = linkSource;
+    downloadLink.download = fileName;
+    downloadLink.click();
+    this.alertService.infoExito('Descargando Diagrama de Flujo');
   }
 
   mapearDatosDAAC(formulario: any) {

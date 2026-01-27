@@ -6,7 +6,7 @@
         <div
             class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-azul-fondo p-2 rounded-t-md gap-2">
 
-            <div class="py-2 px-2 text-white sm:items-center text-med font-semibold capitalize">
+            <div class="py-2 px-2 text-white sm:items-center text-med font-medium capitalize">
                 Procedimientos
             </div>
 
@@ -46,11 +46,6 @@
         <!-- Botones personalizados de la tabla -->
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex items-center justify-center space-x-1 gap-2">
-                <!-- <button
-                        [routerLink]="['/estandarizar', dato.id]"
-                        class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded">
-                        Estandarizar
-                    </button> -->
                 <button [routerLink]="['/identificacionrequerimientos/estandarizar', dato.id]"
                     class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded">
                     Estandarizar
