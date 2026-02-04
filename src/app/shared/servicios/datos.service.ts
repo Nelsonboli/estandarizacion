@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { estado } from '../../interfaces/estado.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DatosService {
-
   /* Datos de la tabla Criterios */
   encabezadoCriterios = ['Criterios', 'Descripcion'];
   tablaCriterios = [
@@ -135,30 +135,30 @@ export class DatosService {
   ];
 
 
-  Estado_actual_procedimiento = [
+  Estado_actual_procedimiento: estado[] = [
     {
-      Inicial: 'Inicial ',
-      Descripcion: 'Teniendo en cuenta que este procedimiento se encuentra en un estado inicial, se ha identificado que para llegar'
-        + 'al estado completo se requiere definir y establecer los soportes documentales, soporte computacional y reglamentar el procedimiento.'
+      estado: 'Inicial ',
+      descripcion: 'Teniendo en cuenta que este procedimiento se encuentra en un estado inicial, se ha identificado que para llegar'
+        + ' al estado completo se requiere definir y establecer los soportes documentales, soporte computacional y reglamentar el procedimiento.'
     },
     {
-      Intermedio1: 'Intermedio 1',
-      Descripcion: 'El procedimiento se encuentra en un estado intermedio I1, para llegar a un estado completo'
+      estado: 'Intermedio 1',
+      descripcion: 'El procedimiento se encuentra en un estado intermedio I1, para llegar a un estado completo'
         + 'se requiere definir el soporte computacional y reglamentar el procedimiento'
     },
     {
-      Intermedio2: 'Intermedio 2',
-      Descripcion: 'El procedimiento se encuentra en un estado intermedio I2, para llegar a un estado'
+      estado: 'Intermedio 2',
+      descripcion: 'El procedimiento se encuentra en un estado intermedio I2, para llegar a un estado'
         + 'completo se requiere definir y establecer los soportes documentales y la reglamentación del procedimiento.'
     },
     {
-      Intermedio3: 'Intermedio 3',
-      Descripcion: 'El procedimiento se encuentra en un estado intermedio I3, para llegar a un estado completo'
+      estado: 'Intermedio 3',
+      descripcion: 'El procedimiento se encuentra en un estado intermedio I3, para llegar a un estado completo'
         + 'se requiere definir y establecer la unificacion de criterios y definir si se requiere o no un soporte computacional.'
     },
     {
-      Completo: 'Completo',
-      Descripcion: 'El procedimiento se encuentra en un estado completo,'
+      estado: 'Completo',
+      descripcion: 'El procedimiento se encuentra en un estado completo,'
     },
   ];
 }

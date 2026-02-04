@@ -12,6 +12,9 @@
         }
         @if (descargaActiva === 'descargarProcedimiento') {
         <ng-container>
+            <app-formato-estandarizacion #formatoRef [procedimientoId]="procedimientoId"></app-formato-estandarizacion>
+
+
             <div
                 class="flex flex-col justify-center items-center text-center space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
                 <strong>Descargar la Ficha de Procedimiento para la DAAC</strong>
@@ -25,7 +28,7 @@
                         acreditacioninstitucional&#64;udenar.edu.co
                     </span>
                 </p>
-                <button (click)="descargarDocumento()"
+                <button (click)="formatoRef.generarPDF()"
                     class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                     <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
                     Descargar {{ fichaProcedimiento }}
@@ -77,6 +80,8 @@
         }
         @if (descargaActiva === 'descargarEstandarizacion') {
         <ng-container>
+            <app-formato-estandarizacion #formatoRefEstandarizacion
+                [procedimientoId]="procedimientoId"></app-formato-estandarizacion>
             <div
                 class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
                 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-2 w-full">
@@ -101,7 +106,7 @@
                             Descargue el Formato de Estandarización y envíe el documento al
                             correo electrónico de la Dependencia correspondiente.
                         </p>
-                        <button
+                        <button (click)="formatoRefEstandarizacion.generarPDF()"
                             class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                             <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato"
                                 class="w-6 h-6" />
@@ -124,7 +129,7 @@
                             de Nariño para su aprobación y subir el documento aprobrado. para continuar
                             con el Formato de Estandarización.
                         </p>
-                        <button
+                        <button (click)="formatoRefEstandarizacion.generarPDF()"
                             class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                             <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
                             Descargar {{ fichaProcedimiento }}

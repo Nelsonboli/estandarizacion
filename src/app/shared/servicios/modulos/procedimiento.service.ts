@@ -8,7 +8,11 @@ import { Observable } from 'rxjs';
 export class ProcedimientoService {
   private apiUrl = 'http://localhost:3000/identificacionrequerimientos';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  getProcedimiento(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
 
   // Obtener todos los procedimientos
   getProcedimientos(): Observable<any[]> {
@@ -32,9 +36,9 @@ export class ProcedimientoService {
 
   // Buscar procedimiento
   buscarProcedimientos(termino: string) {
-  return this.http.get<any[]>(`${this.apiUrl}/buscar`, {
-    params: { termino }
-  });
-}
+    return this.http.get<any[]>(`${this.apiUrl}/buscar`, {
+      params: { termino }
+    });
+  }
 
 }

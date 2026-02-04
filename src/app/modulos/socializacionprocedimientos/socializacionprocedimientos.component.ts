@@ -14,7 +14,6 @@ import { ReglamentoBaseService } from '../../shared/servicios/modulos/reglamento
 import { DocumentoSoporteService } from '../../shared/servicios/modulos/documento-soporte.service';
 import { DiagramaFlujoService } from '../../shared/servicios/modulos/diagrama-flujo.service';
 import { TablasFormularioComponent } from "../../shared/component/tablas-formulario/tablas-formulario.component";
-import { jsPDF } from 'jspdf';
 import { AlertService } from '../../shared/Utils/Alertas/alert.service';
 
 @Component({
@@ -35,7 +34,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   documentosBase: any[] = [];
   soporteComputacional: any = null;
   FormularioDAAC: { Criterio: string; Descripcion: string }[] = [];
-
   columnaDocumentoBase = [
     { key: 'documento', label: 'Documentos base' }
   ];

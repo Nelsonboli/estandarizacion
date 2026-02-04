@@ -17,6 +17,11 @@ export class DiagramaFlujoService {
         return this.imagen;
     }
 
+    cargarImagenesDiagramaFlujo() {
+
+    }
+
+
     guardarDiagramaCompleto(id: number, data: { pdf_diagrama: string, json_diagrama: any, id_diagrama: string }): Observable<any> {
         return this.http.post(`${this.base}/guardar-diagrama/${id}`, data);
     }

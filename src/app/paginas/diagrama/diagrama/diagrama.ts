@@ -1318,16 +1318,67 @@ export class Diagrama implements AfterViewInit {
     }
   }
 
+  // 👇 Nuevo método para generar imágenes por página
+  async generarImagenesPorPagina(): Promise<string[]> {
+    try {
+      this.toggleSeparadores(false);
+      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, { fontEmbedCSS: '' });
+      const imgWidth = canvas.width;
+      const totalHeight = canvas.height;
+
+      // Misma lógica de altura de página que el PDF
+      const pageHeight = Math.floor(imgWidth * 1.4142);
+
+      let heightLeft = totalHeight;
+      let currentPage = 0;
+
+      const sliceCanvas = document.createElement('canvas');
+      sliceCanvas.width = imgWidth;
+      sliceCanvas.height = pageHeight;
+      const ctx = sliceCanvas.getContext('2d');
+
+      const imagenes: string[] = [];
+
+      while (heightLeft > 0) {
+        if (ctx) ctx.clearRect(0, 0, imgWidth, pageHeight);
+        const currentSliceHeight = Math.min(pageHeight, heightLeft);
+
+        // Dibujamos la porción correspondiente del canvas original
+        if (ctx) {
+          ctx.drawImage(canvas, 0, currentPage * pageHeight, imgWidth, currentSliceHeight, 0, 0, imgWidth, currentSliceHeight);
+        }
+
+        const sliceData = sliceCanvas.toDataURL('image/png');
+        imagenes.push(sliceData);
+
+        heightLeft -= pageHeight;
+        currentPage++;
+      }
+
+      this.toggleSeparadores(true);
+      return imagenes;
+
+    } catch (error) {
+      this.toggleSeparadores(true);
+      console.error('Error generando imágenes por página', error);
+      return [];
+    }
+  }
+
   private obtenerTexto(defaultLabel: string): string {
     return this.textoNodo.trim() || `${defaultLabel} ${this.contador}`;
   }
 
   async guardarDiagrama() {
+    // 1. Generar PDF principal
     const pdfBase64 = await this.exportarPDF(true);
     if (!pdfBase64 || !this.documentoId) {
       this.alertService.error('No se pudo generar el PDF o no hay documento asociado');
       return;
     }
+
+    // 2. Generar imágenes por página
+    const imagenes = await this.generarImagenesPorPagina();
 
     // Sanitizar el nombre del procedimiento para evitar caracteres inválidos en el nombre del archivo
     const procedimientoSanitizado = this.procedimiento.replace(/[/\\?%*:|"<>]/g, '-');
@@ -1336,7 +1387,8 @@ export class Diagrama implements AfterViewInit {
     console.log('🚀 Intentando guardar diagrama:', {
       documentoId: this.documentoId,
       procedimiento: this.procedimiento,
-      nombreArchivo: nombreArchivo
+      nombreArchivo: nombreArchivo,
+      cantidadImagenes: imagenes.length
     });
 
     const jsonDiagrama = this.graph.toJSON();
@@ -1360,7 +1412,8 @@ export class Diagrama implements AfterViewInit {
     const data = {
       pdf_diagrama: pdfBase64,
       json_diagrama: jsonDiagrama,
-      id_diagrama: nombreArchivo
+      id_diagrama: nombreArchivo,
+      imagenes: imagenes // 👇 Enviamos las imágenes generadas
     };
 
     // Compartir imagen localmente para otros componentes (ej: Reglamento)

@@ -1,0 +1,492 @@
+<div class="bg-gray-100 min-h-screen py-10 font-['Inter']">
+    <div class="a4-page text-black">
+        <div class="content-wrapper">
+            <div class="flex-grow:1 flex flex-col items-center justify-between py-50">
+                <div class="text-center">
+                    <img alt="Universidad de Nariño Logo" class="w-60 h-auto mb-1 object-contain"
+                        src="assets/images/Escudo_Universidad_Portada.jpg" />
+                </div>
+                <!-- Titulo -->
+                <div class="text-center py-20 px-10">
+                    <h2 class="text-lg font-semibold mb-12 upperlower">Facultad de Ingeniería</h2>
+                    <h2 class="text-lg font-bold leading-tight uppercase max-w-2xl mx-auto">
+                        Estandarización de Procedimientos de la Facultad de Ingeniería de la Universidad de Nariño
+                    </h2>
+                </div>
+                <!-- Proceso y año -->
+                <div class="text-center mt-20">
+                    <p class="text-md arial font-bold ">Proceso:
+                        {{procedimientosSeleccionado?.procedimiento | titlecase }}
+                    </p>
+                    <p class="text-md arial font-bold py-12 ">2026</p>
+                </div>
+            </div>
+            <!-- pie de pagina -->
+            <div class="institutional-footer-1 pt-1 border-t-2 border-[#ffc117] flex justify-between items-center">
+                <div
+                    class="institutional-footer-2 pt-2 border-t-2 w-full border-[#d0d0d0] flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <img alt="Universidad de Nariño" class="h-10" src="assets/images/Universidad_de_Nariño.png" />
+                    </div>
+                    <div class="flex istems-center gap-2">
+                        <img alt="Facultad de Ingeniería" class="h-8" src="assets/images/Facultad_gris.png" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pagina Contenido -->
+    <div class="a4-page text-black">
+        <div class="watermark">π</div>
+        <div class="content-wrapper">
+            <!-- Encabezado -->
+            <h2 class="text-sm font-black mb-10 text-center uppercase leading-tight">
+                Contenido
+            </h2>
+            <div class="letra w-full px-10">
+                <ul class="toc-list w-full">
+                    @for (entry of tocEntries; track $index) {
+                    <li class="toc-item" (click)="scrollToSection(entry.id)">
+                        <span class="toc-title">{{ entry.title }}</span>
+                        <span class="toc-spacer"></span>
+                        <span class="toc-page">{{ entry.page }}</span>
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <!-- pie de pagina -->
+        <div class="institutional-footer-1 pt-1 border-t-4 border-[#ffc117] flex justify-between items-center">
+            <div
+                class="institutional-footer-2 pt-2 border-t-4 w-full border-[#d0d0d0] flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <img alt="Universidad de Nariño" class="h-14" src="assets/images/Universidad_de_Nariño.png" />
+                </div>
+                <div class="flex items-center gap-2">
+                    <img alt="Facultad de Ingeniería" class="h-10" src="assets/images/Facultad_gris.png" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dynamic Pages Loop -->
+    @for (page of pages; track $index; let i = $index) {
+    <div class="a4-page text-black relative">
+        @if (!pageHasDAAC[i]) {
+        <div class="watermark">π</div>
+        }
+        <div class="content-wrapper flex flex-col h-full">
+            <!-- Encabezado -->
+            <div class="border border-black flex shrink-0 h-[80px] w-full text-black mb-4">
+                <div class="w-1/5 border-r border-black p-1 flex flex-col items-center justify-center text-center">
+                    <img alt="Universidad de Nariño Logo" class="w-22 h-auto mb-1 object-contain"
+                        src="assets/images/Escudo_Universidad_Portada.jpg" />
+                </div>
+                <div class="w-2/3 border-r border-black p-2 flex flex-col items-center justify-center text-center">
+                    <h2 class="text-[12px] uppercase tracking-tight">
+                        Facultad de Ingeniería
+                    </h2>
+                    <p class="text-[10px] uppercase font-bold leading-tight">
+                        <span>PROCEDIMIENTO: </span>
+                        {{procedimientosSeleccionado?.procedimiento | titlecase }}
+                    </p>
+                </div>
+                <div class="w-1/4 flex flex-col text-[9px] h-full overflow-hidden">
+                    <div class="border-b border-black px-1 flex items-center justify-between min-h-0 flex-1">
+                        <p class="m-0"><span class="font-bold">Código:</span> FDI-FOA-GU-01</p>
+                    </div>
+
+                    <div class="border-b border-black px-1 flex items-center justify-between min-h-0 flex-1">
+                        <p class="m-0"><span class="font-bold">Página:</span> {{ i + 1 }} de {{ pages.length }}</p>
+                    </div>
+
+                    <div class="border-b border-black px-1 flex items-center justify-between min-h-0 flex-1">
+                        <p class="m-0"><span class="font-bold">Versión:</span> 01</p>
+                    </div>
+
+                    <div class="px-1 flex items-center justify-between min-h-0 flex-1">
+                        <p class="m-0 font-bold">Vigencia a partir de:</p>
+                        <p class="m-0">17/01/2022</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Contenido Dinámico -->
+            <div class="grow flex-1 py-2">
+                @for (item of page; track $index) {
+                <div [innerHTML]="getTrustedHTML(item)"></div>
+                }
+            </div>
+
+            <!-- Pie de Página -->
+            @if (!pageHasDAAC[i]) {
+            <div
+                class="institutional-footer-1 pt-1 border-t-4 border-[#ffc117] flex justify-between items-center mt-auto">
+                <div
+                    class="institutional-footer-2 pt-2 border-t-4 w-full border-[#d0d0d0] flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <img alt="Universidad de Nariño" class="h-14" src="assets/images/Universidad_de_Nariño.png" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <img alt="Facultad de Ingeniería" class="h-10" src="assets/images/Facultad_gris.png" />
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- Hidden Source for Pagination Calculation -->
+    <div #contentSource
+        style="opacity: 0; position: absolute; top: 0; left: 0; width: 170mm; height: 0; overflow: hidden; pointer-events: none; z-index: -10;">
+        <!-- Block 1: Intro Title -->
+        <div class="mb-2">
+            <h2 class="text-sm font-black mb-2 text-center uppercase leading-tight">
+                ESTANDARIZACIÓN DEL PROCEDIMIENTO {{procedimientosSeleccionado?.procedimiento}}
+            </h2>
+            <h2 class="text-sm font-black mb-2 text-center uppercase leading-tight">
+                FACULTAD DE INGENIERÍA
+            </h2>
+        </div>
+
+        <!-- Block 2: Method Title -->
+        <div class="pl-4 mb-2">
+            <h2 data-section-id="1" data-section-title="1. METODOLOGÍA PARA LA ESTANDARIZACIÓN DE PROCEDIMIENTOS"
+                class="text-sm font-black mb-2 uppercase leading-tight">
+                1. METODOLOGÍA PARA LA ESTANDARIZACIÓN DE PROCEDIMIENTOS
+            </h2>
+        </div>
+        <!-- Block 3: Method Text -->
+        <div class=" arial mb-2">
+            <p class="text-justify leading-normal py-4">
+                La guía metodológica para la estandarización de procedimientos de la Facultad de
+                Ingeniería de la Universidad de Nariño, propone ejecutar los siguientes pasos para
+                llevar a cualquier procedimiento a un estado completo<sup>1</sup>:
+            </p>
+        </div>
+        <!-- Block 4: Method Image -->
+        <div class="text-center mb-2 leading-normal block">
+            <img alt="metodologia" src="assets/images/metodologia.png" class="max-w-[85%] mx-auto h-auto" />
+        </div>
+        <div class="border-t mb-1 border-black w-1/2">
+        </div>
+        <div>
+            <p class="text-justify text-sm"><sup>1</sup> Facultad de Ingeniería. Guía Metodológica para la
+                estandarización de procedimientos de las facultades de la Universidad de Nariño. Pasto. 2021, p. 17.
+            </p>
+        </div>
+
+        <!-- Block 5: Ficha Title -->
+        <div class="pl-4 mb-4">
+            <h2 data-section-id="1.1" data-section-title="1.1. FICHA TÉCNICA DEL PROCEDIMIENTO"
+                class="text-sm font-black mb-4 uppercase leading-tight">
+                1.1. FICHA TÉCNICA DEL PROCEDIMIENTO {{procedimientosSeleccionado?.procedimiento}}
+            </h2>
+        </div>
+
+        <!-- Block 6: Ficha Text -->
+        <div class="mb-4">
+            <p class="text-justify mb-4 leading-normal arial">
+                Teniendo en cuenta que el procedimiento a estandarizar, se desarrolla al interior de la Facultad
+                de Ingeniería. Se realizaron las siguientes actividades para recolectar información.
+            </p>
+            <p class="text-justify mb-6 leading-normal arial">
+                [Descripcion de recolección de información]
+            </p>
+        </div>
+        <!-- Block 7: Ficha Table -->
+        <div class="mb-4">
+            <table class="w-full border-collapse border border-black arial ">
+                <thead>
+                    <tr class="yellow-table-bg">
+                        <th class="border border-black p-2 font-semibold text-center uppercase bg-[#ffe599]"
+                            colspan="2">
+                            Ficha Técnica de Procedimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-black p-1 font-semibold uppercase w-1/4 bg-[#ffe599]">Procedimiento
+                        </td>
+                        <td class="border border-black p-1 bg-[#fff2cc]">
+                            {{procedimientosSeleccionado?.procedimiento}}</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black p-1 font-semibold uppercase bg-[#ffe599]">Categoría</td>
+                        <td class="border border-black p-1 bg-[#fff2cc]">{{procedimientosSeleccionado?.categoria}}</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black p-1 font-semibold uppercase bg-[#ffe599]">Rol</td>
+                        <td class="border border-black p-1 bg-[#fff2cc]">
+                            <ul class="list-disc pl-5 space-y-0">
+                                @for (rol of procedimientosSeleccionado?.roles; track $index){
+                                <li class="m-0 p-0 leading-tight">{{rol}} </li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black p-1 font-semibold uppercase bg-[#ffe599]">Estado</td>
+                        <td class="border border-black p-1 bg-[#fff2cc]">
+                            {{procedimientosSeleccionado?.estado}}</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black p-1 font-semibold uppercase bg-[#ffe599]">Actividades</td>
+                        <td class="border border-black p-1 bg-[#fff2cc]">
+                            <ul class="list-disc pl-5 space-y-0">
+                                @for (actividad of procedimientosSeleccionado?.actividades; track $index){
+                                <li class="m-0 p-0 leading-tight"> {{actividad}} </li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black p-1 font-semibold uppercase bg-[#ffe599]">Referencias</td>
+                        <td class="border border-black p-1 min-h-[40px] bg-[#fff2cc]">
+                            <ul class="list-disc pl-5 space-y-0">
+                                @for (referencia of procedimientosSeleccionado?.referencias; track $index){
+                                <li class="m-0 p-0 leading-tight"> {{referencia}} </li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- Block 8: Estado Actual Title -->
+        <div class="mb-2">
+            <h2 data-section-id="1.2" data-section-title="1.2. ESTADO ACTUAL DEL PROCEDIMIENTO"
+                class="pl-4 text-sm font-black uppercase mb-4">1.2. ESTADO ACTUAL DEL PROCEDIMIENTO</h2>
+            <p class="text-[11px] text-justify leading-relaxed arial">
+                {{estadoProcedimiento()}}
+            </p>
+        </div>
+        <!-- Block 9: Soportes Documentales -->
+
+        <div class="pl-4 mb-4">
+            <h2 data-section-id="1.2.1" data-section-title="1.2.1. SOPORTES DOCUMENTALES"
+                class="text-sm font-black uppercase mb-4">1.2.1. SOPORTES DOCUMENTALES</h2>
+        </div>
+        <div class="pl-4 mb-4">
+            <h2 data-section-id="1.2.1.1" data-section-title="1.2.1.1. DOCUMENTOS QUE SE DEBEN PRODUCIR"
+                class="text-xs font-black uppercase mb-4">1.2.1.1. DOCUMENTOS QUE SE DEBEN PRODUCIR
+            </h2>
+            <ul class="list-disc marker:text-base list-outside pl-5 space-y-1 arial">
+                <li>Procedimiento según formato entregado por el Sistema Integrado de Gestión de Calidad
+                </li>
+                <li>Estandarización de procedimientos de las Facultades de la Universidad de Nariño.
+                </li>
+            </ul>
+        </div>
+        <div class="pl-4 mb-4">
+            <h2 data-section-id="1.2.1.2" data-section-title="1.2.1.2. REGLAMENTO BASE"
+                class="text-xs font-black uppercase mb-4">1.2.1.2. REGLAMENTO BASE</h2>
+            <ul class="list-disc marker:text-base list-outside pl-5 space-y-1 arial">
+                @for (doc of documentosBase; track $index) {
+                <li>{{doc.documento}}</li>
+                } @empty {
+                <li>No hay reglamentos base definidos.</li>
+                }
+            </ul>
+        </div>
+        <div class="pl-4 mb-4">
+            <h2 data-section-id="1.2.1.3" data-section-title="1.2.1.3. PROCEDIMIENTO"
+                class="pl-4 text-xs font-black uppercase mb-4">1.2.1.3. PROCEDIMIENTO</h2>
+            <p class="text-justify leading-relaxed arial">
+                Anexo a este documento, se presenta la descripción del procedimiento Anexo No. 1, según
+                formato del Sistema de Gestión de Calidad. [Si] o [No]
+            </p>
+        </div>
+
+        <!-- Block 10: Sistema Computacional -->
+        <div class="mb-4">
+            <h2 data-section-id="1.2.2" data-section-title="1.2.2. SISTEMA COMPUTACIONAL DE SOPORTE"
+                class="pl-4 text-xs font-black uppercase mb-4">1.2.2. SISTEMA COMPUTACIONAL DE SOPORTE</h2>
+            <p class="arial text-justify leading-relaxed">
+                El proceso de {{procedimientosSeleccionado?.procedimiento}} actualmente cuenta con un soporte
+                computacional:
+                {{soporteComputacional?.soporte || 'No cuenta con soporte computacional.'}}
+                {{soporteComputacional?.descripcion}}.
+            </p>
+        </div>
+        <!-- Block 11: Reglamentación -->
+        <div class="mb-4">
+            <h2 data-section-id="1.2.3" data-section-title="1.2.3. REGLAMENTACIÓN DEL PROCEDIMIENTO"
+                class="pl-4 text-xs font-black uppercase mb-4">1.2.3. REGLAMENTACIÓN DEL PROCEDIMIENTO</h2>
+            <p class="arial text-justify leading-relaxed">
+                Para la reglamentación, se entrega el procedimiento a la División de Autoevaluación,
+                Acrediación y Certificación de la Universidad de Nariño para su revisión y visto bueno,
+                posteriormente, se presenta ante el Consejo de la Facultad de Ingeniería para su
+                aprobación.
+            </p>
+        </div>
+        <!-- Block 12: Socialización -->
+        <div class="mb-4">
+            <h2 data-section-id="1.3"
+                data-section-title="1.3. SOCIALIZACIÓN DE PROCEDIMIENTO ESTANDARIZADO EN LA FACULTAD"
+                class="pl-4 text-xs font-black uppercase mb-2">1.3 SOCIALIZACIÓN DE PROCEDIMIENTO ESTANDARIZADO EN LA
+                FACULTAD </h2>
+            <p class="arial text-justify leading-relaxed">
+                De acuerdo con la descripción del procedimiento, los roles involucrados en su desarrollo son:
+                {{procedimientosSeleccionado?.roles}}.
+                Por esta razón se realizó la socialización del procedimiento estandarizado ante la
+                persona responsable para dar a conocer su reglamentación.
+            </p>
+        </div>
+        <div data-is-daac="true" data-force-break="true" class=" arial justify-between flex gap-4">
+            <p><span class=" shrink-0 min-w-[140px] uppercase arial tracking-wide">1. Objetivo:</span>
+                {{formularioDAAC.objetivo}}</p>
+        </div>
+        <div data-is-daac="true" class="flex gap-4 arial mt-4">
+            <p><span class=" shrink-0 min-w-[140px] uppercase arial tracking-wide">2. Alcance:</span>
+                {{formularioDAAC.alcance}}
+            </p>
+        </div>
+        <div data-is-daac="true" class="space-y-2 arial mt-4">
+            <p><span class=" shrink-0 min-w-[140px] uppercase arial tracking-wide">3. Responsable:</span>
+                {{formularioDAAC.responsable}}</p>
+        </div>
+        <div data-is-daac="true" class="grid grid-cols-2 border-[1.5px] border-black arial mt-4">
+            <div class="border-r-[1.5px] border-black">
+                <div class="p-0.5 border-b-[1.5px] border-black  text-xs">
+                    4.a PROVEEDOR
+                </div>
+                <div>
+                    <ul class="list-none pl-1 space-y-0">
+                        @for (proveedor of formularioDAAC.proveedores; track $index){
+                        <li class="m-0 p-0 leading-tight">- {{proveedor}}</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <div class="p-0.5 border-b-[1.5px] border-black text-xs">
+                    4.b INSUMOS
+                </div>
+                <div>
+                    <ul class="list-none pl-1 space-y-0">
+                        @for (insumo of formularioDAAC.insumos; track $index){
+                        <li class="m-0 p-0 leading-tight">- {{insumo}}</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div data-is-daac="true" class="grid grid-cols-2 border-[1.5px] border-black arial mt-4">
+            <div class="border-r-[1.5px] border-black">
+                <div class="p-0.5 border-b-[1.5px] border-black  text-xs">
+                    5.a RESULTADOS:
+                </div>
+                <div>
+                    <p class="pl-1">{{formularioDAAC.resultados}}</p>
+                </div>
+            </div>
+            <div>
+                <div class="p-0.5 border-b-[1.5px] border-black text-xs">
+                    5.b QUIÉN RECIBE EL RESULTADO:
+                </div>
+                <div>
+                    <ul class="list-none pl-1 space-y-0">
+                        @for (quienrecibe of formularioDAAC.recibe; track $index){
+                        <li class="m-0 p-0 leading-tight">- {{quienrecibe}}</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div data-is-daac="true" class="arial mt-4">
+            <p class="mb-2 uppercase">6. REQUISITOS LEGALES:</p>
+            <ul class="list-disc marker:text-lg pl-4 space-y-0 arial">
+                @for (requisito of formularioDAAC.requisitos; track $index){
+                <li>{{requisito}}</li>
+                }
+            </ul>
+        </div>
+        <div data-is-daac="true" class="arial mt-4">
+            <p class="mb-2 uppercase">7. DOCUMENTOS QUE SE DEBEN UTILIZAR:</p>
+            <ul class="list-disc marker:text-lg pl-4 arial">
+                @for (documento of formularioDAAC.documentos; track $index){
+                <li>{{documento}}</li>
+                }
+            </ul>
+        </div>
+        <div data-is-daac="true" class="arial mt-4">
+            <p class="mb-2 uppercase">8. REGISTROS QUE SE DEBEN GENERAR:</p>
+            <ul class="list-disc marker:text-lg pl-4 arial">
+                @for (registro of formularioDAAC.registros; track $index){
+                <li>{{registro}}</li>
+                }
+            </ul>
+        </div>
+        <div data-is-daac="true" class="arial mt-4">
+            <p class="mb-2 uppercase">9. INDICADOR:</p>
+            <ul class="list-disc marker:text-lg pl-4 space-y-1 arial">
+                <li>{{formularioDAAC.indicador}}</li>
+            </ul>
+        </div>
+        <div data-is-daac="true" class="arial mt-4">
+            <p class="mb-2 uppercase">10. FORMULA:</p>
+            <ul class="list-disc marker:text-lg pl-4 space-y-1 arial">
+                <li>{{formularioDAAC.formula}}</li>
+            </ul>
+        </div>
+
+        <div data-is-daac="true" class="mt-10 space-y-4 arial">
+            <table class="w-full border border-black border-collapse">
+                <thead>
+                    <tr class="">
+                        <th class="border border-black p-1 text-left w-20"></th>
+                        <th class="border border-black p-1 text-left">Elaborado por:</th>
+                        <th class="border border-black p-1 text-left">Revisado por:</th>
+                        <th class="border border-black p-1 text-left">Aprobado por:</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="">
+                        <td class="border border-black px-1 py-8 font-bold">Cargo:</td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                    </tr>
+                    <tr class="">
+                        <td class="border border-black px-1 py-8 font-bold">Nombre:</td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black px-1 py-16 font-bold">Firma:</td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                    </tr>
+                    <tr>
+                        <td class="border border-black px-1 py-1 font-bold">Fecha:</td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                        <td class="border border-black"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div data-is-daac="true" class="mt-10 leading-relaxed arial">
+            <table class="w-full border border-black border-collapse text-center">
+                <thead class=" text-center justify-center items-center border-sharp p-2">
+                    <td>Control de cambios</td>
+                <tbody>
+                    <tr class="">
+                        <td class="border border-black p-1 font-bold text-center">Version No.</td>
+                        <td class="border border-black p-1 font-bold text-center"> Fecha de Aprobacion </td>
+                        <td class="border border-black p-1 font-bold text-center"> Descripción del Cambio
+                        </td>
+                    </tr>
+                    <tr class="">
+                        <td class="border border-black p-3"> </td>
+                        <td class="border border-black p-3"> </td>
+                        <td class="border border-black p-3"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
