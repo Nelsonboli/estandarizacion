@@ -17,14 +17,12 @@ export class FormatearArrayPipe implements PipeTransform {
     if (typeof value === 'string') {
       return String(value);
     }
-
     // Si es un array de strings
     if (Array.isArray(value)) {
       return value
         .map((v, i) => this.formatearElemento(v, i, tipo, simbolo))
         .join('\n');
     }
-
     // Si no es ninguno de los anteriores
     return String(value);
   }

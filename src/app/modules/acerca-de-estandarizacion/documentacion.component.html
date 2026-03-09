@@ -1,0 +1,221 @@
+<div class="p-2 bg-white">
+  <div #scrollContainer class="flex flex-col md:flex-row bg-white font-sans overflow-y-auto">
+    <!-- MENÚ LATERAL -->
+    <aside
+      class="hidden md:block md:w-50 text-azul-fondo px-2 py-2 border-r border-gray-200 rounded-sm bg-white overflow-y-auto">
+
+      <nav class="ml-58 mt-4 text-sm">
+        <h2 class="text-xl font-bold mb-3 mt-2 item-center justify-center">Contenido</h2>
+
+        <a (click)="scrollToSection('definiciones')" [class.active]="activeSection === 'definiciones'"
+          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l border-gray-300 cursor-pointer">
+          Definiciones
+        </a>
+
+        <a (click)="scrollToSection('mapa')" [class.active]="activeSection === 'mapa'"
+          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l border-gray-300 cursor-pointer">
+          Mapa de procesos
+        </a>
+
+        <a (click)="scrollToSection('metodologia')" [class.active]="activeSection === 'metodologia'"
+          class="no-underline text-gray-600 block px-3 py-3 hover:text-gray-800 transition border-l border-gray-300 cursor-pointer">
+          Metodología
+        </a>
+
+        <div class="mt-6">
+          <a (click)="scrollToTop()"
+            class="no-underline flex items-center gap-1 px-1 py-2 rounded-full hover:text-azul-fondo text-gray-600 transition-colors cursor-pointer">
+            <span class="material-symbols-outlined">arrow_upward_alt</span>
+            Volver arriba
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="flex-1 px-2 py-2 md:p-10 space-y-1 bg-white md:rounded-sm">
+      <div class="text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
+        1. Acerca de Estandarización de Procedimientos
+      </div>
+      <!-- TÍTULO -->
+
+      <div class="border border-gray-200 rounded-md p-4">
+        <header class="px-4 text-grande">
+          <h1 class="text-2xl font-extrabold text-gray-800">Introducción</h1>
+
+          <p class="text-justify leading-relaxed">
+            En este apartado se presenta una propuesta de guía metodológica para
+            la estandarización de procedimientos en las dependencias de la Universidad de Nariño.
+            Esta guía metodológica ofrece una estrategia para llevar a cualquier procedimiento a un estado completo.
+            Es decir, procedimientos debidamente documentados, con herramientas computacionales
+            de soporte (si es necesario) y reglamentado, la guía está enfocada en brindar
+            el acompañamiento en el proceso de estandarización de procedimientos,
+            especificando cada actividad desde el levantamiento de información
+            hasta el reconocimiento oficial del procedimiento.
+          </p>
+          <p class="text-justify">Los siguientes términos son importantes para
+            entender el contexto de la estandarización de procedimientos:</p>
+        </header>
+
+        <!-- SECCIÓN: DEFINICIONES -->
+        <section id="definiciones" class="px-6 py-2">
+          <div class="bg-white/80 rounded-lg p-4 border-l-2 border-l-azul-fondo/70 border-r-2 border-r-gray-100 
+          border-t-2 border-t-gray-100 border-b-2 border-b-gray-100 text-justify text-grande">
+            <h2 class="text-2xl font-medium text-azul-fondo mb-4">
+              Definiciones</h2>
+            <ul class="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed">
+              <li><strong>Mapa de procesos:</strong> "Es una descripción ilustrada
+                que permite visualizar la dinámica de toda la Universidad como
+                sistema integral, e identifica las áreas, fortalezas que reconocen
+                el valor de las contribuciones individuales".</li>
+              <li><strong>Proceso:</strong> "Conjunto de actividades
+                interrelacionadas que transforman una o más entradas en salidas
+                mientras consume recursos para realizar la transformación".</li>
+              <li><strong>Procedimiento: </strong> "Los procedimientos especifican
+                y
+                detallan un proceso, los cuales conforman un método o modo de
+                ejecutar un conjunto ordenado de operaciones o actividades
+                determinadas secuencialmente en relación con los responsables de
+                la
+                ejecución".</li>
+              <li><strong>Estandarización:</strong> Proceso por el cual una serie
+                de
+                actividades o procedimientos relacionados, se ajustan a un modelo
+                en
+                común que se considera referencia.</li>
+              <li><strong>Direccionamiento Estratégico:</strong> "Definir
+                lineamientos para dirigir las actividades propias de la
+                Universidad
+                de acuerdo con su misión institucional".</li>
+              <li><strong>Gestión de Calidad:</strong> "Implementar, revisar y
+                mantener el Sistema Integrado de Gestión de Calidad, en función de
+                la misión institucional, el mejoramiento continuo y la
+                satisfacción
+                de la Comunidad Estudiantil y los Grupos de Interés".</li>
+              <li><strong>Formación académica:</strong> Proceso misional que se
+                basa
+                en "Formar integralmente estudiantes a través de los diferentes
+                Programas, niveles y modalidades de Educación Superior".</li>
+              <li><strong>Investigación:</strong> Producir conocimiento y
+                contribuir
+                a identificar y resolver problemáticas de la ciencia, las artes,
+                la
+                cultura, las humanidades y la tecnología a través de la
+                investigación.</li>
+              <li><strong>Interacción Social:</strong> Establecer planes,
+                programas
+                y proyectos de interacción entre la comunidad universitaria y la
+                región.</li>
+              <li><strong>Gestión Humana:</strong> Gestionar de manera integral y
+                efectiva el Talento Humano en función de la misión y la visión
+                institucional.</li>
+              <li><strong>Gestión de Comunicaciones:</strong> Promover la
+                comunicación oportuna y el intercambio informativo entre la
+                Institución Universitaria, sociedad y grupos de interés.</li>
+              <li><strong>Gestión de Bienestar Universitario:</strong> Realizar
+                planes y programas encaminados a mantener y mejorar la calidad de
+                vida de la Comunidad Universitaria.</li>
+              <li><strong>Gestión de Información y Tecnología:</strong>
+                Administrar el sistema integral de Información
+                y Tecnología con Herramientas óptimas para satisfacer las
+                necesidades de la
+                Institución y de los entes externos públicos y privados.</li>
+              <li><strong>Gestión de Recursos Físicos:</strong> Proveer de manera
+                efectiva los recursos físicos que se requieran para el
+                cumplimiento
+                de la
+                Visión y Misión Institucional.</li>
+              <li><strong>Gestión Financiera:</strong> Administrar los recursos
+                financieros brindando información oportuna que permita una
+                adecuada
+                toma de decisiones.</li>
+              <li><strong>Gestión Jurídica:</strong> Asesorar a la Universidad de
+                Nariño en
+                los asuntos jurídicos de interés para la entidad.</li>
+              <li><strong>Soporte a Procesos Misionales:</strong> Garantizar el
+                acceso a los diferentes servicios, recursos y tecnologías,
+                necesarios para
+                funciones académicas, investigativas y de interacción social.</li>
+              <li><strong>Gestión Documental:</strong>
+                Garantizar el manejo eficaz, eficiente y efectivo de los documentos
+                y comunicaciones oficiales de la Universidad de Nariño.</li>
+              <li><strong>Control y Evaluación:</strong>
+                Controlar y evaluar de forma efectiva el Sistema de Gestión de la
+                Universidad,
+                verificando el cumplimiento de las actividades
+                y los lineamientos reglamentarios aplicables a los
+                procesos, contribuyendo
+                a la eficiente toma de decisiones, el mejoramiento continuo
+                y el cumplimiento de la misión institucional</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- SECCIÓN: MAPA DE PROCESOS -->
+        <section id="mapa" class="px-4 py-2">
+          <div class="bg-white/80 rounded-lg p-4 border-l-2 border-l-azul-fondo/70 border-r-2 border-r-gray-100 
+          border-t-2 border-t-gray-100 border-b-2 border-b-gray-100 text-justify text-grande">
+            <h2 class="text-2xl font-medium text-azul-fondo mb-4"> Mapa de
+              procesos
+              de la Universidad de Nariño</h2>
+            <p class="text-gray-700 mb-2">
+              La Universidad de Nariño tiene definido un mapa de procesos como una
+              descripción ilustrada que permite visualizar la dinámica de toda la
+              Universidad como sistema integral, e identifica las áreas y
+              fortalezas
+              que reconocen el valor de las contribuciones individuales.
+            </p>
+            <p class="text-gray-700 mb-4">
+              Los procedimientos que llevan a cabo las facultades de la
+              Universidad
+              hacen parte de los procesos misionales específicamente en la
+              categoría
+              de Formación Académica de acuerdo con el siguiente mapa de procesos:
+            </p>
+            <div class="flex justify-center">
+              <img src="assets/images/mapa-procesos.jpg" alt="Mapa de procesos Universidad de Nariño"
+                class="w-full max-w-2xl h-auto rounded-xl" />
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN: METODOLOGÍA -->
+        <section id="metodologia" class="px-6 py-2">
+          <div class="bg-white/80 rounded-lg p-4 border-l-2 border-l-azul-fondo/70 border-r-2 border-r-gray-100 
+          border-t-2 border-t-gray-100 border-b-2 border-b-gray-100 text-justify text-grande">
+            <h2 class="text-2xl font-medium text-azul-fondo mb-4"> Metodología
+              para la estandarización de procedimientos</h2>
+            <p class="text-gray-700 mb-4">
+              Se propone ejecutar los siguientes pasos para llevar a cualquier
+              procedimiento a un estado completo, dentro de la Facultad de
+              Ingeniería de la Universidad de Nariño, para tal fin,
+              se adjunta el Formato de Aplicación de la Guía Metodológica
+              para la Estandarización de Procedimientos de la Facultad de
+              Ingeniería
+              de la Universidad de Nariño. El responsable de la
+              aplicación de esta
+              metodología será el profesional asignado a la estandarización de un
+              procedimiento en
+              particular.
+            </p>
+            <li class="ml-4"><a href="https://electronica.udenar.edu.co/wp-content/uploads/2020/10/Estatuto-General.pdf"
+                target="_blank" class="no-underline text-blue-600 hover:underline  ">
+                Guía Metodológica para la Estandarización de Procedimientos de la
+                Facultad de Ingeniería de la Universidad de Nariño </a>
+            </li>
+            <div class="flex justify-center my-6">
+              <img src="assets/images/metodologia.png"
+                alt="Flujo metodológico para la estandarización de procedimientos" class="w-full max-w-xl h-auto"
+                onerror="this.onerror=null; this.src='assets/placeholder.png';" />
+            </div>
+          </div>
+        </section>
+        <p class="py-1 text-gray-700 text-center justify-center text-grande">
+          <strong>Para la recolección de información, se recomienda dirigirse al siguiente apartado.</strong>
+        </p>
+        <app-navegacion [rutaSiguiente]="'/recoleccioninformacion'">
+        </app-navegacion>
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="font-sans text-gray-800 bg-white/90 p-3">
+  <div class="bg-azul-oscuro text-white p-2 border-3 text-right mb-3 uppercase">
+    Soporte Computacional
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6 px-6">
+    <!-- Primera pregunta -->
+    <div>
+      <label class="text-med block font-bold mb-3">¿El procedimiento
+        cuenta con soporte computacional?</label>
+      <label class="ml-6"><input type="radio" formControlName="tiene_soporte" [value]="true" /> Sí </label>
+      <label class="ml-6"><input type="radio" formControlName="tiene_soporte" [value]="false" /> No</label>
+    </div>
+
+    @if (form.get('tiene_soporte')?.value === true) {
+    <div class="space-y-6">
+      <!-- Nombre soporte -->
+      <div>
+        <label class="text-med block font-bold mb-2">Nombre del soporte
+          computacional:</label>
+        <textarea formControlName="nombre" rows="3" class="border w-full p-3 rounded-md"></textarea>
+      </div>
+
+      <!-- Descripción soporte -->
+      <div>
+        <label class="text-med block font-bold mb-2">Descripción del soporte
+          computacional:</label>
+        <textarea formControlName="descripcion" rows="3" class="border w-full p-3 rounded-md"></textarea>
+      </div>
+
+      <p class="text-med block font-bold">
+        Se recomienda evaluar el desempeño del soporte computacional en función
+        de los resultados obtenidos durante la ejecución del procedimiento y,
+        en caso de ser necesario, proponer mejoras a la herramienta.
+      </p>
+    </div>
+    }
+
+    @if (form.get('tiene_soporte')?.value === false) {
+    <div>
+      <label class="text-med block font-bold mb-3 mt-3">¿El procedimiento
+        requiere de un soporte computacional?</label>
+      <label class="ml-6"><input type="radio" formControlName="requiere_soporte" [value]="true" /> Sí </label>
+      <label class="ml-6"><input type="radio" formControlName="requiere_soporte" [value]="false" /> No</label>
+
+      @if (form.get('requiere_soporte')?.value === true) {
+      <div class="mt-3">
+        <p class="text-med block font-bold">
+          Se recomienda crear un soporte computacional,
+          tener en cuenta que debe cumplir con las directrices
+          institucionales que rigen en las dependencias encargadas del
+          desarrollo tecnológico.
+        </p>
+      </div>
+      }
+      @if (form.get('requiere_soporte')?.value === false) {
+      <div class="mt-3">
+        <p class="text-med block font-bold">
+          Su procedimiento no necesita soporte computacional, puede continuar con el siguiente estado.
+        </p>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- Botón enviar -->
+    <button type="submit" class="mt-6 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
+      Guardar
+    </button>
+  </form>
+</div>

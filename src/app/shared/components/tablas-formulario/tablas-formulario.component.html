@@ -1,0 +1,56 @@
+<div class="overflow-x-auto mx-auto">
+  <!-- Encabezado por columnas -->
+  @if (columnas() && columnas().length > 0) {
+  @for (col of columnas(); track col.label) {
+  <div [ngClass]="{'w-full':mostrarOpciones(),
+        'w-1/4':!mostrarOpciones()
+       }" class="p-1 flex gap-2 mx-auto bg-encabezado-tabla text-white text-med font-medium">
+    <img src="assets/elementos/lista.svg" alt="" class="ml-2 w-4 h-4">
+    Lista de {{ col.label }}
+  </div>
+  }
+  }
+  <table [ngClass]="{'w-full':mostrarOpciones(),
+        'w-1/4':!mostrarOpciones()
+       }" class=" table-fixed mx-auto borderborder-gray-300 justify-center text-med border-collapse">
+    <thead>
+      <tr>
+        @for (col of columnas(); track col.key) {
+        <th
+          class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-medium text-black w-[150px]">
+          {{ col.label | titlecase }}
+        </th>
+        }
+        <!-- ✅ Mostrar solo si mostrarOpciones es true -->
+        @if (mostrarOpciones()) {
+        <th
+          class="bg-white p-1 text-center upperlowercase tracking-wider border border-gray-600 font-medium text-black w-[100px]">
+          Opciones
+        </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody class="bg-white divide-y divide-gray-200">
+      @for (item of data(); track $index) {
+      <tr class="hover:bg-gray-100">
+        @for (nombre of columnas(); track nombre.key) {
+        <td class="px-1 py-2 border border-gray-300 text-center align-top whitespace-normal break-words">
+          {{ item[nombre.key] | titlecase }}
+        </td>
+        }
+
+        <!-- ✅ Mostrar acciones solo si mostrarOpciones es true -->
+        @if (mostrarOpciones()) {
+        <td class="border border-gray-300 p-2 m-2 text-center align-middle">
+          @if (accionesTemplate(); as template) {
+          <ng-container *ngTemplateOutlet="template; context: { $implicit: item }">
+          </ng-container>
+          }
+        </td>
+        }
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

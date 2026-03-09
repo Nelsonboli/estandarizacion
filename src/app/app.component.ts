@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {  RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { ViewportScroller } from '@angular/common';
-import { TablaService } from './shared/servicios/tabla.service';
+import { TablaProcedimientoService } from './modules/identificacion-requerimientos/services/tabla-procedimiento.service';
 
 
 @Component({
@@ -13,9 +13,9 @@ import { TablaService } from './shared/servicios/tabla.service';
 export class AppComponent {
   title = 'estandarizacion';
 
-  constructor(private viewport: ViewportScroller,private tablaService: TablaService) {
+  constructor(private viewport: ViewportScroller) {
     // 100px de offset superior (ajusta a tu header)
     this.viewport.setOffset([0, 130]);
   }
-  
+
 }
