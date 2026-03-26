@@ -1,0 +1,194 @@
+import { Injectable } from '@angular/core';
+import Swal, { SweetAlertIcon } from 'sweetalert2';
+
+@Injectable({ providedIn: 'root' })
+
+export class AlertService {
+  confirmar(
+    titulo: string,
+    texto: string,
+    icono: SweetAlertIcon = 'question',
+    confirmColor: string = '#3085d6',
+    cancelColor: string = '#d33',
+    textoConfirmar: string = 'Aceptar',
+    textoCancelar: string = 'Cancelar'
+  ) {
+    return Swal.fire({
+      title: titulo,
+      text: texto,
+      icon: icono,
+      showCancelButton: true,
+      confirmButtonColor: confirmColor,
+      cancelButtonColor: cancelColor,
+      confirmButtonText: textoConfirmar,
+      cancelButtonText: textoCancelar,
+    });
+  }
+
+  /**
+   * Confirmación para guardar
+   */
+  alertGuardar() {
+    return this.confirmar(
+      '¿Deseas guardar?',
+      'Se guardarán los cambios realizados.',
+      'question',
+      '#00b248',
+      '#d33',
+      'Guardar',
+      'Cancelar',
+    );
+  }
+
+  infoExito(titulo: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2500,
+      background: "#16a34a",
+      color: "#ffffff",
+      iconColor: "#ffffff",
+      showClass: {
+        popup: ''   // sin animación al mostrar
+      },
+      hideClass: {
+        popup: ''   // sin animación al ocultar
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: titulo
+    });
+  }
+
+  infoInformacion(titulo: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      background: "#f3f4f7",
+      color: "#2f3551",
+      iconColor: "#f7ba85",
+      showClass: {
+        popup: ''
+      },
+      hideClass: {
+        popup: ''
+      }
+    });
+    Toast.fire({
+      icon: "info",
+      title: titulo,
+    });
+  }
+
+  infoEliminar(titulo: string) {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2000,
+      background: "#e55353",
+      color: "#ffffff",
+      iconColor: "#ffffff",
+      showClass: {
+        popup: ''
+      },
+      hideClass: {
+        popup: ''
+      }
+    });
+    Toast.fire({
+      icon: "success",
+      title: titulo,
+
+    });
+  }
+
+  /**
+   * Confirmación para eliminar
+   */
+  alertEliminar() {
+    return this.confirmar(
+      '¡Atención!',
+      'Si elimina este campo, no podrá revertir los cambios',
+      'warning',
+      '#00b248',
+      '#d33',
+      'Eliminar',
+      'Cancelar',
+    );
+  }
+
+  /**
+   * Confirmación para cancelar
+   */
+  alertCancelar() {
+    return this.confirmar(
+      '¡Atención!',
+      'Si cancela esta acción, no podrá revertir los cambios',
+      'warning',
+      '#00b248',
+      '#d33',
+      'Confirmar',
+      'Cancelar',
+    );
+  }
+
+  /**
+   * Mensaje de éxito
+   */
+  exito(mensaje: string, titulo: string = 'Éxito') {
+    return Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'success',
+      confirmButtonText: 'De acuerdo',
+      confirmButtonColor: '#2563eb'
+    });
+  }
+
+  /**
+   * Mensaje de error
+   */
+  error(mensaje: string, titulo: string = 'Error') {
+    return Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'error',
+      confirmButtonText: 'De acuerdo',
+      confirmButtonColor: '#2563eb'
+    });
+
+  }
+
+  /**
+   * Mensaje de información
+   */
+  info(mensaje: string, titulo: string = 'Información') {
+    return Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'info',
+      confirmButtonText: 'De acuerdo',
+      confirmButtonColor: '#2563eb'
+    });
+  }
+
+  /**
+   * Mensaje de advertencia
+   */
+  advertencia(mensaje: string, titulo: string = 'Atención') {
+    return Swal.fire({
+      title: titulo,
+      text: mensaje,
+      icon: 'warning',
+      confirmButtonText: 'De acuerdo',
+      confirmButtonColor: '#2563eb'
+    });
+  }
+
+
+}

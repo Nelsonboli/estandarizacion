@@ -1,0 +1,35 @@
+<div class="p-2">
+  <table class="border border-gray-300 text-med w-full max-w-[600px] mx-auto">
+    <thead class="bg-encabezado-tabla text-white text-med font-medium">
+      <tr>
+        @let cols = columnas();
+        @for (col of cols; track col) {
+        <th [attr.colspan]="cols.length === 1 ? 2 : 1" [class.text-center]="cols.length === 1"
+          class="px-2 py-1 text-left uppercase tracking-wider border font-medium border-gray-300">
+          {{ col }}
+        </th>
+        }
+      </tr>
+    </thead>
+    <tbody class="bg-white divide-y divide-gray-200">
+      @for (fila of filas(); track fila) {
+      <tr class="hover:bg-gray-100">
+        <td class="w-[30%] px-3 py-2 border border-gray-300 font-medium uppercase relative group cursor-pointer">
+          {{fila.Criterio}}
+          @if(fila.Tooltip){
+          <div
+            class="absolute left-full ml-2 top-1/2 -translate-y-1/2 
+                     hidden group-hover:block bg-gray-50 text-gray-700 text-med border-1 lowercase first-letter:uppercase border-gray-200 rounded px-1 py-1 shadow-lg z-10 w-70">
+            {{fila.Tooltip}}
+          </div>
+          }
+        </td>
+        <td
+          class="w-[70%] px-2 py-1 border border-gray-300 whitespace-pre-line text-left break-words max-w-[500px] overflow-hidden">
+          {{ fila.Descripcion | formatearArray:'custom':'•' }}
+        </td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

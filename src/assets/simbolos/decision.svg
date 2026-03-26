@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="150" height="100">
-  <polygon points="75,10 140,50 75,90 10,50" fill="white" stroke="black"/>
-  <text x="75" y="55" font-size="14" text-anchor="middle" alignment-baseline="middle">Decisión</text>
-</svg>

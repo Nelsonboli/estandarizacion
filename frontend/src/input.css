@@ -1,0 +1,78 @@
+/* You can add global styles to this file, and also import other style files */
+@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-verde-btn: #068038;
+  --color-azul-fondo: #003444;
+  --color-unficacion: #FF4242;
+  --color-documento: #EBF92F;
+  --color-soporte: #006FFF;
+  --color-blanco: #FFFFFF; 
+  --color-margen-div: #676767;
+  --color-texto-p: #1A90B1;
+  --color-div-sup: #1A90B1;
+  --color-encabezado-tabla: #1FA087;
+  --color-background: #FFFFFF;
+  --color-azul-oscuro: #00232E;
+  --color-gris-oscuro: #333333;
+  --color-rojo-btn: #ff4242;
+  --color-amarillo-btn:  #EBF92F;
+  --color-azul-btn:  #006FFF;
+   --text-small : 8px;
+  --text-peq: 10px;
+  --text-med: 12px;
+  --text-semigrande : 14px;
+  --text-grande: 16px;
+  --text-btn: 40px;
+  --color-naranja: #fbb03b;
+}
+.estados-basic-button {
+  @apply font-sans ring-1 ring-background shadow-sm scale-105 bg-transparent text-4xl font-bold text-center;
+}
+
+.estado-group-hover {
+  @apply group-hover:ring-1 duration-200 group-hover:m-1 group-hover:text-white group-hover:ring-background group-hover:shadow
+}
+
+/* Boton cuando estados ya esten cumplidos */
+.estados-select-button {
+  @apply text-gris-oscuro
+}
+
+.menu-button {
+  @apply text-white transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none p-1 
+ hover:w-full hover:bg-gradient-to-r from-green-700 to-green-900
+}
+.principal-button {
+  @apply text-white rounded transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none p-1 
+  hover:bg-verde-btn hover:w-full 
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-verde {
+  background-color: #4CAF50 !important;/* Verde */
+  color: white !important;
+}
+
+.mat-form-field-small .mat-form-field-wrapper {
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 20px;
+}
+
+.mat-form-field-small .mat-form-field-infix {
+  padding: 0 4px;
+}
+
+/* Premium Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}

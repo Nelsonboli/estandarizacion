@@ -1,0 +1,239 @@
+<div class="p-2 bg-white">
+  <div class="text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
+    4. Socialización de procedimientos
+  </div>
+  <!-- Modal de lista desplegable  -->
+  <app-lista-desplegable [visible]="estaAbierto()" [items]="procedimientos" (cerrar)="cerrarModal()"
+    (guardar)="seleccionarProcedimiento($event)">
+  </app-lista-desplegable>
+  @if (procedimientoSeleccionado) {
+  <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white animate-fade-in">
+    <div class="border-b border-gray-200 px-4 py-3 mb-3 glass-card">
+      <h4 class="font-normal text-center"> <strong>Procedimiento: </strong>
+        {{procedimientoSeleccionado.procedimiento | titlecase}}
+      </h4>
+    </div>
+    <div class="px-4">
+      <!-- Mostrar Ficha tecnica del procedimiento -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Ficha Técnica del Procedimiento
+          </h1>
+        </div>
+        <div class="p-4 ">
+          <app-tabla-criterios [columnas]="datosTablaService.encabezadoFichaTecnica" [filas]="datosProcedimiento">
+          </app-tabla-criterios>
+        </div>
+      </div>
+
+      <!-- Mostrar el formulario DAAC -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card ">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Formulario División de Autoevaluación y Acreditación de la Calidad
+          </h1>
+        </div>
+        <div class="p-4 ">
+          @if (formularioDAAC.length > 0) {
+          <app-tabla-criterios [columnas]="datosTablaService.DescripcionDAAC" [filas]="formularioDAAC">
+          </app-tabla-criterios>
+          }
+          @else {
+          <p class="text-gray-500 text-center font-bold">
+            El procedimiento {{ procedimientoSeleccionado.procedimiento | titlecase }}
+            no tiene el Formulario DAAC creado
+          </p>
+          }
+        </div>
+      </div>
+
+      <!-- Documento base -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Documento Base
+          </h1>
+        </div>
+        <div class="p-4 ">
+          @if (documentosBase && documentosBase.length > 0) {
+          <app-tablas-formulario [columnas]="datosTablaService.columnaReglamentoBase" [data]="documentosBase"
+            [mostrarOpciones]="false">
+          </app-tablas-formulario>
+          }
+          @else {
+          <p class="text-gray-500 text-center font-bold">
+            El procedimiento {{ procedimientoSeleccionado.procedimiento | titlecase }}
+            no tiene Documento Base creado
+          </p>
+          }
+        </div>
+      </div>
+
+      <!-- Mostrar Diagrama de flujo -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Diagrama de Flujo
+          </h1>
+        </div>
+        <div class="p-4 text-center ">
+          @if (imagenDiagrama) {
+          <Button (click)="descargarPDFDiagrama()" class="premium-btn inline-flex items-center gap-2 bg-gray-100 border border-gray-200
+               text-gray-700 px-4 py-2 rounded hover:bg-gray-200">
+            <img src="assets/elementos/descargarDocumentoGris.svg" class="w-6 h-6" />
+            Descargar PDF del Diagrama
+          </Button>
+          }
+          @else {
+          <p class="text-gray-500 font-bold">
+            El procedimiento {{procedimientoSeleccionado.procedimiento | titlecase}} no tiene Diagrama de Flujo creado
+          </p>
+          }
+        </div>
+      </div>
+
+      <!-- Soporte computacional -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Soporte Computacional
+          </h1>
+        </div>
+        <div class="p-4 ">
+          @if (soporteComputacional) {
+          <div class="border rounded-lg p-4 max-w-xl mx-auto">
+            <ul class="list-none list-inside text-gray-700 items-center text-center">
+              <li><strong>Cuenta con soporte computacional:</strong> {{
+                soporteComputacional.tiene_soporte ? 'Sí' : 'No' }}</li>
+              @if (soporteComputacional.nombre) {
+              <li><strong>Nombre del soporte computacional:</strong> {{
+                soporteComputacional.nombre }}</li>
+              }
+              @if (soporteComputacional.descripcion) {
+              <li><strong>Descripción del soporte computacional:</strong> {{ soporteComputacional.descripcion
+                }}</li>
+              }
+              @if (soporteComputacional.requiere_soporte !== undefined && soporteComputacional.requiere_soporte !==
+              null)
+              {
+              <li><strong>Requiere soporte computacional:</strong> {{
+                soporteComputacional.requiere_soporte ? 'Sí' : 'No' }}</li>
+              }
+            </ul>
+          </div>
+          }
+          @else {
+          <p class="text-gray-500 text-center font-bold">
+            El procedimiento {{procedimientoSeleccionado.procedimiento | titlecase}} no tiene soporte computacional
+            registrado
+          </p>
+          }
+        </div>
+      </div>
+
+      <!-- Formato de Estandarización -->
+      <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Formato de Estandarización
+          </h1>
+        </div>
+        <div class="p-4 text-center ">
+          <Button class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
+             text-gray-700 px-4 py-2 rounded hover:bg-gray-200 premium-btn"
+            (click)="descargarProcedimientoCompletado() ">
+            <img src="assets/elementos/descargarDocumentoGris.svg" class="w-6 h-6" />
+            Descargar PDF del Procedimiento
+          </Button>
+        </div>
+      </div>
+
+      <!-- Registro de socialización -->
+      <div class="max-w-screen mx-auto mb-4 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
+          <h1 class="text-lg font-medium text-azul-fondo text-center">
+            Registro de Socialización
+          </h1>
+        </div>
+        <div class="p-6">
+          @if (!estaSocializado()) {
+          <form [formGroup]="socializacionForm" (ngSubmit)="registrarSocializacion()"
+            class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+            <mat-form-field appearance="fill" class="w-full premium-field" color="warn">
+              <mat-label>Fecha de socialización</mat-label>
+              <input matInput [matDatepicker]="fechaPicker" formControlName="fecha" [min]="minDate" class="white-input">
+              <mat-datepicker-toggle matSuffix [for]="fechaPicker"></mat-datepicker-toggle>
+              <mat-datepicker #fechaPicker></mat-datepicker>
+              <mat-hint>DD/MM/AAAA</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full premium-field">
+              <mat-label>Hora de socialización</mat-label>
+              <input matInput [ngxTimepicker]="pickerHora" formControlName="hora" readonly class="white-input">
+              <ngx-material-timepicker-toggle matSuffix [for]="pickerHora"></ngx-material-timepicker-toggle>
+              <ngx-material-timepicker #pickerHora [theme]="darkBlueTheme"></ngx-material-timepicker>
+              <mat-hint>HH:MM</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" class="w-full premium-field">
+              <mat-label>Lugar de socialización</mat-label>
+              <input matInput type="text" formControlName="lugar" placeholder="Ej. Auditorio Central, Salón 101"
+                class="white-input">
+              <mat-icon matPrefix color="primary" class="mr-2">location_on</mat-icon>
+            </mat-form-field>
+            <button type="submit"
+              class="premium-btn bg-gray-100 hover:bg-gray-200 border border-gray-200 px-6 rounded-md py-3 transition-all duration-300 flex items-center justify-center tracking-wider">
+              <mat-icon class="mr-2 text-gray-700">save</mat-icon>
+              Registrar Socialización
+            </button>
+          </form>
+          } @else {
+          <div class="bg-white border border-gray-200 rounded-lg p-4  max-w-2xl mx-auto flex flex-col items-center">
+            <div class="flex items-center gap-2  text-azul-fondo">
+              <h2 class="text-lg font-bold flex text-center gap-4">Registro de socialización del procedimiento<br>
+                "{{procedimientoSeleccionado.procedimiento | titlecase}}"</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full text-center">
+              <div>
+                <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Fecha</p>
+                <p class="text-lg font-medium text-gray-800">{{ fechaSignal() | date:'dd/MM/yyyy' }}</p>
+              </div>
+              <div>
+                <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Hora</p>
+                <p class="text-lg font-medium text-gray-800">{{ horaSignal() | date:'HH:mm' }}</p>
+              </div>
+              <div>
+                <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Lugar</p>
+                <p class="text-lg font-medium text-gray-800">{{ lugarSignal() }}</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4">
+              <button type="button" (click)="estaSocializado.set(false)"
+                class="premium-btn bg-gray-100 px-3 rounded-md hover:bg-gray-200 py-3 border border-gray-200 text-gray-700
+                 transition-all duration-300 flex items-center justify-center shadow-md shadow-gray-100 tracking-wider ">
+                <mat-icon class="mr-2 text-blue-400">edit</mat-icon>
+                Editar socialización
+              </button>
+              <button type="button" (click)="eliminarSocializacion()"
+                class="premium-btn bg-gray-100 px-3 rounded-md hover:bg-gray-200 py-3 border border-gray-200 text-gray-700
+                 transition-all duration-300 flex items-center justify-center shadow-md shadow-gray-100 tracking-wider">
+                <mat-icon class="mr-2 text-red-400">delete</mat-icon>
+                Eliminar socialización
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class=" p-2">
+      <app-navegacion [rutaAnterior]="'/identificacionrequerimientos'" [rutaSiguiente]="'/manualusuario'"
+        (siguiente)="abrirListaSocializacion()">
+      </app-navegacion>
+    </div>
+  </div>
+  }
+</div>

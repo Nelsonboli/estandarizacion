@@ -1,0 +1,62 @@
+<div class="font-sans text-gray-800 bg-white p-2 m-2">
+    <div class="mb-2 space-x-0.5 min-h-screen bg-white text-med px-2 py-2 max-w-screen mx-auto animate-fade-in">
+        <div class=" text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
+            Estandarización de procedimientos
+        </div>
+        <div class="bg-white/80 border border-gray-200 rounded-lg p-4 m-2">
+            <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
+                @for (estado of datosService.estados; track estado; let i = $index) {
+                <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
+                    <!-- Botón -->
+                    <button class="w-full h-24 flex flex-col items-center justify-center rounded-xl 
+                        transition-all duration-200 ease-in-out m-2 border" [ngClass]="{
+                            'border-gray-700 bg-white text-gray-800': !estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
+                            'border-gray-400 bg-white text-gray-800': !estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !==i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white shadow-sm scale-102': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() ===i || estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i || estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !==i, 
+                            'ring-2 ring-gray-600 bg-white ': !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !== i || !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() === i,
+                            'hover:scale-[1.05]': hoverIndex() !== i && buttonIndex() !== i
+                        }" (click)="onButtonClick(i)" (mouseenter)="onHoverState(i)"
+                        (mouseleave)="hoverIndex.set(null)">
+                        <span class="text-lg font-medium">{{ i + 1 }} </span>
+                        <h6 class="leading-tight text-center mt-1">{{ estado }} </h6>
+                    </button>
+                    <!-- Card cuando el estado está activo O en hover -->
+                    @if (buttonIndex() === i || hoverIndex() === i) {
+                    <div class="w-full flex justify-center">
+                        <div class="w-full bg-amber-50 rounded transition-all duration-200 animate-fade-in">
+                            <app-card-actividades [indice]="i" [refrescar]="estadosCompletados()[i]"
+                                [valoresExternos]="i === 0 ? actividadesDocumentoSoporte(): (i === 1 ? actividadesSoporteComputacional(): (i === 2 ? actividadesReglamento(): null))" />
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            <!-- Sección dinámica-->
+            <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-1 m-1">
+                <h5 class="text-center"> Procedimiento : {{nombreprocedimiento() + " (Id: "+procedimientoId()+")"}}</h5>
+                @switch (buttonIndex()) {
+                @case (0) {
+                <app-documentacion-soporte [procedimientoId]="procedimientoId()" [documentoId]="documentoId()"
+                    (cambioEstadoActividades)="actualizarChecklist(0, $event)" (documentoEnviado)="finalizarEstado(0)">
+                </app-documentacion-soporte>
+                }
+                @case (1) {
+                <app-soporte-computacional [procedimientoId]="procedimientoId()" [soporteId]="soporteId()"
+                    (cambioEstadoActividades)="actualizarChecklist(1, $event)" (soporteEnviado)="finalizarEstado(1)">
+                </app-soporte-computacional>
+                }
+                @case (2) {
+                <app-reglamento [procedimientoId]="procedimientoId()" [reglamentoId]="reglamentoId()"
+                    (cambioEstadoActividades)="actualizarChecklist(2, $event)" (reglamentoEnviado)="finalizarEstado(2)">
+                </app-reglamento>
+                }
+                @default {
+                <app-inicio></app-inicio>
+                }
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="100">
-  <path d="M10 10 H170 V70 Q150 90 10 70 Z" fill="white" stroke="black"/>
-  <text x="90" y="50" font-size="14" text-anchor="middle" alignment-baseline="middle">Documento</text>
-</svg>

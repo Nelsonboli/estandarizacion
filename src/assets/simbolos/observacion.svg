@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="60">
-  <line x1="0" y1="30" x2="40" y2="30" stroke="black" stroke-width="2"/>
-  <rect x="40" y="10" width="140" height="40" fill="white" stroke="black"/>
-  <text x="110" y="35" font-size="14" text-anchor="middle" alignment-baseline="middle">Observaciones</text>
-</svg>
