@@ -67,7 +67,7 @@ export class AlertService {
       toast: true,
       position: "top-end",
       showConfirmButton: false,
-      timer: 2500,
+      timer: 3000,
       background: "#f3f4f7",
       color: "#2f3551",
       iconColor: "#f7ba85",
@@ -84,13 +84,12 @@ export class AlertService {
     });
   }
 
-
   infoEliminar(titulo: string) {
     const Toast = Swal.mixin({
       toast: true,
       position: "top-end",
       showConfirmButton: false,
-      timer: 2500,
+      timer: 2000,
       background: "#e55353",
       color: "#ffffff",
       iconColor: "#ffffff",

@@ -1,33 +1,5 @@
-<div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4">
-
-    @if (mostrarFormularioDAAC()) {
-    <div class="w-full">
-        <app-formreutilizable [titulo]="this.datosService.DescripcionDAAC" [campos]=" datosService.columnasDAAC"
-            [datoEditar]="editarformulario()" (guardar)="guardarDatosFormularioDAAC($event)"
-            (cerrar)="cerrarFormularioDAAC()">
-        </app-formreutilizable>
-    </div>
-    }
-    @else {
-    <div>
-        <app-tabla-datos [data]="dataFormularioDAAC()" [columnas]="datosService.columnasDAAC"
-            encabezadoGeneral="Datos Formulario DAAC" [accionesTemplate]="accionesPersonalizadas">
-        </app-tabla-datos>
-        <ng-template #accionesPersonalizadas let-dato>
-            <div class="flex items-center justify-center space-x-1">
-                <button (click)="eliminarDatoFormularioDAAC(dato)" class="px-1 h-6 w-6" title="Eliminar">
-                    <img src="assets/elementos/eliminar.svg" alt="eliminar" class=" hover:brightness-120 w-6 h-6" />
-                </button>
-                <button (click)="editarFormulario(dato)" class="px-1 h-6 w-6" title="Editar">
-                    <img src="assets/elementos/editar.svg" alt="editar" class=" hover:brightness-120 w-6 h-6" />
-                </button>
-            </div>
-        </ng-template>
-    </div>
-    }
-</div>
-
-@if (mostrarDocumentoBase()) {
+<!-- Reglamento Base -->
+@if (mostrarReglamentoBase()) {
 <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2">
     <div class="flex flex-col lg:flex-row gap-4 lg:items-start">
         <div class="flex flex-col gap-3">
@@ -37,7 +9,8 @@
                     <label class="block text-sm font-medium text-gray-700 py-1">
                         Documento base
                     </label>
-                    <input [(ngModel)]="nuevoDato" (keyup.enter)="agregarReglamentoBase(); $event.preventDefault()"
+                    <input [ngModel]="nuevoDato()" (ngModelChange)="nuevoDato.set($event)"
+                        (keyup.enter)="agregarReglamentoBase(); $event.preventDefault()"
                         class="w-full p-2 border rounded placeholder-gray-400 disabled:bg-gray-100"
                         placeholder="Escribe el nombre del documento" />
                 </div>
@@ -59,10 +32,10 @@
         </div>
         <!-- Tabla (debajo en md, al lado en lg) -->
         <div class="flex flex-1 flex-col overflow-x-auto">
-            <app-tablas-formulario [columnas]="datosService.columnaDocumentoBase" [data]="datosDocumentoBase()"
-                [accionesTemplate]="accionesDocumentoBase">
+            <app-tablas-formulario [columnas]="datosService.columnaReglamentoBase" [data]="datosReglamentoBase()"
+                [accionesTemplate]="accionesReglamentoBase">
             </app-tablas-formulario>
-            <ng-template #accionesDocumentoBase let-dato>
+            <ng-template #accionesReglamentoBase let-dato>
                 <div class="flex items-center justify-center space-x-1 gap-2">
                     <button (click)="eliminarDato(dato)" class="px-1 w-6 h-6" title="Eliminar">
                         <img src="assets/elementos/eliminar.svg" alt="eliminar" class="hover:brightness-120 w-6 h-6">
@@ -77,10 +50,41 @@
 </div>
 }
 
+<!-- Formulario / Tabla DAAC -->
+@if (reglamentoBaseCompletado()) {
+<div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2">
+    @if (mostrarFormularioDAAC()) {
+    <div class="w-full">
+        <app-formreutilizable [titulo]="this.datosService.DescripcionDAAC" [campos]=" datosService.columnasDAAC"
+            [datoEditar]="editarformulario()" (guardar)="guardarDatosFormularioDAAC($event)"
+            (cerrar)="cerrarFormularioDAAC()">
+        </app-formreutilizable>
+    </div>
+    }
+    @else if (formularioDAACCompletado()) {
+    <div>
+        <app-tabla-datos [data]="dataFormularioDAAC()" [columnas]="datosService.columnasDAAC"
+            encabezadoGeneral="Datos Formulario DAAC" [accionesTemplate]="accionesPersonalizadas">
+        </app-tabla-datos>
+        <ng-template #accionesPersonalizadas let-dato>
+            <div class="flex items-center justify-center space-x-1">
+                <button (click)="eliminarDatoFormularioDAAC(dato)" class="px-1 h-6 w-6" title="Eliminar">
+                    <img src="assets/elementos/eliminar.svg" alt="eliminar" class=" hover:brightness-120 w-6 h-6" />
+                </button>
+                <button (click)="editarFormulario(dato)" class="px-1 h-6 w-6" title="Editar">
+                    <img src="assets/elementos/editar.svg" alt="editar" class=" hover:brightness-120 w-6 h-6" />
+                </button>
+            </div>
+        </ng-template>
+    </div>
+    }
+</div>
+}
+<!-- Diagrama de Flujo -->
+@if (reglamentoBaseCompletado() && formularioDAACCompletado()) {
 <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4 ">
-    @if(mostrarDiagramaFlujo()) {
     <app-diagrama-de-flujo [procedimiento]="nombreProcedimiento()" [documentoId]="documentoId()!"
         (diagramaEnviado)="verificarActividadesDocumentoSoporte()" (cancelarDiagrama)="cancelarDiagrama()">
     </app-diagrama-de-flujo>
-    }
 </div>
+}

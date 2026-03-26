@@ -1,39 +1,40 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { DocumentoSoporte } from '../interfaces/documento-soporte.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentoSoporteService {
-  private base = 'http://localhost:3000/documento_soporte';
+  private baseDocumentoSoporte = 'http://localhost:3000/documento_soporte';
 
   constructor(private http: HttpClient) { }
 
-  getDocumentos(): Observable<any[]> {
-    return this.http.get<any[]>(this.base);
+  getDocumentos(): Observable<DocumentoSoporte[]> {
+    return this.http.get<DocumentoSoporte[]>(this.baseDocumentoSoporte);
   }
 
-  findOne(id: number): Observable<any> {
-    return this.http.get<any>(`${this.base}/${id}`);
+  findOne(id: number): Observable<DocumentoSoporte> {
+    return this.http.get<DocumentoSoporte>(`${this.baseDocumentoSoporte}/${id}`);
   }
 
-  getDocumento(id: number): Observable<any> {
+  getDocumento(id: number): Observable<DocumentoSoporte> {
     return this.findOne(id);
   }
 
   crearDocumento(procedimientoId: number) {
-    return this.http.post<any>(`${this.base}/crear-documento/${procedimientoId}`, {});
+    return this.http.post<any>(`${this.baseDocumentoSoporte}/crear-documento/${procedimientoId}`, {});
   }
 
   getPorProcedimiento(procedimientoId: number) {
-    return this.http.get<any>(`${this.base}/por-procedimiento/${procedimientoId}`);
+    return this.http.get<any>(`${this.baseDocumentoSoporte}/por-procedimiento/${procedimientoId}`);
   }
 
-  actualizarDocumento(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.base}/${id}`, data);
+  actualizarDocumento(id: number, data: any): Observable<DocumentoSoporte> {
+    return this.http.put<DocumentoSoporte>(`${this.baseDocumentoSoporte}/${id}`, data);
   }
 
-  eliminarDocumento(id: number): Observable<any> {
-    return this.http.delete(`${this.base}/${id}`);
+  eliminarDocumento(id: number): Observable<DocumentoSoporte> {
+    return this.http.delete<DocumentoSoporte>(`${this.baseDocumentoSoporte}/${id}`);
   }
 
 }

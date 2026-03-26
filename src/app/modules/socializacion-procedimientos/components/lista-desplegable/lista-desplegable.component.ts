@@ -3,6 +3,9 @@ import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild, effect, inject, input, model, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { EstadolistaService } from '../../../../shared/services/estado-lista.service';
+import { Procedimiento } from '../../../identificacion-requerimientos/interfaces/procedimiento.interface';
+import { AlertService } from '../../../../shared/services/alert.service';
+
 
 
 @Component({
@@ -18,12 +21,13 @@ export class ListaDesplegableComponent implements OnInit {
   guardar = output<any>();
   @ViewChild('formulario') formularioRef!: ElementRef;
   escalar = signal(false);
-  procedimientos: any[] = [];
-  selectedProcedimiento: number | null = null;
+  procedimientos: Procedimiento[] = [];
+  seleccionProcedimiento: number | null = null;
 
   //Servicios e inyecciones de dependencias
   private router = inject(Router);
   private listaService = inject(EstadolistaService);
+  private alertService = inject(AlertService);
 
   constructor() {
     effect(() => {
@@ -46,19 +50,15 @@ export class ListaDesplegableComponent implements OnInit {
   }
 
   Guardar() {
-    console.log('Guardar clicked. Selected ID:', this.selectedProcedimiento);
-    console.log('Available procedimientos:', this.procedimientos);
-
     const procedimiento = this.procedimientos.find(
-      p => p.id === Number(this.selectedProcedimiento)
+      p => p.id === Number(this.seleccionProcedimiento)
     );
-
     if (procedimiento) {
-      console.log('Procedimiento found:', procedimiento);
       this.guardar.emit(procedimiento);
       this.cerrar.emit();
-    } else {
-      console.log('No se encontró el procedimiento seleccionado');
+    }
+    else {
+      this.alertService.info('debe seleccionar un procedimiento');
     }
   }
 

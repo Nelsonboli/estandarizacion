@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -10,14 +10,19 @@ import { ReglamentoComponent } from '../../components/estados/reglamento/reglame
 import { InicioComponent } from '../../components/estados/inicio/inicio.component';
 import { DocumentacionSoporteComponent } from '../../components/estados/documentacion-soporte/documentacion-soporte.component';
 import { SoporteComputacionalComponent } from '../../components/estados/soporte-computacional/soporte-computacional.component';
-import { CardComponent } from '../../components/card/card.component';
-
+import { CardActividadesComponent } from '../../components/card-actividades/card-actividades.component';
+import { SoporteComputacional } from '../../interfaces/soporte-computacional.interface';
+import { DocumentoSoporte } from '../../interfaces/documento-soporte.interface';
+import { ReglamentoService } from '../../services/reglamento.service';
+import { Reglamento } from '../../interfaces/reglamento.interface';
+import { ProcedimientoService } from '../../../identificacion-requerimientos/services/procedimiento.service';
+import { Procedimiento } from '../../../identificacion-requerimientos/interfaces/procedimiento.interface';
 
 @Component({
   standalone: true,
   selector: 'app-estandarizar',
   imports: [
-    CardComponent,
+    CardActividadesComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -31,273 +36,371 @@ import { CardComponent } from '../../components/card/card.component';
 })
 
 export class EstandarizarComponent {
-  procedimientoId!: number;
-  procedimiento: any;
-  estadoCompletos: boolean[] = [false, false, false];
-  estado: string = '';
-  hoverIndex: number | null = null;
-  buttonIndex: number | null = null;
-  documentoId!: number;
+  //id de estados y procedimiento
+  procedimientoId = signal<number>(0);
+  soporteId = signal<number>(0);
+  documentoId = signal<number>(0);
+  reglamentoId = signal<number>(0);
 
-  @Input() valoresExternos: boolean[] | null = null;
+  //Validacion de estado para procedimiento y estados del procedimiento
+  estadosCompletados = signal<boolean[]>([false, false, false]);
+  actividadesDocumentoSoporte = signal<boolean[]>([false, false, false]);
+  actividadesSoporteComputacional = signal<boolean[]>([false]);
+  actividadesReglamento = signal<boolean[]>([false, false, false, false]);
 
-  actividadesDocumentoSoporte: boolean[] = [false, false, false];
-  actividadesSoporteComputacional: boolean[] = [false];
-  actividadesReglamento: boolean[] = [false];
+  //Index de estados
+  hoverIndex = signal<number | null>(null);
+  buttonIndex = signal<number | null>(null);
 
-  constructor(
-    private route: ActivatedRoute,
-    private alertService: AlertService,
-    private cd: ChangeDetectorRef,
-    public datosService: DatosService,
-    private documentoSoporteService: DocumentoSoporteService,
-    private soporteComputacionalService: SoporteComputacionalService,
-  ) { }
+  // validacion para estado imcompleto de procedimiento
+  estadoAnterior = signal<boolean>(false);
+  nombreprocedimiento = signal<string>('');
+
+  //Servicios e inyeccion de dependencias
+  private route = inject(ActivatedRoute);
+  private alertService = inject(AlertService);
+  public datosService = inject(DatosService);
+  private documentoSoporteService = inject(DocumentoSoporteService);
+  private soporteComputacionalService = inject(SoporteComputacionalService);
+  private reglamentoService = inject(ReglamentoService);
+  private procedimientoService = inject(ProcedimientoService);
 
   ngOnInit() {
-    this.procedimientoId = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('Procedimiento Seleccionado:', this.procedimientoId);
-    // Cargar estado inicial del documento de soporte
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.procedimientoId.set(id);
     this.cargarEstadoDocumentoSoporte();
-    // Cargar estado inicial del soporte computacional
-    this.cargarSoporteComputacional();
+    this.cargarEstadoSoporteComputacional();
+    this.cargarEstadoReglamento();
+    this.datosProcedimiento();
   }
 
+  //llamado a los diferentes estados
   onButtonClick(index: number) {
-    if (index === 0 || this.estadoCompletos[index - 1]) {
-      if (index === 0) {
-        // Primero obtener o crear el documento de soporte
-        this.documentoSoporteService.getPorProcedimiento(this.procedimientoId).subscribe({
-          next: (doc: any) => {
-            if (doc) {
-              // Ya existe → asignarlo y mostrar
-              this.documentoId = doc.id;
-              if (doc.actividades_completadas) {
-                this.actividadesDocumentoSoporte = [
-                  doc.actividades_completadas.formulario,
-                  doc.actividades_completadas.reglamentoBase,
-                  doc.actividades_completadas.diagramaFlujo
-                ];
+    console.log('--- Click en botón ---', { index, nombre: this.datosService.estados[index] });
+    // Validar que TODOS los estados anteriores estén completos
+    const estadosIncompletos = this.estadosCompletados()
+      .slice(0, index)
+      .map((estado, i) => estado ? null : this.datosService.estados[i])
+      .filter(e => e !== null);
+    if (estadosIncompletos.length > 0) {
+      const mensaje = estadosIncompletos.length === 1
+        ? `debe completar el estado ${estadosIncompletos[0]}` :
+        `debe completar los estados ${estadosIncompletos.join(' y ')}`
+      this.alertService.info(`${mensaje} para pasar al estado ${this.datosService.estados[index]}`);
+      return;
+    }
+    switch (index) {
+      case 0:
+        this.documentoSoporteService.getPorProcedimiento(this.procedimientoId()).subscribe({
+          next: (documentoSoporte: DocumentoSoporte) => {
+            console.log('Datos cargados - Documento Soporte:', documentoSoporte);
+            if (documentoSoporte) {
+              this.procesarDocumentoSoporte(documentoSoporte);
+              this.buttonIndex.set(index);
+              if (documentoSoporte.documento_completado) {
+                this.alertService.infoInformacion(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
               }
-              if (doc.documento_completado) {
-                this.estadoCompletos[0] = true;
-              }
-              // Ahora sí, mostrar el componente
-              this.buttonIndex = index;
-              this.cd.detectChanges();
             } else {
-              // No existe → crearlo primero
-              this.documentoSoporteService.crearDocumento(this.procedimientoId).subscribe({
-                next: (nuevo) => {
-                  this.documentoId = nuevo.id;
-                  // Ahora sí, mostrar el componente
-                  this.buttonIndex = index;
-                  this.cd.detectChanges();
+              this.documentoSoporteService.crearDocumento(this.procedimientoId()).subscribe({
+                next: (soporteNuevo: DocumentoSoporte) => {
+                  console.log('Datos creados - Documento Soporte Nuevo:', soporteNuevo);
+                  this.procesarDocumentoSoporte(soporteNuevo);
+                  this.buttonIndex.set(index);
                 },
                 error: (err) => {
-                  console.error('Error creando documento soporte', err);
+                  console.error('Error al crear el documento de soporte', err);
                   this.alertService.error('Error al crear el documento de soporte');
                 }
               });
             }
           },
           error: (err) => {
-            console.error('Error obteniendo documento soporte', err);
+            console.error('Error al obtener el documento de soporte', err);
             this.alertService.error('Error al obtener el documento de soporte');
           }
         });
-      } else {
-        // Para otros estados, mostrar inmediatamente
-        this.buttonIndex = index;
-        this.cd.detectChanges();
-      }
-    } else {
-      this.estado = this.datosService.estados[index - 1];
-      const siguiente = this.datosService.estados[index];
-      this.alertService.info(`Debe completar todas las actividades del estado ${this.estado} para seguir con ${siguiente}`);
-    }
-  }
-
-  // Cargar el estado del soporte computacional al inicializar
-  cargarSoporteComputacional() {
-    console.log('🔍 Cargando estado del soporte computacional para procedimiento:', this.procedimientoId);
-    this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId).subscribe({
-      next: (soporte: any) => {
-        console.log('📦 Soporte computacional recibido del backend:', soporte);
-        if (soporte) {
-          // Verificar si el formulario está completo
-          let completado = false;
-          if (soporte.tiene_soporte === true) {
-            completado = !!(soporte.nombre && soporte.descripcion);
-          } else if (soporte.tiene_soporte === false) {
-            completado = soporte.requiere_soporte !== null && soporte.requiere_soporte !== undefined;
-          }
-
-          this.actividadesSoporteComputacional = [completado];
-          console.log('📥 Actividades soporte computacional cargadas:', this.actividadesSoporteComputacional);
-
-          // Verificar si el soporte computacional está completado
-          if (soporte.computacional_completado) {
-            this.estadoCompletos[1] = true;
-            console.log('✅ Estado inicial: Soporte computacional completado');
-          } else {
-            this.estadoCompletos[1] = false;
-            console.log('⏳ Soporte computacional en progreso');
-          }
-          console.log('📊 Estado final - estadoCompletos:', this.estadoCompletos);
-          console.log('📊 Estado final - actividadesSoporteComputacional:', this.actividadesSoporteComputacional);
-          this.cd.detectChanges();
-        }
-      },
-      error: (err) => {
-        console.log('ℹ️ No existe soporte computacional aún');
-        this.estadoCompletos[1] = false;
-        this.actividadesSoporteComputacional = [false];
-      }
-    });
-  }
-
-  // Cargar el estado del documento de soporte al inicializar
-  cargarEstadoDocumentoSoporte() {
-    console.log('🔍 Cargando estado del documento de soporte para procedimiento:', this.procedimientoId);
-    this.documentoSoporteService.getPorProcedimiento(this.procedimientoId).subscribe({
-      next: (doc: any) => {
-        console.log('📦 Documento recibido del backend:', doc);
-        if (doc) {
-          this.documentoId = doc.id;
-
-          // Cargar el estado de actividades completadas
-          if (doc.actividades_completadas) {
-            this.actividadesDocumentoSoporte = [
-              doc.actividades_completadas.formulario,
-              doc.actividades_completadas.reglamentoBase,
-              doc.actividades_completadas.diagramaFlujo
-            ];
-            console.log('📥 Actividades cargadas:', this.actividadesDocumentoSoporte);
-            console.log('📥 Detalle - formulario:', doc.actividades_completadas.formulario);
-            console.log('📥 Detalle - reglamentoBase:', doc.actividades_completadas.reglamentoBase);
-            console.log('📥 Detalle - diagramaFlujo:', doc.actividades_completadas.diagramaFlujo);
-          } else {
-            console.log('⚠️ No hay actividades_completadas en el documento');
-            this.actividadesDocumentoSoporte = [false, false, false];
-          }
-
-          // Verificar si el documento está completado
-          if (doc.documento_completado) {
-            this.estadoCompletos[0] = true;
-            console.log('✅ Estado inicial: Documento de soporte completado');
-          } else {
-            this.estadoCompletos[0] = false;
-            console.log('⏳ Documento de soporte en progreso');
-          }
-          console.log('📊 Estado final - estadoCompletos:', this.estadoCompletos);
-          console.log('📊 Estado final - actividadesDocumentoSoporte:', this.actividadesDocumentoSoporte);
-          this.cd.detectChanges();
-        }
-      },
-      error: (err) => {
-        console.log('ℹ️ No existe documento de soporte aún', err);
-        this.estadoCompletos[0] = false;
-        this.actividadesDocumentoSoporte = [false, false, false];
-      }
-    });
-  }
-
-  actualizarChecklistDocumentoSoporte(estados: boolean[]) {
-    console.log('🔄 Estandarizar recibió estados:', estados);
-    console.log('📋 Estados anteriores:', this.actividadesDocumentoSoporte);
-    this.actividadesDocumentoSoporte = [...estados];
-    console.log('✅ Estados actualizados:', this.actividadesDocumentoSoporte);
-    this.cd.detectChanges();
-  }
-
-  // Nuevo método para manejar hover
-  onHoverState(index: number) {
-    this.hoverIndex = index;
-    // Si es el estado 0 (Documento de soporte), recargar desde backend
-    if (index === 0) {
-      this.documentoSoporteService.getPorProcedimiento(this.procedimientoId).subscribe({
-        next: (doc: any) => {
-          if (doc && doc.actividades_completadas) {
-            this.actividadesDocumentoSoporte = [
-              doc.actividades_completadas.formulario,
-              doc.actividades_completadas.reglamentoBase,
-              doc.actividades_completadas.diagramaFlujo
-            ];
-            console.log('🔄 Actividades recargadas en hover:', this.actividadesDocumentoSoporte);
-            this.cd.detectChanges();
-          }
-        },
-        error: (err) => {
-          console.log('ℹ️ No se pudo cargar el documento en hover');
-        }
-      });
-    }
-    // Si es el estado 1 (Soporte computacional), recargar actividades
-    else if (index === 1) {
-      this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId).subscribe({
-        next: (soporte: any) => {
-          if (soporte) {
-            // Verificar si el formulario está completo
-            let completado = false;
-            if (soporte.tiene_soporte === true) {
-              completado = !!(soporte.nombre && soporte.descripcion);
-            } else if (soporte.tiene_soporte === false) {
-              completado = soporte.requiere_soporte !== null && soporte.requiere_soporte !== undefined;
+        break;
+      case 1:
+        this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId()).subscribe({
+          next: (soporteComputacional: SoporteComputacional) => {
+            console.log('Datos cargados - Soporte Computacional:', soporteComputacional);
+            if (soporteComputacional) {
+              this.procesarSoporteComputacional(soporteComputacional);
+              this.buttonIndex.set(index);
+              if (soporteComputacional.computacional_completado) {
+                this.alertService.infoInformacion(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
+              }
+            } else {
+              this.soporteComputacionalService.crearSoporteComputacional(this.procedimientoId()).subscribe({
+                next: (computacionalNuevo: SoporteComputacional) => {
+                  console.log('Datos creados - Soporte Computacional Nuevo:', computacionalNuevo);
+                  this.procesarSoporteComputacional(computacionalNuevo);
+                  this.buttonIndex.set(index);
+                },
+                error: (err) => {
+                  console.error('Error al crear el soporte computacional', err);
+                  this.alertService.error('Error al crear el soporte computacional');
+                }
+              });
             }
-            this.actividadesSoporteComputacional = [completado];
-            console.log('🔄 Actividades soporte computacional recargadas en hover:', this.actividadesSoporteComputacional);
-            this.cd.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error al obtener el soporte computacional', err);
+            this.alertService.error('Error al obtener el soporte computacional');
           }
-        },
-        error: (err) => {
-          console.log('ℹ️ No se pudo cargar el soporte computacional en hover', err);
+        });
+        break;
+      case 2:
+        this.reglamentoService.obtenerReglamento(this.procedimientoId()).subscribe({
+          next: (reglamento: Reglamento) => {
+            console.log('Datos cargados - Reglamento:', reglamento);
+            if (reglamento) {
+              this.procesarReglamento(reglamento);
+              this.buttonIndex.set(index);
+              if (reglamento.reglamento_completado) {
+                this.alertService.infoInformacion(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
+              }
+            } else {
+              this.reglamentoService.crearReglamento(this.procedimientoId()).subscribe({
+                next: (reglamentoNuevo: Reglamento) => {
+                  console.log('Datos creados - Reglamento Nuevo:', reglamentoNuevo);
+                  this.procesarReglamento(reglamentoNuevo);
+                  this.buttonIndex.set(index);
+                },
+                error: (err) => {
+                  console.error('Error al crear el reglamento', err);
+                  this.alertService.error('Error al crear el reglamento');
+                }
+              });
+            }
+          },
+          error: (err) => {
+            console.error('Error al obtener el reglamento', err);
+            this.alertService.error('Error al obtener el reglamento');
+          }
+        });
+        break;
+    }
+  }
+
+
+
+  onHoverState(index: number) {
+    if (this.hoverIndex() === index) return;
+    console.log('--- Hover en botón ---', { index, nombre: this.datosService.estados[index] });
+    this.hoverIndex.set(index);
+    if (this.buttonIndex() === index) return;
+    if (index === 0 && !this.estadosCompletados()[0]) this.cargarEstadoDocumentoSoporte();
+    else if (index === 1 && !this.estadosCompletados()[1]) this.cargarEstadoSoporteComputacional();
+    else if (index === 2 && !this.estadosCompletados()[2]) this.cargarEstadoReglamento();
+  }
+
+  // Funciones Documento Soporte
+  cargarEstadoDocumentoSoporte() {
+    this.documentoSoporteService.getPorProcedimiento(this.procedimientoId()).subscribe({
+      next: (doc: DocumentoSoporte) => {
+        console.log('Datos cargados - Estado Documento Soporte:', doc);
+        if (doc) {
+          this.procesarDocumentoSoporte(doc);
+        } else {
+          this.restaurarEstadoDocumentoSoporte();
         }
+      },
+      error: (err) => {
+        console.error('cargarEstadoDocumentoSoporte error', err);
+        this.restaurarEstadoDocumentoSoporte();
+      }
+    });
+  }
+
+  private restaurarEstadoDocumentoSoporte() {
+    this.estadosCompletados.update(estados => {
+      estados[0] = false;
+      return [...estados];
+    });
+    this.actividadesDocumentoSoporte.set([false, false, false]);
+  }
+
+  private procesarDocumentoSoporte(doc: DocumentoSoporte) {
+    console.log('Procesando Documento Soporte...', doc);
+    this.documentoId.set(doc.id);
+    if (doc.actividades_completadas) {
+      this.actividadesDocumentoSoporte.set([
+        doc.actividades_completadas.reglamentoBase,
+        doc.actividades_completadas.formulario,
+        doc.actividades_completadas.diagramaFlujo
+      ]);
+    } else {
+      this.actividadesDocumentoSoporte.set([false, false, false]);
+    }
+    this.estadosCompletados.update(estados => {
+      estados[0] = !!doc.documento_completado;
+      return [...estados];
+    });
+    this.estadoCompletado();
+  }
+
+  // Funciones Soporte Computacional
+  cargarEstadoSoporteComputacional() {
+    this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId()).subscribe({
+      next: (soporte: SoporteComputacional) => {
+        console.log('Datos cargados - Estado Soporte Computacional:', soporte);
+        if (soporte) {
+          this.procesarSoporteComputacional(soporte);
+        } else {
+          this.restaurarEstadoSoporteComputacional();
+        }
+      },
+      error: (err) => {
+        console.error('cargarSoporteComputacional error', err);
+        this.restaurarEstadoSoporteComputacional();
+      }
+    });
+  }
+
+  private restaurarEstadoSoporteComputacional() {
+    this.estadosCompletados.update(estados => {
+      estados[1] = false;
+      return [...estados];
+    });
+    this.actividadesSoporteComputacional.set([false]);
+  }
+
+  private procesarSoporteComputacional(soporte: SoporteComputacional) {
+    console.log('Procesando Soporte Computacional...', soporte);
+    this.soporteId.set(soporte.id!); // Asignar el ID crucial
+    let completado = false;
+    if (soporte.tiene_soporte === true) {
+      completado = !!(soporte.nombre && soporte.descripcion)
+    } else if (soporte.tiene_soporte === false) {
+      completado = soporte.requiere_soporte !== null && soporte.requiere_soporte !== undefined;
+    }
+    this.actividadesSoporteComputacional.set([completado]);
+    this.estadosCompletados.update(estados => {
+      estados[1] = !!soporte.computacional_completado;
+      return [...estados];
+    });
+    this.estadoCompletado();
+  }
+
+  // Funciones Reglamento
+  cargarEstadoReglamento() {
+    this.reglamentoService.obtenerReglamento(this.procedimientoId()).subscribe({
+      next: (reglamento: Reglamento) => {
+        console.log('Datos cargados - Estado Reglamento:', reglamento);
+        if (reglamento) {
+          this.procesarReglamento(reglamento);
+        } else {
+          this.restaurarEstadoReglamento();
+        }
+      },
+      error: (err) => {
+        console.error('cargarReglamento error', err, this.procedimientoId());
+        this.restaurarEstadoReglamento();
+      }
+    });
+  }
+
+  private restaurarEstadoReglamento() {
+    this.estadosCompletados.update(estados => {
+      estados[2] = false;
+      return [...estados];
+    });
+    this.actividadesReglamento.set([false, false, false, false]);
+  }
+
+  private procesarReglamento(reglamento: Reglamento) {
+    console.log('Procesando Reglamento...', reglamento);
+    this.reglamentoId.set(reglamento.id!);
+    if (reglamento.actividades_completadas) {
+      const acts = reglamento.actividades_completadas as any;
+      this.actividadesReglamento.set([
+        !!acts.descarga_daac_completada,
+        !!acts.subida_daac_completada,
+        !!acts.descarga_estandarizacion_completada,
+        !!acts.subida_estandarizacion_completada,
+      ]);
+    } else {
+      this.actividadesReglamento.set([false, false, false, false]);
+    }
+    this.estadosCompletados.update(estados => {
+      estados[2] = !!reglamento.reglamento_completado;
+      return [...estados];
+    });
+    this.estadoCompletado();
+  }
+
+  actualizarChecklist(index: number, estados: boolean[]) {
+    console.log('actualizarChecklist called', { index, estados });
+    const todosCompletos = estados.length > 0 && estados.every(e => e === true);
+    this.estadoCompletado();
+    this.estadosCompletados.update(completos => {
+      const nuevosCompletos = [...completos];
+      nuevosCompletos[index] = todosCompletos;
+      console.log('nuevosCompletos', nuevosCompletos);
+      return nuevosCompletos;
+    });
+    const map = [
+      this.actividadesDocumentoSoporte,
+      this.actividadesSoporteComputacional,
+      this.actividadesReglamento
+    ];
+    map[index].set([...estados]);
+    this.estadoCompletado();
+  }
+
+  finalizarEstado(index: number) {
+    console.log('finalizarEstado called', { index });
+    // Solo marcamos como completado si no lo estaba ya
+    if (!this.estadosCompletados()[index]) {
+      this.estadosCompletados.update(estados => {
+        const nuevosEstados = [...estados];
+        nuevosEstados[index] = true;
+        return nuevosEstados;
       });
+      this.estadoCompletado();
     }
-  }
-
-  onEstadoCompleto(event: { index: number; completo: boolean }) {
-    this.estadoCompletos[event.index] = event.completo;
-    this.cd.detectChanges()
-  }
-
-  actualizarChecklistSoporteComputacional(estados: boolean[]) {
-    console.log('🔄 Estandarizar recibió estados soporte computacional:', estados);
-    console.log('📋 Estados anteriores:', this.actividadesSoporteComputacional);
-    this.actividadesSoporteComputacional = [...estados];
-    console.log('✅ Estados actualizados:', this.actividadesSoporteComputacional);
-    this.cd.detectChanges();
-  }
-
-  marcarchecklist(index: number) {
-    this.estadoCompletos[index] = true;
-    console.log('el estado completo es el', this.estadoCompletos)
-    this.alertService.infoExito(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
-    //  Obtener el procedimiento activo
-    const procedimientoId = sessionStorage.getItem('procedimientoActivo');
-    if (!procedimientoId) return;
-    this.estadoCompletos[index] = true;
-    // Recargar el estado del documento para sincronizar con el backend
     if (index === 0) {
-      setTimeout(() => this.cargarEstadoDocumentoSoporte(), 300);
+      setTimeout(() => {
+        console.log('Marcado Documento Soporte');
+        this.cargarEstadoDocumentoSoporte();
+      }, 100);
+    } else if (index === 1) {
+      setTimeout(() => {
+        console.log('Marcado Soporte Computacional');
+        this.cargarEstadoSoporteComputacional();
+      }, 100);
+    } else if (index === 2) {
+      setTimeout(() => {
+        console.log('Marcado Reglamento');
+        this.cargarEstadoReglamento();
+      }, 100);
     }
   }
 
-  // Helper methods para validaciones en el template
-  todosEstadosCompletos(): boolean {
-    return this.estadoCompletos.every(estado => estado === true);
+  estadoCompletado() {
+    const todosCompletos = this.estadosCompletados().every(e => e === true);
+    console.log('estadoCompletos para alerta', todosCompletos, 'estadoAnterior:', this.estadoAnterior());
+    if (!todosCompletos) {
+      this.estadoAnterior.set(true);
+    } else if (todosCompletos && this.estadoAnterior()) {
+      this.estadoAnterior.set(false);
+      setTimeout(() => {
+        this.alertService.exito(`El procedimiento " ${this.nombreprocedimiento()}" esta Completo`);
+      }, 300);
+    }
   }
 
-  todasActividadesDocumentoSoporteCompletas(): boolean {
-    return this.actividadesDocumentoSoporte.every(actividad => actividad === true);
-  }
-
-  todasActividadesSoporteComputacionalCompletas(): boolean {
-    return this.actividadesSoporteComputacional.every(actividad => actividad === true);
-  }
-
-  todasActividadesReglamentoCompletas(): boolean {
-    return this.actividadesReglamento.every(actividad => actividad === true);
+  datosProcedimiento() {
+    this.procedimientoService.getProcedimiento(this.procedimientoId()).subscribe({
+      next: (procedimiento: Procedimiento) => {
+        console.log('Datos cargados - Procedimiento (datos):', procedimiento);
+        this.nombreprocedimiento.set(procedimiento.procedimiento);
+      },
+      error: (err) => {
+        console.error('Error al obtener el procedimiento', err);
+        this.alertService.error('Error al obtener el procedimiento');
+      }
+    });
   }
 }

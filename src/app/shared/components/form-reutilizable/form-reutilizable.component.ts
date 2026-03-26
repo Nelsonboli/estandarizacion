@@ -16,15 +16,14 @@ export class FormreutilizableComponent implements OnInit {
   // Inputs y outputs con Signals
   titulo = input<string[]>();
   campos = input<Campos[]>([]);
-  datoEditar = input<any>(null);
+  datoEditar = input<any>(null); // Se mantiene any por la naturaleza genérica, pero se podría refactorizar a Record<string, any>
   guardar = output<any>();
   cerrar = output<void>();
   cancelar = output<void>();
 
   // Variables
-  showTooltip: string | null = null;
   form!: FormGroup;
-  listaDatos = signal<any[]>([]);
+  listaDatos = signal<Record<string, any>[]>([]);
   editIndex = signal<number | null>(null);
 
   // Servicios e inyecciones de dependencias

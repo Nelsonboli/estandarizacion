@@ -1,5 +1,4 @@
 <div class="sm:grid-cols-1 grid-cols-2 justify-center items-center gap-4 m-4">
-
     <!-- 🔹 Ficha de Procedimiento -->
     <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4 m-2">
         @if (descargaActiva !== 'descargarProcedimiento') {
@@ -25,7 +24,7 @@
                         acreditacioninstitucional&#64;udenar.edu.co
                     </span>
                 </p>
-                <button (click)="DescargarReporteDAAC()"
+                <button (click)="descargarReporteDAAC()"
                     class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                     <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
                     Descargar {{ fichaProcedimiento }}
@@ -51,20 +50,35 @@
             Subir {{ fichaProcedimiento }}
         </button>
         }
-
         @if (subidaActiva === 'subirProcedimiento'){
-
         <div class=" w-full px-4 py-2 ">
-            <app-subir-archivo (fileUploaded)="subirArchivoProcedimiento($event)"></app-subir-archivo>
+            @if (!estadoReglamento().subida_daac_completada) {
+            <app-subir-archivo (cancelarSubidaDocumentoDAAC)="cerrarDocumento()"
+                (guardarSubidaDocumentoDAAC)="guardarDocumentoDAAC($event)"
+                (archivoSeleccionadoEvent)="obtenerArchivoSeleccionado($event)"></app-subir-archivo>
             <div class="mt-4">
-                @if (subiendo) {
+                @if (subiendo()) {
                 <p class="text-blue-600 font-medium">Subiendo archivo...</p>
                 }
             </div>
+            } @else {
+            <div class="w-full flex justify-center p-4">
+                <app-card-documento [selectedFileName]="selectedFileName()"
+                    (eliminarArchivoEvent)="eliminarFormatoDAAC()" [filePreviewUrl]="filePreviewUrl()">
+                </app-card-documento>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" (click)="cerrarDocumento()"
+                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 rounded hover:brightness-150 transition-colors duration-300">
+                    <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
+                    Cerrar
+                </button>
+            </div>
+
+            }
         </div>
         }
     </div>
-
     <!-- 🔹 Formato de Estandarización -->
     <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4 m-2">
         @if (descargaActiva !== 'descargarEstandarizacion') {
@@ -103,7 +117,7 @@
                             Descargue el Formato de Estandarización y envíe el documento al
                             correo electrónico de la Dependencia correspondiente.
                         </p>
-                        <button (click)="formatoRefEstandarizacion.generarPDF()"
+                        <button (click)="descargarFormatoEstandarizacion(formatoRefEstandarizacion)"
                             class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                             <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato"
                                 class="w-6 h-6" />
@@ -126,7 +140,7 @@
                             de Nariño para su aprobación y subir el documento aprobado para continuar
                             con el Formato de Estandarización.
                         </p>
-                        <button (click)="DescargarReporteDAAC()"
+                        <button (click)="descargarReporteDAAC()"
                             class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                             <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
                             Descargar {{ fichaProcedimiento }}
@@ -137,7 +151,6 @@
             </div>
         </ng-container>
         }
-
         @if (subidaActiva !== 'subirEstandarizacion') {
         <button
             class="flex items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-500 px-4 py-2 rounded min-w-70 group"
@@ -150,17 +163,32 @@
             Subir {{ formatoEstandarizacion }}
         </button>
         }
-
         @if (subidaActiva === 'subirEstandarizacion'){
         <div class=" w-full px-4 py-2 ">
-            <app-subir-archivo (fileUploaded)="subirArchivoEstandarizacion($event)"></app-subir-archivo>
+            @if (!estadoReglamento().subida_estandarizacion_completada) {
+            <app-subir-archivo (cancelarSubidaDocumentoDAAC)="cerrarDocumento()"
+                (guardarSubidaDocumentoDAAC)="guardarDocumentoDAAC($event)"
+                (archivoSeleccionadoEvent)="obtenerArchivoSeleccionado($event)"></app-subir-archivo>
             <div class="mt-4">
-                @if (subiendo) {
+                @if (subiendo()) {
                 <p class="text-blue-600 font-medium">Subiendo archivo...</p>
                 }
             </div>
+            } @else {
+            <div class="w-full flex justify-center p-4">
+                <app-card-documento [selectedFileName]="selectedFileName()"
+                    (eliminarArchivoEvent)="eliminarFormatoEstandarizacion()" [filePreviewUrl]="filePreviewUrl()">
+                </app-card-documento>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" (click)="cerrarDocumento()"
+                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 rounded hover:brightness-150 transition-colors duration-300">
+                    <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
+                    Cerrar
+                </button>
+            </div>
+            }
         </div>
         }
-
     </div>
 </div>

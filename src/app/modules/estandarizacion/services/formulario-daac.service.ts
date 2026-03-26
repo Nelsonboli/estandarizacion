@@ -1,33 +1,34 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { FormularioDAAC } from '../interfaces/documento-soporte.interface';
 
 @Injectable({ providedIn: 'root' })
 export class FormularioDAACService {
 
-  private apiUrl = 'http://localhost:3000/formulariodaac';
+  private baseFormularioDAAC = 'http://localhost:3000/formulariodaac';
 
   constructor(private http: HttpClient) { }
 
-  getFormularioDAAC(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getFormularioDAAC(): Observable<FormularioDAAC[]> {
+    return this.http.get<FormularioDAAC[]>(this.baseFormularioDAAC);
   }
 
-  crearFormularioConDocumento(documentoSoporteId: number, payload: any) {
+  crearFormularioConDocumento(documentoSoporteId: number, payload: FormularioDAAC) {
     const body = { ...payload, documento_soporte_id: documentoSoporteId };
-    return this.http.post(`${this.apiUrl}`, body);
+    return this.http.post<FormularioDAAC>(`${this.baseFormularioDAAC}`, body);
   }
 
-  obtenerPorDocumento(documentoSoporteId: number) {
-    return this.http.get<any>(`${this.apiUrl}/por-documento/${documentoSoporteId}`);
+  obtenerPorDocumento(documentoSoporteId: number): Observable<FormularioDAAC> {
+    return this.http.get<FormularioDAAC>(`${this.baseFormularioDAAC}/por-documento/${documentoSoporteId}`);
   }
 
-  eliminarFormularioDAAC(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  eliminarFormularioDAAC(id: number): Observable<FormularioDAAC> {
+    return this.http.delete<FormularioDAAC>(`${this.baseFormularioDAAC}/${id}`);
   }
 
-  editarFormulario(id: number, payload: any) {
-    return this.http.patch(`${this.apiUrl}/${id}`, payload);
+  editarFormulario(id: number, payload: Partial<FormularioDAAC>): Observable<FormularioDAAC> {
+    return this.http.patch<FormularioDAAC>(`${this.baseFormularioDAAC}/${id}`, payload);
   }
 
 

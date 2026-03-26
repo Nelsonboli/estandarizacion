@@ -1,22 +1,38 @@
-﻿import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, signal, output, input, inject } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ViewChild, ElementRef, signal, output, input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as joint from 'jointjs';
 import * as htmlToImage from 'html-to-image';
 import { jsPDF } from 'jspdf';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AlertService } from '../../../../shared/services/alert.service';
 import { DiagramaFlujoService } from '../../services/diagrama-flujo.service';
 import { BotonSimbolos } from '../../interfaces/botones-simbolos.interface';
+import { JsonDiagrama } from '../../interfaces/documento-soporte.interface';
+
+interface ClipboardData {
+  elements: {
+    id: string | number;
+    type: string;
+    attrs: any;
+    size: { width: number; height: number };
+    tipoCustom: string;
+  }[];
+  links: {
+    type: string;
+    sourceId: string | number;
+    targetId: string | number;
+    attrs: any;
+  }[];
+}
 
 @Component({
   standalone: true,
   selector: 'app-diagrama-de-flujo',
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './diagrama-de-flujo.html',
   styleUrl: './diagrama-de-flujo.css'
 })
-export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
+export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   diagramaEnviado = output<boolean>();
   cancelarDiagrama = output<boolean>();
   procedimiento = input<string>('');
@@ -56,7 +72,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
   currentElement: joint.dia.Element | null = null;
 
   // Propiedades para Copiar/Pegar
-  private clipboard: any = null;
+  private clipboard: ClipboardData | null = null;
   contextMenuVisible = signal(false);
   contextMenuPos = signal({ x: 0, y: 0 });
 
@@ -427,10 +443,8 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
 
         // 2. Esperar estabilización y cargar links manualmente
         setTimeout(() => {
-          console.log('🔧 [LOAD] Reconstruyendo links manualmente...');
           this.reconectarLinks(links);
           this.postProcesarLarga(jsonData);
-          this.alertService.infoInformacion('DiagramaDeFlujo restaurado correctamente');
         }, 150);
       },
       error: (err) => {
@@ -600,7 +614,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
           this.selectedElements = [];
           this.popoverVisible.set(false);
         } else if (this.selectedElement) {
-          this.eliminarelemento();
+          this.eliminarElemento();
         }
       }
       if (event.ctrlKey && event.key === 'c') this.copiarElementos();
@@ -655,7 +669,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
               this.paper.updateViews();
             }
             this.currentPaperHeight = pageHeight;
-            this.alertService.infoExito('Diagrama de flujo eliminado correctamente');
+            this.alertService.infoEliminar('Diagrama de flujo eliminado correctamente');
             this.diagramaEnviado.emit(true); // Para recargar estado en el componente padre
           },
           error: (err) => {
@@ -884,7 +898,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
       y: bbox.y - 135 // Posición optimizada para elementos
     });
   }
-  private eliminarelemento() {
+  private eliminarElemento() {
     if (this.selectedElement) {
       this.selectedElement.remove();
 
@@ -918,7 +932,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
     }
     // 3. Eliminar elemento único seleccionado
     else if (this.selectedElement) {
-      this.eliminarelemento();
+      this.eliminarElemento();
       algoEliminado = true;
     }
 
@@ -932,7 +946,6 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
 
   // 📋 Lógica de Copiar / Pegar
   copiarElementos() {
-    this.clipboard = [];
     let itemsToCopy: joint.dia.Element[] = [];
 
     if (this.selectedElements.length > 0) {
@@ -965,8 +978,8 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
       })),
       links: linksToCopy.map(link => ({
         type: (link.constructor as any).type || (link as any).get('type'),
-        sourceId: link.source().id,
-        targetId: link.target().id,
+        sourceId: link.source().id as string | number,
+        targetId: link.target().id as string | number,
         attrs: JSON.parse(JSON.stringify((link as any).attributes.attrs))
       }))
     };
@@ -1407,7 +1420,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
     });
   }
 
-  EliminarUltimaPagina() {
+  eliminarUltimaPagina() {
     const separadores = this.graph.getElements().filter(el => el.prop('tipo') === 'separador');
     if (separadores.length > 0) {
       // Obtener el último separador basado en su posición Y
@@ -1641,9 +1654,9 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
 
     const data = {
       pdf_diagrama: pdfBase64,
-      json_diagrama: jsonDiagrama,
-      id_diagrama: nombreArchivo,
-      imagenes: imagenes // 👇 Enviamos las imágenes generadas
+      json_diagrama: jsonDiagrama as JsonDiagrama,
+      documento_diagrama: nombreArchivo,
+      imagenes: imagenes
     };
 
     // Compartir imagen localmente para otros componentes (ej: Reglamento)
@@ -1651,7 +1664,7 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
 
     this.diagramaFlujoService.guardarDiagramaCompleto(this.documentoId()!, data).subscribe({
       next: (res) => {
-        this.alertService.infoExito('Diagrama de flujo Guardado y persistido localmente');
+        this.alertService.infoExito('Diagrama de flujo Guardado');
         this.diagramaEnviado.emit(true);
       },
       error: (err) => {
@@ -1700,56 +1713,6 @@ export class DiagramaDeFlujo implements AfterViewInit, OnDestroy {
       });
       console.log('✅ [RECONECTAR] Batch de links completado.');
     }
-    return; // Stop here and ignore legacy code below in the same method
-    if (!linksJSON) return;
-
-    linksJSON.forEach(linkData => {
-      try {
-        // 1. Buscar si ya existe, si no, crear de cero
-        let link = this.graph.getCell(linkData.id) as joint.dia.Link;
-        if (!link) {
-          console.log('🔧 [RECONECTAR] Re-creando link perdido:', linkData.id);
-          link = new joint.shapes.standard.Link();
-          link.id = linkData.id;
-          link.addTo(this.graph);
-        }
-
-        // 2. Restaurar atributos visuales y funcionales
-        if (linkData.attrs) link.attr(linkData.attrs);
-        if (linkData.labels) link.labels(linkData.labels);
-        if (linkData.router) link.router(linkData.router);
-        if (linkData.connector) link.connector(linkData.connector);
-
-        // 3. Vincular obligatoriamente
-        const sourceId = linkData.source?.id;
-        const targetId = linkData.target?.id;
-
-        if (sourceId && targetId) {
-          const sourceEl = this.graph.getCell(sourceId);
-          const targetEl = this.graph.getCell(targetId);
-
-          if (sourceEl && targetEl) {
-            link.source(sourceEl as joint.dia.Element);
-            link.target(targetEl as joint.dia.Element);
-            console.log(`✅ [RECONECTAR] Link ${link.id} conectado.`);
-
-            // Refuerzo de renderizado inmediato
-            const view = link.findView(this.paper);
-            if (view) {
-              (view as any).update();
-              if (typeof (view as any).requestConnectionUpdate === 'function') {
-                (view as any).requestConnectionUpdate();
-              }
-            }
-          } else {
-            console.warn(`❌ [RECONECTAR] Falló link ${link.id}: Elementos no encontrados`);
-          }
-        }
-      } catch (e) {
-        console.error('❌ [RECONECTAR] Error fatal:', linkData.id, e);
-      }
-    });
   }
-
 }
 

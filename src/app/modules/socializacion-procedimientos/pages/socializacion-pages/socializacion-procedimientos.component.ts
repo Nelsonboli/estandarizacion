@@ -1,6 +1,6 @@
-﻿import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DatosService } from '../../../../shared/services/datos.service';
 import { NavegacionComponent } from '../../../../shared/components/navegacion/navegacion';
 import { EstadolistaService } from '../../../../shared/services/estado-lista.service';
@@ -17,44 +17,105 @@ import { TablaProcedimientoService } from '../../../identificacion-requerimiento
 import { ProcedimientoService } from '../../../identificacion-requerimientos/services/procedimiento.service';
 import { DiagramaFlujoService } from '../../../estandarizacion/services/diagrama-flujo.service';
 import { ListaDesplegableComponent } from '../../components/lista-desplegable/lista-desplegable.component';
+import { Procedimiento } from '../../../identificacion-requerimientos/interfaces/procedimiento.interface';
+import { Criterios } from '../../../../shared/interfaces/tablas.interface';
+import { ReglamentoBase } from '../../../estandarizacion/interfaces/documento-soporte.interface';
+import { SocializacionService } from '../../../estandarizacion/services/socializacion.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgxMaterialTimepickerModule, NgxMaterialTimepickerTheme } from 'ngx-material-timepicker';
+import { socializacion } from '../../../estandarizacion/interfaces/socializacion.interface';
+import { SoporteComputacional } from '../../../estandarizacion/interfaces/soporte-computacional.interface';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-socializacionprocedimientos',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule,
-    NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent, TablasFormularioComponent],
+  imports: [ReactiveFormsModule, CommonModule,
+    NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent, TablasFormularioComponent,
+    MatDatepickerModule, MatInputModule, MatFormFieldModule, MatNativeDateModule, NgxMaterialTimepickerModule, MatIconModule],
   templateUrl: './socializacion-procedimientos.component.html',
-  styleUrl: './socializacion-procedimientos.component.css'
+  styleUrl: './socializacion-procedimientos.component.css',
 })
 
 export class SocializacionprocedimientosComponent implements OnInit {
-  procedimientos: any[] = [];
-  abrir = false;
-  procedimientoSeleccionado: any = null;
-  datosProcedimiento: { Criterio: string; Descripcion: string }[] = [];
-  objectKeys = Object.keys;
-  imagenDiagrama: string | null = null;
-  documentosBase: any[] = [];
-  soporteComputacional: any = null;
-  FormularioDAAC: { Criterio: string; Descripcion: string }[] = [];
 
-  //servicios e inyecciones de dependencias 
-  public datosTablaService = inject(DatosService);
-  public tablaService = inject(TablaProcedimientoService);
-  public listaService = inject(EstadolistaService);
-  public procedimientoService = inject(ProcedimientoService);
-  public reglamentoBaseService = inject(ReglamentoBaseService);
-  public formularioDAACService = inject(FormularioDAACService);
-  public soporteComputacionalService = inject(SoporteComputacionalService);
-  public documentoSoporteService = inject(DocumentoSoporteService);
-  public diagramaFlujoService = inject(DiagramaFlujoService);
-  public alertService = inject(AlertService);
-  public estadoAsignacionService = inject(EstadoAsignacionService);
-  public router = inject(Router);
+  darkBlueTheme: NgxMaterialTimepickerTheme = {
+    container: {
+      bodyBackgroundColor: '#ffffff',
+      buttonColor: '#0d47a1'
+    },
+    dial: {
+      dialBackgroundColor: '#0d47a1',
+    },
+    clockFace: {
+      clockFaceBackgroundColor: '#f0f0f0',
+      clockHandColor: '#0d47a1',
+      clockFaceTimeInactiveColor: '#000000'
+    }
+  };
 
-  ngOnInit() {
-    this.ObtenerProcedimientos();
+  public procedimientos: Procedimiento[] = [];
+  public estaAbierto = signal<boolean>(false);
+  public procedimientoSeleccionado: Procedimiento | null = null;
+  public datosProcedimiento: Criterios[] = [];
+  public imagenDiagrama: string | null = null;
+  public documentosBase: ReglamentoBase[] = [];
+  public soporteComputacional: SoporteComputacional | null = null;
+  public formularioDAAC: Criterios[] = [];
+  public fechaSignal = signal<Date>(new Date());
+  public lugarSignal = signal<string>('');
+  public horaSignal = signal<Date>(new Date());
+  public socializacionData = signal<socializacion | null>(null);
+  public estaSocializado = signal<boolean>(false);
+
+  // Datos para la fecha y hora de socialización
+  private readonly fechaActualDia = new Date().getDay();
+  public readonly minDate = new Date(this.fechaActualDia);
+  public socializacionForm!: FormGroup;
+
+  // Servicios e inyecciones de dependencias 
+  public readonly datosTablaService = inject(DatosService);
+  public readonly tablaService = inject(TablaProcedimientoService);
+  public readonly listaService = inject(EstadolistaService);
+  public readonly procedimientoService = inject(ProcedimientoService);
+  public readonly reglamentoBaseService = inject(ReglamentoBaseService);
+  public readonly formularioDAACService = inject(FormularioDAACService);
+  private readonly soporteComputacionalService = inject(SoporteComputacionalService);
+  private readonly documentoSoporteService = inject(DocumentoSoporteService);
+  private readonly diagramaFlujoService = inject(DiagramaFlujoService);
+  public readonly alertService = inject(AlertService);
+  private readonly estadoAsignacionService = inject(EstadoAsignacionService);
+  public readonly socializacionService = inject(SocializacionService);
+  public readonly router = inject(Router);
+
+  ngOnInit(): void {
+    this.inicializarFormulario();
+    this.obtenerProcedimientos();
     this.listaService.visible$.subscribe(valor => {
-      this.abrir = valor;
+      this.estaAbierto.set(valor);
+    });
+  }
+
+  private inicializarFormulario(): void {
+    this.socializacionForm = new FormGroup({
+      fecha: new FormControl<Date | null>(null, Validators.required),
+      hora: new FormControl<string>('', Validators.required),
+      lugar: new FormControl<string>('', Validators.required)
+    });
+  }
+
+  public obtenerProcedimientos(): void {
+    this.procedimientoService.getProcedimientos().subscribe({
+      next: (data: Procedimiento[]) => {
+        console.log('Datos cargados - Procedimientos:', data);
+        this.procedimientos = data;
+        this.tablaService.setProcedimientos(data);
+      },
+      error: (err) => {
+        console.error('Error al obtener los procedimientos:', err);
+      }
     });
   }
 
@@ -69,31 +130,121 @@ export class SocializacionprocedimientosComponent implements OnInit {
         console.error('Error al obtener los procedimientos:', err);
       }
     });
-
   }
 
-  abrirListaSocializacion() {
-    this.listaService.abrir(); // Se abre la lista al llegar a Socialización
+  public abrirListaSocializacion(): void {
+    this.listaService.abrir();
   }
 
-  cerrarModal() {
-    this.abrir = false;
+  public cerrarModal(): void {
+    this.estaAbierto.set(false);
     this.listaService.cerrar();
   }
 
-  fecha = '';
-  lugar = '';
-  socializado = false;
+  public registrarSocializacion(): void {
+    if (this.socializacionForm.invalid) {
+      this.socializacionForm.markAllAsTouched();
+      this.alertService.error('Por favor complete todos los campos');
+      return;
+    }
 
-  registrarSocializacion() {
-    if (this.fecha && this.lugar) {
-      this.socializado = true;
+    const { fecha, hora, lugar } = this.socializacionForm.value;
+    const horaFinal = this.parsearHora(hora);
+    const procedimientoId = this.procedimientoSeleccionado?.id;
+
+    if (!procedimientoId) {
+      this.alertService.error('No hay un procedimiento seleccionado');
+      return;
+    }
+    const data: socializacion = {
+      fecha,
+      lugar,
+      hora: horaFinal,
+      procedimiento_id: procedimientoId
+    };
+
+    const idExistente = this.socializacionData()?.id;
+
+    if (idExistente) {
+      this.socializacionService.actualizarSocializacion(idExistente, data).subscribe({
+        next: (res: socializacion) => {
+          console.log('Datos actualizados - Socialización:', res);
+          this.procesarExitoSocializacion(res, data, 'Socialización actualizada exitosamente');
+        },
+        error: (err) => {
+          console.error('Error al actualizar socialización:', err);
+          this.alertService.error('Hubo un error al actualizar la socialización');
+        }
+      });
+    } else {
+      this.socializacionService.guardarSocializacion(data).subscribe({
+        next: (res: socializacion) => {
+          console.log('Datos guardados - Socialización:', res);
+          this.procesarExitoSocializacion(res, data, 'Socialización registrada exitosamente');
+        },
+        error: (err) => {
+          console.error('Error al registrar:', err);
+          this.alertService.error('Hubo un error al registrar la socialización');
+        }
+      });
     }
   }
 
-  onSocializar(procedimiento: any) {
-    const id = procedimiento.id || procedimiento.Id || procedimiento.ID || procedimiento.procedimientoId;
+  private parsearHora(hora: any): Date {
+    let horaFinal = new Date();
+    if (typeof hora === 'string') {
+      const es12h = hora.toLowerCase().includes('am') || hora.toLowerCase().includes('pm');
+      if (es12h) {
+        const [hh_mm, periodo] = hora.split(' ');
+        let [hh, mm] = hh_mm.split(':').map(Number);
+        if (periodo.toUpperCase() === 'PM' && hh < 12) hh += 12;
+        if (periodo.toUpperCase() === 'AM' && hh === 12) hh = 0;
+        horaFinal.setHours(hh, mm, 0);
+      } else {
+        const [hh, mm] = hora.split(':').map(Number);
+        horaFinal.setHours(hh, mm, 0);
+      }
+    } else {
+      horaFinal = hora;
+    }
+    return horaFinal;
+  }
 
+  private procesarExitoSocializacion(res: socializacion, data: socializacion, mensaje: string): void {
+    this.estaSocializado.set(true);
+    this.socializacionData.set(res);
+    this.fechaSignal.set(data.fecha);
+    this.lugarSignal.set(data.lugar);
+    this.horaSignal.set(data.hora);
+    this.alertService.infoExito(mensaje);
+  }
+
+  public eliminarSocializacion(): void {
+    const idSocializacion = this.socializacionData()?.id;
+    if (!idSocializacion) return;
+
+    this.alertService.alertEliminar().then((res) => {
+      if (res.isConfirmed) {
+        this.socializacionService.eliminarSocializacion(idSocializacion).subscribe({
+          next: () => {
+            this.estaSocializado.set(false);
+            this.socializacionData.set(null);
+            this.socializacionForm.reset();
+            this.fechaSignal.set(new Date());
+            this.lugarSignal.set('');
+            this.horaSignal.set(new Date());
+            this.alertService.infoExito('Socialización eliminada exitosamente');
+          },
+          error: (err) => {
+            console.error('Error al eliminar:', err);
+            this.alertService.error('No se pudo eliminar la socialización');
+          }
+        });
+      }
+    });
+  }
+  public seleccionarProcedimiento(procedimiento: Procedimiento): void {
+    const id = procedimiento.id;
     if (!id) {
       this.alertService.error('No se pudo identificar el procedimiento');
       return;
@@ -101,80 +252,121 @@ export class SocializacionprocedimientosComponent implements OnInit {
 
     this.estadoAsignacionService.obtenerCompletitud(id).subscribe({
       next: (estadoAsignacion) => {
-        if (estadoAsignacion.estado === 'completo') {
+        const estadoLower = estadoAsignacion.estado.toLowerCase();
+        if (estadoLower === 'completo') {
           this.procedimientoSeleccionado = procedimiento;
-          // Transformar el objeto seleccionado en filas para la tabla
-          this.datosProcedimiento = Object.keys(procedimiento)
-            .filter(key => key.toLowerCase() !== 'id') // Filtramos 'id'
-            .map(key => ({
-              Criterio: key.toUpperCase(),
-              Descripcion: procedimiento[key]
-            }));
-
-          this.cargarDatosProcedimiento(id);
+          this.mapearDatosProcedimiento(procedimiento);
+          this.cargarDatosAdicionalesProcedimiento(id);
+          this.cargarSocializacion(id);
           this.cerrarModal();
           this.alertService.infoExito('Procedimiento Seleccionado');
         } else {
-          this.alertService.error(`El procedimiento seleccionado está en estado "${estadoAsignacion.estado}", para verlo debe pasar a completo`).then(() => {
+          this.alertService.error(`El procedimiento seleccionado está en estado "${estadoAsignacion.estado}", para socializarlo debe estar en estado "Completo"`).then(() => {
             this.router.navigate(['/identificacionrequerimientos']);
           });
         }
       },
-      error: (err) => {
-        console.error('Error al validar el estado del procedimiento:', err);
-        this.alertService.error('Error al validar el estado del procedimiento');
-      }
+      error: () => this.alertService.error('Error al validar el estado del procedimiento')
     });
   }
 
-  cargarDatosProcedimiento(procedimientoId: number) {
-    // 1. Obtener el documento soporte asociado al procedimiento
-    this.documentoSoporteService.getPorProcedimiento(procedimientoId).subscribe({
-      next: (documentoSoporte) => {
-        if (documentoSoporte && documentoSoporte.id) {
-          // 2. Con el documento soporte, cargar DAAC
-          this.cargarFormularioDAAC(documentoSoporte.id);
-          // 3. Cargar documentos base (reglamentos)
-          this.cargarDocumentosBase(documentoSoporte.id);
-          // 4. Cargar diagrama de flujo
-          this.CargarDiagramaFlujo(documentoSoporte.id);
+  private mapearDatosProcedimiento(procedimiento: Procedimiento): void {
+    const excluidos = ['id', 'roles', 'actividades', 'referencias'];
+    this.datosProcedimiento = Object.entries(procedimiento)
+      .filter(([key, value]) => !excluidos.includes(key.toLowerCase()) && typeof value !== 'object')
+      .map(([key, value]) => ({
+        Criterio: key.toUpperCase(),
+        Descripcion: String(value)
+      }));
+  }
+
+  public cargarSocializacion(idProcedimiento: number): void {
+    this.socializacionService.obtenerPorProcedimiento(idProcedimiento).subscribe({
+      next: (data: socializacion | null) => {
+        console.log('Datos cargados - Socialización del procedimiento:', data);
+        if (data) {
+          this.socializacionData.set(data);
+          this.estaSocializado.set(true);
+
+          const fechaParsed = new Date(data.fecha);
+          this.fechaSignal.set(fechaParsed);
+          this.lugarSignal.set(data.lugar || '');
+
+          if (typeof data.hora === 'string') {
+            const [h, m] = (data.hora as string).split(':');
+            const d = new Date();
+            d.setHours(+h, +m, 0);
+            this.horaSignal.set(d);
+          } else {
+            this.horaSignal.set(data.hora);
+          }
+
+          const hStr = data.hora as unknown as string;
+          this.socializacionForm.patchValue({
+            fecha: fechaParsed,
+            lugar: data.lugar,
+            hora: typeof hStr === 'string' ? hStr.substring(0, 5) : ''
+          });
+
         } else {
-          this.FormularioDAAC = [];
+          this.socializacionData.set(null);
+          this.estaSocializado.set(false);
+          this.socializacionForm.reset();
+          this.fechaSignal.set(new Date());
+          this.lugarSignal.set('');
+          this.horaSignal.set(new Date());
+        }
+      },
+      error: (err) => console.error('Error al cargar socialización:', err)
+    });
+  }
+
+  public cargarDatosAdicionalesProcedimiento(idProcedimiento: number): void {
+    this.documentoSoporteService.getPorProcedimiento(idProcedimiento).subscribe({
+      next: (documentoSoporte: any) => {
+        console.log('Datos cargados - Documento Soporte:', documentoSoporte);
+        if (documentoSoporte?.id) {
+          this.cargarFormularioDAAC(documentoSoporte.id);
+          this.cargarDocumentosBase(documentoSoporte.id);
+          this.cargarDiagramaFlujo(documentoSoporte.id);
+        } else {
+          this.formularioDAAC = [];
           this.documentosBase = [];
           this.imagenDiagrama = null;
         }
       },
       error: (err) => {
         console.error('Error al obtener documento soporte:', err);
-        this.FormularioDAAC = [];
+        this.formularioDAAC = [];
         this.documentosBase = [];
         this.imagenDiagrama = null;
       }
     });
-    // 5. Cargar soporte computacional (usa procedimientoId directamente)
-    this.cargarSoporteComputacional(procedimientoId);
+    this.cargarSoporteComputacional(idProcedimiento);
   }
 
-  cargarFormularioDAAC(documentoSoporteId: number) {
-    this.formularioDAACService.obtenerPorDocumento(documentoSoporteId).subscribe({
-      next: (formulario) => {
-        if (formulario) {
-          this.mapearDatosDAAC(formulario);
+  public cargarFormularioDAAC(idDocumentoSoporte: number): void {
+    this.formularioDAACService.obtenerPorDocumento(idDocumentoSoporte).subscribe({
+      next: (data: any) => {
+        console.log('Datos cargados - Formulario DAAC:', data);
+        if (data) {
+          this.mapearDatosDAAC(data);
         } else {
-          this.FormularioDAAC = [];
+          this.formularioDAAC = [];
         }
       },
       error: (err) => {
         console.error('Error al obtener formulario DAAC:', err);
-        this.FormularioDAAC = [];
+        this.formularioDAAC = [];
       }
     });
   }
 
-  cargarDocumentosBase(documentoSoporteId: number) {
-    this.reglamentoBaseService.obtenerReglamentoBasePorDocumento(documentoSoporteId).subscribe({
-      next: (documentos) => {
-        this.documentosBase = Array.isArray(documentos) ? documentos : (documentos ? [documentos] : []);
+  public cargarDocumentosBase(idDocumentoSoporte: number): void {
+    this.reglamentoBaseService.obtenerReglamentoBasePorDocumento(idDocumentoSoporte).subscribe({
+      next: (reglamentoBase: ReglamentoBase | ReglamentoBase[]) => {
+        console.log('Datos cargados - Documentos Base:', reglamentoBase);
+        this.documentosBase = Array.isArray(reglamentoBase) ? reglamentoBase : (reglamentoBase ? [reglamentoBase] : []);
       },
       error: (err) => {
         console.error('Error al obtener documentos base:', err);
@@ -183,14 +375,11 @@ export class SocializacionprocedimientosComponent implements OnInit {
     });
   }
 
-  CargarDiagramaFlujo(documentoSoporteId: number) {
-    this.diagramaFlujoService.getDiagramaPdf(documentoSoporteId).subscribe({
-      next: (data) => {
-        if (data && data.pdfBase64) {
-          this.imagenDiagrama = data.pdfBase64;
-        } else {
-          this.imagenDiagrama = null;
-        }
+  public cargarDiagramaFlujo(idDocumentoSoporte: number): void {
+    this.diagramaFlujoService.getDiagramaPdf(idDocumentoSoporte).subscribe({
+      next: (diagramaFlujo: any) => {
+        console.log('Datos cargados - Diagrama de Flujo (PDF):', diagramaFlujo ? 'Contiene base64' : null);
+        this.imagenDiagrama = diagramaFlujo?.pdfBase64 || null;
       },
       error: (err) => {
         console.error('Error al cargar diagrama de flujo:', err);
@@ -199,9 +388,10 @@ export class SocializacionprocedimientosComponent implements OnInit {
     });
   }
 
-  cargarSoporteComputacional(procedimientoId: number) {
-    this.soporteComputacionalService.getSoporteComputacional(procedimientoId).subscribe({
-      next: (soporte) => {
+  public cargarSoporteComputacional(idProcedimiento: number): void {
+    this.soporteComputacionalService.getSoporteComputacional(idProcedimiento).subscribe({
+      next: (soporte: SoporteComputacional) => {
+        console.log('Datos cargados - Soporte Computacional:', soporte);
         this.soporteComputacional = soporte;
       },
       error: (err) => {
@@ -211,34 +401,52 @@ export class SocializacionprocedimientosComponent implements OnInit {
     });
   }
 
-
-  descargarPDFDiagrama() {
+  public descargarPDFDiagrama(): void {
     if (!this.imagenDiagrama) {
       this.alertService.error('No hay diagrama disponible para descargar.');
       return;
     }
-
-    const linkSource = `data:application/pdf;base64,${this.imagenDiagrama}`;
-    const downloadLink = document.createElement("a");
-    const fileName = `diagrama_${this.procedimientoSeleccionado?.procedimiento || 'export'}.pdf`;
-
-    downloadLink.href = linkSource;
-    downloadLink.download = fileName;
-    downloadLink.click();
+    const linkfuente = `data:application/pdf;base64,${this.imagenDiagrama}`;
+    const linkDescarga = document.createElement("a");
+    const nombreArchivo = `diagrama_${this.procedimientoSeleccionado?.procedimiento}.pdf`;
+    linkDescarga.href = linkfuente;
+    linkDescarga.download = nombreArchivo;
+    linkDescarga.click();
     this.alertService.infoExito('Descargando Diagrama de Flujo');
   }
 
-  mapearDatosDAAC(formulario: any) {
-    this.FormularioDAAC = this.datosTablaService.columnasDAAC.map(columna => {
-      const valor = formulario[columna.key] || formulario[columna.label] || '';
-      return {
-        Criterio: columna.key,
-        Descripcion: valor
-      };
+  private mapearDatosDAAC(formulario: any): void {
+    this.formularioDAAC = this.datosTablaService.columnasDAAC.map(columna => ({
+      Criterio: columna.key,
+      Descripcion: formulario[columna.key] || formulario[columna.label] || ''
+    }));
+  }
+
+  public descargarProcedimientoCompletado(): void {
+    if (!this.procedimientoSeleccionado?.id) {
+      this.alertService.error('Debe seleccionar un procedimiento primero');
+      return;
+    }
+    const id = this.procedimientoSeleccionado.id;
+    this.alertService.infoExito('Preparando descarga del procedimiento completado...');
+    this.socializacionService.descargarPdfSocializacion(id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `procedimiento_${this.procedimientoSeleccionado?.procedimiento}_completado.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        this.alertService.infoExito('Descarga iniciada');
+      },
+      error: (err) => {
+        console.error('Error al descargar el PDF:', err);
+        this.alertService.error('Error al generar o descargar el PDF. Asegúrese de que ambos formatos (DAAC y Estandarización) estén subidos en el reglamento.');
+      }
     });
   }
 
-
 }
-
 

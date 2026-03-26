@@ -1,4 +1,4 @@
-﻿import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { estado } from '../interfaces/estado.interfaces';
 import { FichaTecnica } from '../interfaces/ficha-tecnica.interface';
 import { Campos } from '../interfaces/campos.interface';
@@ -188,12 +188,14 @@ export class DatosService {
 
   // Opciones para el componente card
   public readonly opciones = [
-    ["Formulario de procedimiento DAAC", "Reglamento base", "Diagrama de procedimiento"],
+    ["Reglamento base", "Formulario de procedimiento DAAC", "Diagrama de procedimiento"],
     ["Soporte computacional"],
-    ["Procedimiento Enviado DAAC", "Procedimiento aprobado por la DAAC"]
+    ["Ficha de procedimiento descargada", "Ficha de procedimiento aprobada por la DAAC", "Formato de estandarización descargado", "Formato de estandarización subido"]
+
   ];
 
-  public readonly columnaDocumentoBase: Campos[] = [
+  // "Formato de estanrdarización descargado", "formato de estandarización aprobado por la dependencia"
+  public readonly columnaReglamentoBase: Campos[] = [
     { key: 'documento', label: 'Documentos base' }
   ];
 

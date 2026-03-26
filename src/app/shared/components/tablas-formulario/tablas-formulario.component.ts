@@ -1,5 +1,5 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component, TemplateRef, effect, input } from '@angular/core';
+import { Component, TemplateRef, input } from '@angular/core';
 import { Campos } from '../../interfaces/campos.interface';
 
 @Component({

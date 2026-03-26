@@ -37,7 +37,7 @@ export class EstadoAsignacionService {
                 const unificacion = true; // Según el requerimiento, siempre es true por ser creado en ficha técnica.
                 const documental = !!(doc && doc.documento_completado);
                 const computacional = !!(soporte && soporte.computacional_completado);
-                const reglamentacion = !!(reg && (reg.reglamento_completado || reg.completado));
+                const reglamentacion = !!(reg && reg.reglamento_completado);
 
                 let estadoCalculado = 'Inicial';
 

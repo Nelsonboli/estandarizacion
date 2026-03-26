@@ -1,11 +1,10 @@
 import { Component, input, output, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navegacion',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './navegacion.component.html',
   styleUrls: ['./navegacion.component.css']
 })

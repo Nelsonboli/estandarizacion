@@ -2,18 +2,12 @@
   <table class="border border-gray-300 text-med w-full max-w-[600px] mx-auto">
     <thead class="bg-encabezado-tabla text-white text-med font-medium">
       <tr>
-        @for (col of columnas(); track col) {
-        @if(columnas().length > 1) {
-        <th class="px-2 py-1 text-left col span-2 uppercase tracking-wider border font-medium border-gray-300">
-          {{ col }}
-
-        </th>
-        }
-        @if(columnas().length === 1) {
-        <th colspan="2" class=" text-med font-medium px-1 py-0.5 uppercase tracking-wider text-center ">
+        @let cols = columnas();
+        @for (col of cols; track col) {
+        <th [attr.colspan]="cols.length === 1 ? 2 : 1" [class.text-center]="cols.length === 1"
+          class="px-2 py-1 text-left uppercase tracking-wider border font-medium border-gray-300">
           {{ col }}
         </th>
-        }
         }
       </tr>
     </thead>
@@ -22,7 +16,6 @@
       <tr class="hover:bg-gray-100">
         <td class="w-[30%] px-3 py-2 border border-gray-300 font-medium uppercase relative group cursor-pointer">
           {{fila.Criterio}}
-          <!-- Tooltip -->
           @if(fila.Tooltip){
           <div
             class="absolute left-full ml-2 top-1/2 -translate-y-1/2 

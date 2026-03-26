@@ -1,4 +1,4 @@
-﻿import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, Inject, PLATFORM_ID, input, model, inject } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, Inject, PLATFORM_ID, input, model, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser, TitleCasePipe } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -88,13 +88,13 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
           logging: false,
           backgroundColor: '#ffffff',
           onclone: (clonedDoc) => {
-            // Fix for html2canvas oklch error
+            // Fix for html2canvas oklch error and other layout issues
             const elements = clonedDoc.getElementsByTagName('*');
             for (let i = 0; i < elements.length; i++) {
               const el = elements[i] as HTMLElement;
               const style = window.getComputedStyle(el);
 
-              // Helper to convert oklch or any color to rgb using the browser's own rendering
+              // 1. Fix colors (oklch)
               const fixColor = (color: string) => {
                 if (color && color.includes('oklch')) {
                   const temp = document.createElement('div');
@@ -111,7 +111,12 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
                 if (style.color.includes('oklch')) el.style.color = fixColor(style.color);
                 if (style.backgroundColor.includes('oklch')) el.style.backgroundColor = fixColor(style.backgroundColor);
                 if (style.borderColor.includes('oklch')) el.style.borderColor = fixColor(style.borderColor);
-                if (style.outlineColor.includes('oklch')) el.style.outlineColor = fixColor(style.outlineColor);
+              }
+
+              // 2. Stabilize tables and flex items for html2canvas
+              if (el.tagName === 'TABLE') {
+                el.style.borderCollapse = 'collapse';
+                el.style.width = '100%';
               }
             }
           }
@@ -212,10 +217,10 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
         } else if (diagrama && diagrama.imagen) {
           // Fallback for single image
           this.imagenesDiagrama = [diagrama.imagen];
-        } else if (diagrama && diagrama.pdf_diagrama) {
+        } else if (diagrama && diagrama.ubicacion_diagrama) {
           // Possible fallback if stored here
-          console.log('Detectado pdf_diagrama');
-          this.imagenesDiagrama = [diagrama.pdf_diagrama];
+          console.log('Detectado ubicacion_diagrama');
+          this.imagenesDiagrama = [diagrama.ubicacion_diagrama];
         } else {
           this.imagenesDiagrama = [];
         }
@@ -259,7 +264,7 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
   }
 
   // Constants for A4 page layout (in pixels approx, assuming 96 DPI or similar scaling)
-  readonly PAGE_CONTENT_HEIGHT_PX = 800; // Adjusted safe area for content
+  readonly PAGE_CONTENT_HEIGHT_PX = 870; // Increased to use more A4 space
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -281,11 +286,13 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
     this.tocEntries = [];
 
     sourceChildren.forEach((child) => {
-      const height = child.offsetHeight;
+      // Get height including margins
+      const rect = child.getBoundingClientRect();
       const style = window.getComputedStyle(child);
-      const margin = parseInt(style.marginBottom || '0', 10) + parseInt(style.marginTop || '0', 10);
+      const marginTop = parseFloat(style.marginTop || '0');
+      const marginBottom = parseFloat(style.marginBottom || '0');
 
-      const totalItemHeight = height + margin;
+      const totalItemHeight = rect.height + marginTop + marginBottom;
       const forceBreak = child.hasAttribute('data-force-break');
 
       if (currentHeight + totalItemHeight > this.PAGE_CONTENT_HEIGHT_PX || (forceBreak && currentPage.length > 0)) {
@@ -300,7 +307,6 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
       currentPage.push(child);
       currentHeight += totalItemHeight;
     });
-
     // Push last page
     if (currentPage.length > 0) {
       this.pages.push(currentPage);
@@ -329,19 +335,16 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
         }
       });
     });
-    this.pageHasDAAC = [];
 
-    this.pages.forEach((page) => {
-      this.pageHasDAAC = this.pages.map((page) =>
-        page.some((element: HTMLElement) => {
-          return (
-            element.closest('[data-is-daac]') !== null ||
-            element.querySelector('[data-is-daac]') !== null ||
-            element.hasAttribute('data-is-daac')
-          );
-        })
-      );
-    });
+    this.pageHasDAAC = this.pages.map((page) =>
+      page.some((element: HTMLElement) => {
+        return (
+          element.closest('[data-is-daac]') !== null ||
+          element.querySelector('[data-is-daac]') !== null ||
+          element.hasAttribute('data-is-daac')
+        );
+      })
+    );
 
     this.cdr.detectChanges();
   }
@@ -356,6 +359,5 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   }
-
 }
 

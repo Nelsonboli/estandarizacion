@@ -1,0 +1,35 @@
+<div class="flex justify-center mt-2 hover:border-gray-800">
+    <div
+        class=" relative group w-60 bg-white border border-gray-500 rounded-xl hover:shadow-xl transition-all duration-300 group pt-10 pl-10 pr-10">
+        <button (click)="eliminarArchivo()" class="absolute -top-3 -right-3 z-20 bg-gray-300 opacity-1 group-hover:opacity-100 hover:bg-red-600 text-white w-8 h-8 rounded-full flex 
+            items-center justify-center shadow-lg border-2 border-white group transition-all duration-300">
+            <!-- ICONO -->
+            <span class="material-symbols-outlined text-sm font-bold">
+                close
+            </span>
+            <!-- TOOLTIP -->
+            <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-1 group-hover:opacity-100 pointer-events-none
+                whitespace-nowrap transition-opacity duration-200">
+                Eliminar archivo
+                <span
+                    class="absolute left-1/2 -translate-x-1/2 top-full border-4 border-transparent border-t-black"></span>
+            </span>
+        </button>
+        <!-- Vista previa del PDF -->
+        <div class="h-48 flex items-center justify-center">
+            @if (filePreviewUrl()) {
+            <iframe [src]="filePreviewUrl()" class="w-full h-full"></iframe>
+            }
+            @else {
+            <span class="material-symbols-outlined text-red-600 text-3xl">picture_as_pdf</span>
+            }
+        </div>
+        <!-- Información archivo -->
+        <div class="text-center">
+            <p class="text-sm text-gray-700 mt-4 truncate" title="{{ selectedFileName()}}">
+                {{ selectedFileName()}}
+            </p>
+            <p class="text-xs text-gray-400"> Documento cargado</p>
+        </div>
+    </div>
+</div>
