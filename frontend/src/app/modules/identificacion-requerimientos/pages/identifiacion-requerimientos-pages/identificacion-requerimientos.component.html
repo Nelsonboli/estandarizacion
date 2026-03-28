@@ -46,11 +46,14 @@
 
         <!-- Botones personalizados de la tabla -->
         <ng-template #accionesPersonalizadas let-dato>
-            <div class="flex items-center justify-center space-x-1 gap-2">
+            <div class="flex flex-wrap justify-center space-x-1 gap-2">
                 <button [routerLink]="['/identificacionrequerimientos/estandarizar', dato.id]"
-                    class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded">
-                    Estandarizar
+                    class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded flex items-center justify-center gap-1">
+                    <span class="hidden md:inline">Estandarizar</span>
+                    <img src="assets/elementos/estandarizar.svg" alt="Estandarizar"
+                        class="hover:brightness-120 w-4 h-4 md:hidden">
                 </button>
+
                 <button (click)="eliminarProcedimiento(dato)" title="Eliminar procedimiento" aria-label="Eliminar">
                     <img class="hover:brightness-120 w-4 h-4" src="assets/elementos/eliminar.svg" alt="Eliminar" />
                 </button>
