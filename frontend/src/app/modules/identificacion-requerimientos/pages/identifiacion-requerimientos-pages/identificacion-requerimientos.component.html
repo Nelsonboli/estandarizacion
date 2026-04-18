@@ -51,7 +51,7 @@
                     class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded flex items-center justify-center gap-1">
                     <span class="hidden md:inline">Estandarizar</span>
                     <img src="assets/elementos/estandarizar.svg" alt="Estandarizar"
-                        class="hover:brightness-120 w-4 h-4 md:hidden">
+                        class="hover:brightness-120 w-3 h-3 md:hidden">
                 </button>
 
                 <button (click)="eliminarProcedimiento(dato)" title="Eliminar procedimiento" aria-label="Eliminar">
@@ -60,9 +60,13 @@
                 <button (click)="editarProcedimiento(dato)" title="Editar procedimiento" aria-label="Editar">
                     <img class="hover:brightness-120 w-4 h-4" src="assets/elementos/editar.svg" alt="Editar" />
                 </button>
+                <button (click)="descargarFormatoProcedimiento()" title="Descargar formato procedimiento"
+                    aria-label="Descargar formato procedimiento">
+                    <img class="hover:brightness-120 w-4 h-4" src="assets/elementos/descargarFormato.svg"
+                        alt="Descargar formato procedimiento" />
+                </button>
             </div>
         </ng-template>
-
         <div>
             <app-navegacion [rutaAnterior]="'/recoleccioninformacion'" [rutaSiguiente]="'/socializacionprocedimientos'"
                 (siguiente)="verListaProcedimientos()">

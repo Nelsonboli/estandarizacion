@@ -95,43 +95,27 @@
                 [procedimientoId]="procedimientoId()!"></app-formato-estandarizacion>
             <div
                 class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
-                <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-2 w-full">
-                    <!-- Pregunta centrada -->
-                    <label class="block text-med font-bold text-center pb-4">
-                        ¿El documento ya está validado por la DAAC?
-                    </label>
-                    <!-- Radio buttons centrados -->
-                    <div class="flex justify-center items-center gap-4 pb-2">
-                        <label class="flex items-center gap-2">
-                            <input type="radio" formControlName="respuesta1" value="si" /> Sí
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="radio" formControlName="respuesta1" value="no" /> No
-                        </label>
-                    </div>
 
-                    <!-- Si la respuesta es Sí -->
-                    @if (form.get('respuesta1')?.value === 'si') {
-                    <div class="flex flex-col items-center text-center space-y-3">
-                        <p class="text-med m-2 pt-2 mb-4">
-                            Descargue el Formato de Estandarización y envíe el documento al
-                            correo electrónico de la Dependencia correspondiente.
-                        </p>
-                        <button (click)="descargarFormatoEstandarizacion(formatoRefEstandarizacion)"
-                            class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
-                            <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato"
-                                class="w-6 h-6" />
-                            {{ formatoEstandarizacion }}
-                        </button>
-                        <p class="text-med m-2 pt-2">
-                            Luego de recibir la aprobación por la Dependencia, deberá subir el
-                            Formato de Estandarización para continuar con la Socialización del
-                            procedimiento.
-                        </p>
-                    </div>
-                    }
-                    <!-- Si la respuesta es No -->
-                    @if (form.get('respuesta1')?.value === 'no') {
+                <div class="flex flex-col items-center text-center space-y-3">
+                    <p class="text-med m-2 pt-2 mb-4">
+                        Descargue el Formato de Estandarización y envíe el documento al
+                        correo electrónico de la Dependencia correspondiente para su validación.
+                    </p>
+                    <button (click)="descargarFormatoEstandarizacion(formatoRefEstandarizacion)"
+                        class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
+                        <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato" class="w-6 h-6" />
+                        {{ formatoEstandarizacion }}
+                    </button>
+                    <p class="text-med m-2 pt-2">
+                        Luego de recibir la aprobación por la Dependencia, deberá subir el
+                        Formato de Estandarización para continuar con la Socialización del
+                        procedimiento.
+                    </p>
+
+                </div>
+
+                <!-- Si la respuesta es No -->
+                <!-- @if (form.get('respuesta1')?.value === 'no') {
                     <div class="flex flex-col items-center text-center space-y-3">
                         <p class="text-med m-2 pt-2 mb-4">
                             <span class="text-blue-600 font-medium">Recuerde:</span>
@@ -146,8 +130,8 @@
                             Descargar {{ fichaProcedimiento }}
                         </button>
                     </div>
-                    }
-                </form>
+                    } -->
+                <!-- </form> -->
             </div>
         </ng-container>
         }

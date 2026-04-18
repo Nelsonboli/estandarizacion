@@ -35,7 +35,6 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
   // Pages array to hold the distributed content
   pages: any[][] = [];
   tocEntries: TocEntry[] = [];
-  pageHasDAAC: boolean[] = [];
 
   //Servicios e inyecciones de dependencias
   private cdr = inject(ChangeDetectorRef);
@@ -162,7 +161,6 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
         if (documentoSoporte && documentoSoporte.id) {
           this.cargarFormularioDAAC(documentoSoporte.id);
           this.cargarDocumentosBase(documentoSoporte.id);
-          this.cargarDiagramaFlujo(documentoSoporte.id);
         } else {
           this.formularioDAAC = {};
           this.documentosBase = [];
@@ -207,35 +205,7 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
   // Cargar diagrama flujo
   imagenesDiagrama: string[] = [];
 
-  cargarDiagramaFlujo(documentoSoporteId: number) {
-    this.diagramaFlujoService.obtenerPorDocumento(documentoSoporteId).subscribe({
-      next: (diagrama) => {
-        console.log('Diagrama Recibido:', diagrama);
-        if (diagrama && diagrama.imagenes) {
-          // Asumiendo que 'imagenes' es un array de strings (base64 o urls) check backend return
-          this.imagenesDiagrama = Array.isArray(diagrama.imagenes) ? diagrama.imagenes : [];
-        } else if (diagrama && diagrama.imagen) {
-          // Fallback for single image
-          this.imagenesDiagrama = [diagrama.imagen];
-        } else if (diagrama && diagrama.ubicacion_diagrama) {
-          // Possible fallback if stored here
-          console.log('Detectado ubicacion_diagrama');
-          this.imagenesDiagrama = [diagrama.ubicacion_diagrama];
-        } else {
-          this.imagenesDiagrama = [];
-        }
-        // Force update and redistribute content
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.distributeContent();
-        }, 500);
-      },
-      error: (err) => {
-        console.error('Error al obtener diagrama de flujo:', err);
-        this.imagenesDiagrama = [];
-      }
-    });
-  }
+  // 
 
   //Cargar Sopporte Computacional
   cargarSoporteComputacional(procedimientoId: number) {
@@ -336,15 +306,6 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
       });
     });
 
-    this.pageHasDAAC = this.pages.map((page) =>
-      page.some((element: HTMLElement) => {
-        return (
-          element.closest('[data-is-daac]') !== null ||
-          element.querySelector('[data-is-daac]') !== null ||
-          element.hasAttribute('data-is-daac')
-        );
-      })
-    );
 
     this.cdr.detectChanges();
   }
@@ -359,5 +320,36 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   }
+
+
+  // cargarDiagramaFlujo(documentoSoporteId: number) {
+  //   this.diagramaFlujoService.obtenerPorDocumento(documentoSoporteId).subscribe({
+  //     next: (diagrama) => {
+  //       console.log('Diagrama Recibido:', diagrama);
+  //       if (diagrama && diagrama.imagenes) {
+  //         // Asumiendo que 'imagenes' es un array de strings (base64 o urls) check backend return
+  //         this.imagenesDiagrama = Array.isArray(diagrama.imagenes) ? diagrama.imagenes : [];
+  //       } else if (diagrama && diagrama.imagen) {
+  //         // Fallback for single image
+  //         this.imagenesDiagrama = [diagrama.imagen];
+  //       } else if (diagrama && diagrama.ubicacion_diagrama) {
+  //         // Possible fallback if stored here
+  //         console.log('Detectado ubicacion_diagrama');
+  //         this.imagenesDiagrama = [diagrama.ubicacion_diagrama];
+  //       } else {
+  //         this.imagenesDiagrama = [];
+  //       }
+  //       // Force update and redistribute content
+  //       this.cdr.detectChanges();
+  //       setTimeout(() => {
+  //         this.distributeContent();
+  //       }, 500);
+  //     },
+  //     error: (err) => {
+  //       console.error('Error al obtener diagrama de flujo:', err);
+  //       this.imagenesDiagrama = [];
+  //     }
+  //   });
+  // }
 }
 

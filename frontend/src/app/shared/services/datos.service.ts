@@ -195,8 +195,9 @@ export class DatosService {
   ];
 
   // "Formato de estanrdarización descargado", "formato de estandarización aprobado por la dependencia"
+  public readonly encabezadoReglamentoBase = ['Reglamento base'];
   public readonly columnaReglamentoBase: Campos[] = [
-    { key: 'documento', label: 'Documentos base' }
+    { key: 'documento', label: 'documento' }
   ];
 
 }

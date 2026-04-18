@@ -46,7 +46,7 @@ export class ListaDesplegableComponent implements OnInit {
 
   Cancelar() {
     this.cerrar.emit();
-    this.router.navigate(['/']);
+    this.router.navigate(['/identificacionrequerimientos']);
   }
 
   Guardar() {

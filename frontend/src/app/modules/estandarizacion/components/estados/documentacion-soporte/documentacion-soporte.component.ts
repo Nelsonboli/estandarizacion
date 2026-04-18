@@ -14,7 +14,6 @@ import { DocumentoSoporteService } from '../../../services/documento-soporte.ser
 import { forkJoin, map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TablaFormularioDAACService } from '../../../services/tabla-formulario-daac.service';
-
 import { ReglamentoBase, FormularioDAAC, ActividadesDocumentoSoporte } from '../../../interfaces/documento-soporte.interface';
 import { DiagramaDeFlujoComponent } from '../../diagrama-de-flujo/diagrama-de-flujo';
 

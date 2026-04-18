@@ -53,7 +53,6 @@ export class ReglamentoComponent implements OnInit {
     effect(() => {
       const currentReglamentoId = this.reglamentoId();
       if (currentReglamentoId) {
-        // Verificar actividades cuando cambie el soporteId
         this.verificarActividadesReglamento();
         console.log('Reglamento ID:', this.reglamentoId());
       }
@@ -65,92 +64,12 @@ export class ReglamentoComponent implements OnInit {
       respuesta1: ['', Validators.required],
       detalle1: [''],
     });
-
   }
 
   onSubmit() {
     // TODO: Implementar lógica de envío si es necesario
   }
 
-  subirFormatoDAAC(file: File) {
-    const regId = this.reglamentoId();
-    if (!regId) return;
-    this.subiendo.set(true);
-    this.reglamentoService.subirFormatoDAAC(regId, file)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap(() => this.subiendo.set(false))
-      )
-      .subscribe({
-        next: () => {
-          this.alertService.exito('Formato de caracterizacion DAAC subido correctamente');
-          this.verificarActividadesReglamento();
-          console.log(this.subiendo());
-        },
-        error: () => {
-          this.alertService.error('Error al subir el formato de caracterizacion DAAC');
-        }
-      });
-  }
-
-  subirFormatoEstandarizacion(file: File) {
-    const regId = this.reglamentoId();
-    if (!regId) return;
-    this.subiendo.set(true);
-    this.reglamentoService.subirFormatoEstandarizacion(regId, file)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap(() => this.subiendo.set(false))
-      )
-      .subscribe({
-        next: () => {
-          this.alertService.exito('Archivo de estandarización subido correctamente');
-          this.verificarActividadesReglamento();
-          console.log(this.subiendo());
-        },
-        error: () => {
-          this.alertService.error('Error al subir el archivo de estandarización');
-        }
-      });
-  }
-
-  eliminarFormatoDAAC() {
-    const regId = this.reglamentoId();
-    if (!regId) return;
-    this.alertService.confirmar('¿Está seguro de eliminar el formato de caracterizacion DAAC?', 'Esta acción no se puede deshacer').then((result) => {
-      if (result.isConfirmed) {
-        this.reglamentoService.eliminarFormatoDAAC(regId).subscribe({
-          next: () => {
-            this.alertService.exito('Formato de caracterizacion DAAC eliminado correctamente');
-            this.verificarActividadesReglamento();
-          },
-          error: (error) => {
-            console.error('Error al eliminar formato de caracterizacion DAAC:', error);
-            this.alertService.error('Error al eliminar el formato de caracterizacion DAAC. Por favor intente nuevamente.');
-          }
-        });
-      }
-    });
-  }
-
-  eliminarFormatoEstandarizacion() {
-    const regId = this.reglamentoId();
-    if (!regId) return;
-    this.alertService.confirmar('¿Está seguro de eliminar el formato de estandarización?', 'Esta acción no se puede deshacer').then((result) => {
-      if (result.isConfirmed) {
-        this.reglamentoService.eliminarFormatoEstandarizacion(regId).subscribe({
-          next: () => {
-            this.alertService.exito('Formato de estandarización eliminado correctamente');
-            this.verificarActividadesReglamento();
-          },
-          error: (error) => {
-            console.error('Error al eliminar formato de estandarización:', error);
-            this.alertService.error('Error al eliminar el formato de estandarización. Por favor intente nuevamente.');
-          }
-        });
-      }
-    });
-  }
 
   descargarReporteDAAC() {
     const pId = this.procedimientoId();
@@ -201,7 +120,129 @@ export class ReglamentoComponent implements OnInit {
     });
   }
 
-  //METODOS PARA LA DESCARGA DEL REPORTE DE LA FICHA DE PROCEDIMIENTO
+  subirFormatoDAAC(file: File) {
+    const regId = this.reglamentoId();
+    if (!regId) return;
+    this.subiendo.set(true);
+    this.reglamentoService.subirFormatoDAAC(regId, file)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => this.subiendo.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.exito('Formato de caracterizacion DAAC subido correctamente');
+          this.verificarActividadesReglamento();
+          console.log(this.subiendo());
+        },
+        error: () => {
+          this.alertService.error('Error al subir el formato de caracterizacion DAAC');
+        }
+      });
+  }
+
+  guardarDocumentoDAAC(file: File) {
+    if (this.subidaActiva === 'subirProcedimiento') {
+      this.subirFormatoDAAC(file);
+    } else if (this.subidaActiva === 'subirEstandarizacion') {
+      this.subirFormatoEstandarizacion(file);
+    }
+    this.subidaActiva = null;
+  }
+
+  eliminarFormatoDAAC() {
+    const regId = this.reglamentoId();
+    if (!regId) return;
+    this.alertService.confirmar('¿Está seguro de eliminar el formato de caracterizacion DAAC?', 'Esta acción no se puede deshacer').then((result) => {
+      if (result.isConfirmed) {
+        this.reglamentoService.eliminarFormatoDAAC(regId).subscribe({
+          next: () => {
+            this.alertService.exito('Formato de caracterizacion DAAC eliminado correctamente');
+            this.verificarActividadesReglamento();
+          },
+          error: (error) => {
+            console.error('Error al eliminar formato de caracterizacion DAAC:', error);
+            this.alertService.error('Error al eliminar el formato de caracterizacion DAAC. Por favor intente nuevamente.');
+          }
+        });
+      }
+    });
+  }
+
+  descargarFormatoEstandarizacion(formatoRef: any) {
+    if (!this.formatoDAACCompletado()) return;
+    else {
+      formatoRef.generarPDF();
+    }
+    const regId = this.reglamentoId();
+    if (regId) {
+      this.reglamentoService.marcarDescargaFormatoEstandarizacion(regId, 'Formato_Estandarizacion.pdf').subscribe({
+        next: () => {
+          console.log('Formato de estandarización marcado como descargado');
+          this.verificarActividadesReglamento();
+        },
+        error: (err) => console.error('Error al marcar formato como descargado:', err)
+      });
+    }
+  }
+
+  subirFormatoEstandarizacion(file: File) {
+    const regId = this.reglamentoId();
+    if (!regId) return;
+    this.subiendo.set(true);
+    this.reglamentoService.subirFormatoEstandarizacion(regId, file)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => this.subiendo.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.alertService.exito('Archivo de estandarización subido correctamente');
+          this.verificarActividadesReglamento();
+          console.log(this.subiendo());
+        },
+        error: () => {
+          this.alertService.error('Error al subir el archivo de estandarización');
+        }
+      });
+  }
+
+  eliminarFormatoEstandarizacion() {
+    const regId = this.reglamentoId();
+    if (!regId) return;
+    this.alertService.confirmar('¿Está seguro de eliminar el formato de estandarización?', 'Esta acción no se puede deshacer').then((result) => {
+      if (result.isConfirmed) {
+        this.reglamentoService.eliminarFormatoEstandarizacion(regId).subscribe({
+          next: () => {
+            this.alertService.exito('Formato de estandarización eliminado correctamente');
+            this.verificarActividadesReglamento();
+          },
+          error: (error) => {
+            console.error('Error al eliminar formato de estandarización:', error);
+            this.alertService.error('Error al eliminar el formato de estandarización. Por favor intente nuevamente.');
+          }
+        });
+      }
+    });
+  }
+
+  formatoDAACCompletado() {
+    const { subida_daac_completada, descarga_daac_completada } = this.estadoReglamento();
+    if (!subida_daac_completada && !descarga_daac_completada) {
+      this.alertService.info('Debe descargar y subir el formato DAAC para descargar el formato de estandarización');
+      return false;
+    }
+    if (!subida_daac_completada) {
+      this.alertService.info('Debe subir el formato DAAC para descargar el formato de estandarización');
+      return false;
+    }
+    if (!descarga_daac_completada) {
+      this.alertService.info('Debe descargar el formato DAAC para descargar el formato de estandarización');
+      return false;
+    }
+    return true;
+  }
+
   verificarActividadesReglamento() {
     const procId = this.procedimientoId();
     if (!procId) return;
@@ -225,13 +266,13 @@ export class ReglamentoComponent implements OnInit {
         error: () => this.alertService.error('Error al obtener reglamento')
       });
   }
+
   actualizarActividadesReglamento(estado: actividadesReglamento) {
     const todascompletas =
       estado.descarga_daac_completada &&
       estado.subida_daac_completada &&
       estado.descarga_estandarizacion_completada &&
       estado.subida_estandarizacion_completada;
-
     this.reglamentoService.actualizarReglamento(this.reglamentoId()!, {
       actividades_completadas: estado,
       reglamento_completado: todascompletas
@@ -249,30 +290,7 @@ export class ReglamentoComponent implements OnInit {
     });
   }
 
-  descargarFormatoEstandarizacion(formatoRef: any) {
-    formatoRef.generarPDF();
-    const regId = this.reglamentoId();
-    if (regId) {
-      this.reglamentoService.marcarDescargaFormatoEstandarizacion(regId, 'Formato_Estandarizacion.pdf').subscribe({
-        next: () => {
-          console.log('Formato de estandarización marcado como descargado');
-          this.verificarActividadesReglamento();
-        },
-        error: (err) => console.error('Error al marcar formato como descargado:', err)
-      });
-    }
-  }
-
   cerrarDocumento() {
-    this.subidaActiva = null;
-  }
-
-  guardarDocumentoDAAC(file: File) {
-    if (this.subidaActiva === 'subirProcedimiento') {
-      this.subirFormatoDAAC(file);
-    } else if (this.subidaActiva === 'subirEstandarizacion') {
-      this.subirFormatoEstandarizacion(file);
-    }
     this.subidaActiva = null;
   }
 
@@ -283,5 +301,7 @@ export class ReglamentoComponent implements OnInit {
   }
 
 }
+
+
 
 

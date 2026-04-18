@@ -1,0 +1,41 @@
+<div class="p-5 animate-fade-in">
+    <div
+        class="bg-white rounded-xl shadow-xs overflow-hidden hover:-translate-y-1 hover:shadow-lg hover:shadow-encabezado-tabla/10 transition-all duration-500 ease-in-out">
+
+        <div class="bg-encabezado-tabla text-white flex justify-between px-6 py-3">
+            <span class="font-semibold text-sm letra">
+                Sistema de gestión de calidad
+            </span>
+            <button class="bg-encabezado-tabla brightness-110 hover:brightness-80 rounded-md" (click)="mostrarModulo()">
+                <img [src]="mostrarMenu() 
+                        ? 'assets/elementos/minimizar.svg'  
+                        : 'assets/elementos/maximizar.svg'"
+                    class="w-10 h-10 cursor-pointer brightness-110 p-2 hover:brightness-80 rounded-md transition-all duration-500 ease-in-out"
+                    [ngClass]="mostrarMenu() ? 'rotate-0' : 'rotate-180'" />
+            </button>
+        </div>
+        <div class="grid transition-all duration-500 ease-in-out"
+            [ngClass]="mostrarMenu() ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'">
+            <div class="overflow-hidden">
+                <div class="p-6 flex flex-wrap gap-6">
+                    @for (menu of menuGestionCalidad; track menu.nombre) {
+                    <div class="flex items-center gap-4 rounded-lg px-5 py-3 
+                    hover:scale-105 hover:bg-gray-100/75 
+                    transition-all duration-300 ease-in-out">
+                        <div class="flex items-center justify-center rounded-full">
+                            <img src="assets/elementos/estandarizacion.svg" class="max-w-16 max-h-16 cursor-pointer"
+                                [routerLink]="menu.ruta" />
+                        </div>
+                        <a class="letrasmodales inline-block text-sm no-underline cursor-pointer transition-all duration-300 ease-in-out hover:translate-x-2"
+                            [routerLink]="menu.ruta">
+                            <span class="hover:text-[#28a745]">{{ menu.nombre }}</span>
+                        </a>
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

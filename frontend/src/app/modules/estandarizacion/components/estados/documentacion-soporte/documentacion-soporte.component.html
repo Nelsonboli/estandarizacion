@@ -40,9 +40,11 @@
                     <button (click)="eliminarDato(dato)" class="px-1 w-6 h-6" title="Eliminar">
                         <img src="assets/elementos/eliminar.svg" alt="eliminar" class="hover:brightness-120 w-6 h-6">
                     </button>
+                    @if (dato.documento !== 'No tiene Reglamento Base') {
                     <button (click)="editarDato(dato)" class="px-1 w-6 h-6" title="Editar">
                         <img src="assets/elementos/editar.svg" alt="editar" class="hover:brightness-120 w-6 h-6">
                     </button>
+                    }
                 </div>
             </ng-template>
         </div>

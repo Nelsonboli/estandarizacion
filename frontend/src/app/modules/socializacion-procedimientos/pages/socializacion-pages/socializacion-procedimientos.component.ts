@@ -33,7 +33,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-socializacionprocedimientos',
   imports: [ReactiveFormsModule, CommonModule,
-    NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent, TablasFormularioComponent,
+    NavegacionComponent, ListaDesplegableComponent, TablaCriteriosComponent,
     MatDatepickerModule, MatInputModule, MatFormFieldModule, MatNativeDateModule, NgxMaterialTimepickerModule, MatIconModule],
   templateUrl: './socializacion-procedimientos.component.html',
   styleUrl: './socializacion-procedimientos.component.css',
@@ -61,7 +61,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public procedimientoSeleccionado: Procedimiento | null = null;
   public datosProcedimiento: Criterios[] = [];
   public imagenDiagrama: string | null = null;
-  public documentosBase: ReglamentoBase[] = [];
+  public documentosBase: Criterios[] = [];
   public soporteComputacional: SoporteComputacional | null = null;
   public formularioDAAC: Criterios[] = [];
   public fechaSignal = signal<Date>(new Date());
@@ -71,8 +71,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public estaSocializado = signal<boolean>(false);
 
   // Datos para la fecha y hora de socialización
-  private readonly fechaActualDia = new Date().getDay();
-  public readonly minDate = new Date(this.fechaActualDia);
+  public readonly minDate = new Date();
   public socializacionForm!: FormGroup;
 
   // Servicios e inyecciones de dependencias 
@@ -142,14 +141,31 @@ export class SocializacionprocedimientosComponent implements OnInit {
   }
 
   public registrarSocializacion(): void {
+    const { fecha, hora, lugar } = this.socializacionForm.value;
+    const horaFinal = this.parsearHora(hora);
     if (this.socializacionForm.invalid) {
       this.socializacionForm.markAllAsTouched();
       this.alertService.error('Por favor complete todos los campos');
       return;
     }
+    // Combina la fecha seleccionada con la hora ingresada para validarlas juntas
+    const fechaHoraSeleccionada = new Date(fecha);
+    fechaHoraSeleccionada.setHours(horaFinal.getHours(), horaFinal.getMinutes(), 0, 0);
 
-    const { fecha, hora, lugar } = this.socializacionForm.value;
-    const horaFinal = this.parsearHora(hora);
+    const ahora = new Date();
+    ahora.setSeconds(0, 0); // Ignorar los segundos para la validación
+
+    // Validar si la hora o fecha ingresada es inválida (por escritura manual)
+    if (isNaN(horaFinal.getTime()) || isNaN(fechaHoraSeleccionada.getTime())) {
+      this.alertService.error('El formato de la fecha o la hora es inválido');
+      return;
+    }
+
+    if (fechaHoraSeleccionada < ahora) {
+      this.alertService.error('La fecha y hora de socialización no pueden ser anteriores a la fecha y hora actual');
+      return;
+    }
+
     const procedimientoId = this.procedimientoSeleccionado?.id;
 
     if (!procedimientoId) {
@@ -249,7 +265,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
       this.alertService.error('No se pudo identificar el procedimiento');
       return;
     }
-
     this.estadoAsignacionService.obtenerCompletitud(id).subscribe({
       next: (estadoAsignacion) => {
         const estadoLower = estadoAsignacion.estado.toLowerCase();
@@ -366,7 +381,11 @@ export class SocializacionprocedimientosComponent implements OnInit {
     this.reglamentoBaseService.obtenerReglamentoBasePorDocumento(idDocumentoSoporte).subscribe({
       next: (reglamentoBase: ReglamentoBase | ReglamentoBase[]) => {
         console.log('Datos cargados - Documentos Base:', reglamentoBase);
-        this.documentosBase = Array.isArray(reglamentoBase) ? reglamentoBase : (reglamentoBase ? [reglamentoBase] : []);
+        const docs = Array.isArray(reglamentoBase) ? reglamentoBase : (reglamentoBase ? [reglamentoBase] : []);
+        this.documentosBase = docs.map((doc) => ({
+          Criterio: `Documento `,
+          Descripcion: String(doc.documento)
+        }));
       },
       error: (err) => {
         console.error('Error al obtener documentos base:', err);

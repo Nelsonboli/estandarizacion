@@ -43,6 +43,20 @@ export class DiagramaFlujoService {
 
       // Guardar imágenes individuales si existen
       if (data.imagenes && data.imagenes.length > 0) {
+        // 👉 REFUERZO: Limpiar archivos antiguos para que no queden páginas huérfanas en el disco
+        if (fs.existsSync(procDir)) {
+          const files = fs.readdirSync(procDir);
+          for (const file of files) {
+            if (file.endsWith('.png')) {
+              try {
+                fs.unlinkSync(path.join(procDir, file));
+              } catch (e) {
+                console.warn(`No se pudo eliminar archivo antiguo: ${file}`);
+              }
+            }
+          }
+        }
+
         data.imagenes.forEach((imgBase64, index) => {
           if (!imgBase64) return;
           const cleanBase64 = imgBase64.includes(',') ? imgBase64.split(',')[1] : imgBase64;

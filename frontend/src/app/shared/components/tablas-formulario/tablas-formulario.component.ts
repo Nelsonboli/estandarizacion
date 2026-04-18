@@ -13,5 +13,4 @@ export class TablasFormularioComponent {
   columnas = input<Campos[]>([]);
   data = input<any[]>([]);
   accionesTemplate = input<TemplateRef<any>>();
-  mostrarOpciones = input<boolean>(true);
 }

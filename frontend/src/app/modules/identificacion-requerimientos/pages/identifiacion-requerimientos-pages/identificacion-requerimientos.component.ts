@@ -164,6 +164,11 @@ export class IdentificacionrequerimientosComponent implements OnInit, OnDestroy 
     this.listaService.abrir();
     this.router.navigate(['/socializacionprocedimientos']);
   }
+
+
+  descargarFormatoProcedimiento() {
+
+  }
 }
 
 

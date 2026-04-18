@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,6 +9,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./navegacion.component.css']
 })
 export class NavegacionComponent {
+
+
+  private router = inject(Router);
   rutaAnterior = input<string>();
   rutaSiguiente = input<string>();
   posicion = signal<'primera' | 'ultima' | 'intermedia'>('intermedia');
@@ -37,8 +40,6 @@ export class NavegacionComponent {
     }
   }
 
-  constructor(private router: Router) { }
-
   irAnterior() {
     this.anterior.emit();  // Notifica al padre (si quiere hacer algo extra)
     const prev = this.rutaAnterior();
@@ -54,5 +55,7 @@ export class NavegacionComponent {
       this.router.navigate([next]); // Navega automáticamente
     }
   }
+
+
 
 }

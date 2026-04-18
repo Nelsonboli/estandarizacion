@@ -57,9 +57,8 @@
         </div>
         <div class="p-4 ">
           @if (documentosBase && documentosBase.length > 0) {
-          <app-tablas-formulario [columnas]="datosTablaService.columnaReglamentoBase" [data]="documentosBase"
-            [mostrarOpciones]="false">
-          </app-tablas-formulario>
+          <app-tabla-criterios [columnas]="datosTablaService.encabezadoReglamentoBase" [filas]="documentosBase">
+          </app-tabla-criterios>
           }
           @else {
           <p class="text-gray-500 text-center font-bold">
@@ -167,15 +166,14 @@
               <mat-datepicker #fechaPicker></mat-datepicker>
               <mat-hint>DD/MM/AAAA</mat-hint>
             </mat-form-field>
-
             <mat-form-field appearance="fill" class="w-full premium-field">
               <mat-label>Hora de socialización</mat-label>
-              <input matInput [ngxTimepicker]="pickerHora" formControlName="hora" readonly class="white-input">
+              <input matInput [ngxTimepicker]="pickerHora" formControlName="hora" placeholder="Ej: 14:30"
+                class="white-input">
               <ngx-material-timepicker-toggle matSuffix [for]="pickerHora"></ngx-material-timepicker-toggle>
               <ngx-material-timepicker #pickerHora [theme]="darkBlueTheme"></ngx-material-timepicker>
               <mat-hint>HH:MM</mat-hint>
             </mat-form-field>
-
             <mat-form-field appearance="fill" class="w-full premium-field">
               <mat-label>Lugar de socialización</mat-label>
               <input matInput type="text" formControlName="lugar" placeholder="Ej. Auditorio Central, Salón 101"

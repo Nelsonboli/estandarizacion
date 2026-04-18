@@ -8,6 +8,10 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
+                loadComponent: () => import('./layout/subsistema/subsistema.component').then(m => m.SubsistemaComponent),
+            },
+            {
+                path: 'menuprincipal',
                 loadComponent: () => import('./modules/menu-principal/menu-principal.component').then(m => m.menuprincipalComponent)
             },
             {

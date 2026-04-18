@@ -314,7 +314,9 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       this.alertService.infoInformacion('Seleccione el destino');
     });
 
-    this.paper.on('link:pointerclick', (linkView: any) => this.seleccionarLink(linkView.model as joint.dia.Link));
+    this.paper.on('link:pointerclick', (linkView: any, evt: any, x: number, y: number) => {
+      this.seleccionarLink(linkView.model as joint.dia.Link, x, y);
+    });
 
     this.paper.on('blank:pointerdown', (evt: any, x: number, y: number) => {
       this.limpiarTodo();
@@ -536,7 +538,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       const bbox = cell.getBBox();
       const y = bbox.y + bbox.height;
       if (y > maxContentY) maxContentY = y;
-
       if (cell.isElement()) {
         cell.attr('root/pointerEvents', 'auto');
         cell.attr('root/cursor', 'move');
@@ -586,11 +587,10 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
     // 👉 PRIORIZAR ALTURA ACTUAL (Si el usuario ya la ajustó o se cargó del JSON)
     const currentH = this.paper.options.height as number;
-    let finalHeight = Math.max(baseHeight, Math.ceil((maxContentY + 20) / pageHeight) * pageHeight);
 
-    // Si el finalHeight calculado es mayor que el actual, expandimos.
-    // Pero si es menor, y hay contenido que lo justifica, expandimos.
-    // Si borramos página, baseHeight será menor y finalHeight bajará.
+    // Si se eliminaron páginas, currentH será menor, así que lo usamos como base.
+    // Evitamos expandir automáticamente usando maxContentY para no recargar páginas eliminadas.
+    let finalHeight = Math.max(currentH, baseHeight);
 
     this.paper.setDimensions(825, finalHeight);
     this.currentPaperHeight = finalHeight;
@@ -720,7 +720,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     this.selectedElement = element;
   }
 
-  private seleccionarLink(link: joint.dia.Link) {
+  private seleccionarLink(link: joint.dia.Link, x?: number, y?: number) {
     if (this.selectedLink && this.selectedLink.id !== link.id) {
       this.limpiarSeleccionLink(this.selectedLink);
     }
@@ -751,16 +751,23 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       this.popoverVisible.set(true);
 
       // Posicionar popover EXACTAMENTE arriba del texto o punto medio del link
-      const linkView = link.findView(this.paper);
-      if (linkView) {
-        const connection = (linkView as any).getConnection();
-        if (connection) {
-          const midPoint = connection.getPointAtLength(connection.getTotalLength() / 2);
+      if (x !== undefined && y !== undefined) {
+        this.popoverPos.set({
+          x: x - 100,
+          y: y - 50 // Aparecer inmediatamente arriba del clic
+        });
+      } else {
+        const linkView = link.findView(this.paper);
+        if (linkView) {
+          const connection = (linkView as any).getConnection();
+          if (connection) {
+            const midPoint = connection.getPointAtLength(connection.getTotalLength() / 2);
 
-          this.popoverPos.set({
-            x: midPoint.x - 100,
-            y: midPoint.y - 135 // Ajuste fino para estar arriba sin alejarse demasiado
-          });
+            this.popoverPos.set({
+              x: midPoint.x - 100,
+              y: midPoint.y - 135
+            });
+          }
         }
       }
     }
@@ -1396,6 +1403,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     });
     separator.attr('body/pointer-events', 'none');
     separator.addTo(this.graph);
+    this.currentPaperHeight = newHeight;
     this.alertService.infoExito('Nueva página agregada');
   }
 
@@ -1440,6 +1448,17 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       this.paper.setDimensions(825, newHeight);
       this.currentPaperHeight = newHeight;
 
+      // 👉 REFUERZO: Eliminar elementos que quedaron "huérfanos" fuera de la nueva altura
+      const elementosFuera = this.graph.getElements().filter(el => {
+        if (el.prop('tipo') === 'separador') return false;
+        return el.position().y > (newHeight - 50); // Margen de seguridad
+      });
+
+      if (elementosFuera.length > 0) {
+        elementosFuera.forEach(el => el.remove());
+        this.alertService.infoInformacion(`Se eliminaron ${elementosFuera.length} elementos que estaban en la página borrada`);
+      }
+
       this.alertService.infoExito('Última página eliminada');
     } else {
       this.alertService.infoInformacion('No hay páginas adicionales para eliminar');
@@ -1449,9 +1468,19 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   async exportarPDF(guardarSolo = false): Promise<string | null> {
     try {
       this.toggleSeparadores(false);
-      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, { fontEmbedCSS: '' });
+
+      // 👉 REFUERZO: Forzar dimensiones exactas basándose en el papel actual
+      const totalHeight = this.currentPaperHeight;
+      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, {
+        fontEmbedCSS: '',
+        width: 825,
+        height: totalHeight,
+        style: {
+          width: '825px',
+          height: totalHeight + 'px'
+        }
+      });
       const imgWidth = canvas.width;
-      const totalHeight = canvas.height;
 
       const pageHeight = Math.floor(imgWidth * 1.4142);
       const pdf = new jsPDF('p', 'pt', 'a4');
@@ -1502,9 +1531,19 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   async generarImagenesPorPagina(): Promise<string[]> {
     try {
       this.toggleSeparadores(false);
-      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, { fontEmbedCSS: '' });
+
+      // 👉 REFUERZO: Forzar dimensiones exactas basándose en el papel actual
+      const totalHeight = this.currentPaperHeight;
+      const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, {
+        fontEmbedCSS: '',
+        width: 825,
+        height: totalHeight,
+        style: {
+          width: '825px',
+          height: totalHeight + 'px'
+        }
+      });
       const imgWidth = canvas.width;
-      const totalHeight = canvas.height;
 
       // Misma lógica de altura de página que el PDF
       const pageHeight = Math.floor(imgWidth * 1.4142);

@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../../../../shared/services/alert.service';
 import { DatosService } from '../../../../shared/services/datos.service';
 import { DocumentoSoporteService } from '../../services/documento-soporte.service';
@@ -17,6 +17,9 @@ import { ReglamentoService } from '../../services/reglamento.service';
 import { Reglamento } from '../../interfaces/reglamento.interface';
 import { ProcedimientoService } from '../../../identificacion-requerimientos/services/procedimiento.service';
 import { Procedimiento } from '../../../identificacion-requerimientos/interfaces/procedimiento.interface';
+import { NavegacionComponent } from '../../../../shared/components/navegacion/navegacion';
+import { ListaDesplegableComponent } from '../../../socializacion-procedimientos/components/lista-desplegable/lista-desplegable.component';
+import { EstadolistaService } from '../../../../shared/services/estado-lista.service';
 
 @Component({
   standalone: true,
@@ -29,7 +32,8 @@ import { Procedimiento } from '../../../identificacion-requerimientos/interfaces
     ReglamentoComponent,
     InicioComponent,
     DocumentacionSoporteComponent,
-    SoporteComputacionalComponent
+    SoporteComputacionalComponent,
+    NavegacionComponent
   ],
   templateUrl: './estandarizacion.component.html',
   styleUrls: ['./estandarizacion.component.css'],
@@ -57,7 +61,9 @@ export class EstandarizarComponent {
   nombreprocedimiento = signal<string>('');
 
   //Servicios e inyeccion de dependencias
+  private listaService = inject(EstadolistaService)
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private alertService = inject(AlertService);
   public datosService = inject(DatosService);
   private documentoSoporteService = inject(DocumentoSoporteService);
@@ -181,9 +187,43 @@ export class EstandarizarComponent {
         });
         break;
     }
+
   }
 
+  navegarAnterior() {
+    const index = this.buttonIndex();
+    if (index === null) {
+      this.router.navigate(['/identificacionrequerimientos']);
+    } else if (index === 0) {
+      this.buttonIndex.set(null);
+    } else {
+      this.onButtonClick(index - 1);
+    }
+  }
 
+  navegarSiguiente() {
+    const index = this.buttonIndex();
+    if (index === null) {
+      this.onButtonClick(0);
+    } else if (index !== null && index < this.datosService.estados.length - 1) {
+      if (this.estadosCompletados()[index]) {
+        this.onButtonClick(index + 1);
+      } else {
+        this.alertService.infoInformacion(`Debe completar el estado "${this.datosService.estados[index]}" para continuar`);
+      }
+    } else if (index === this.datosService.estados.length - 1) {
+      if (this.estadosCompletados()[index]) {
+        this.alertService.exito('El procedimiento ha sido completado, puede pasar a la socialización').then((result) => {
+          if (result.isConfirmed) {
+            this.listaService.abrir();
+            this.router.navigate(['/socializacionprocedimientos']);
+          }
+        });
+      } else {
+        this.alertService.infoInformacion(`Debe completar el último estado para finalizar`);
+      }
+    }
+  }
 
   onHoverState(index: number) {
     if (this.hoverIndex() === index) return;
@@ -386,7 +426,7 @@ export class EstandarizarComponent {
     } else if (todosCompletos && this.estadoAnterior()) {
       this.estadoAnterior.set(false);
       setTimeout(() => {
-        this.alertService.exito(`El procedimiento " ${this.nombreprocedimiento()}" esta Completo`);
+        this.alertService.exito(`El procedimiento "${this.nombreprocedimiento()}" esta Completo`);
       }, 300);
     }
   }

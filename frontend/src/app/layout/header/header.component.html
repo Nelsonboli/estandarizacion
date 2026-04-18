@@ -6,26 +6,33 @@
     </a>
   </div>
 </div>
-
 <!-- BARRA DE NAVEGACIÓN -->
 <nav class="bg-naranja shadow-md w-full">
   <div class="mx-auto flex items-center ">
     <!-- Título del módulo -->
     <div class="bg-green-900 px-10 pt-2 clip-romboide w-90">
       <h4 class="text-white text-med font-medium text-center uppercase">
-        Estandarización de Procedimientos
+        Estandarización de procedimientos
       </h4>
     </div>
-
     <!-- Íconos -->
     @if (!esMenuPrincipal()) {
-    <div class="flex items-center space-x-2 ml-2">
-      <a (click)="colapsarMenu()" class="hover:opacity-80 transition" title="Colapsar menú">
-        <img src="https://sapiens.udenar.edu.co:3026/cdn/images/contraer.svg" class="h-4.5 w-4.5" alt="Colapsar">
-      </a>
-      <a routerLink='/' class="hover:opacity-80 transition" title="Dashboard">
-        <img src="https://sapiens.udenar.edu.co:3026/cdn/images/dashboard.svg" class="h-4.5 w-4.5" alt="Dashboard">
-      </a>
+    <div class="flex items-center space-x-1 ml-2">
+      <div class="hover:bg-naranja-oscuro transition p-1">
+        <a (click)="colapsarMenu()" title="Colapsar menú">
+          <img src="https://sapiens.udenar.edu.co:3026/cdn/images/contraer.svg" class="h-5 w-5" alt="Colapsar">
+        </a>
+      </div>
+      <div class="hover:bg-naranja-oscuro transition p-1">
+        <a routerLink="/menuprincipal" title="Dashboard">
+          <img src="https://sapiens.udenar.edu.co:3026/cdn/images/dashboard.svg" class="h-5 w-5" alt="Dashboard">
+        </a>
+      </div>
+      <div class="hover:bg-naranja-oscuro transition p-1">
+        <a routerLink="/" title="Inicio">
+          <img src="assets/elementos/inicio.svg" class="h-5 w-5" alt="Inicio">
+        </a>
+      </div>
     </div>
     }
   </div>

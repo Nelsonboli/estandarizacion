@@ -8,18 +8,30 @@
                 @for (estado of datosService.estados; track estado; let i = $index) {
                 <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
                     <!-- Botón -->
-                    <button class="w-full h-24 flex flex-col items-center justify-center rounded-xl 
-                        transition-all duration-200 ease-in-out m-2 border" [ngClass]="{
-                            'border-gray-700 bg-white text-gray-800': !estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
-                            'border-gray-400 bg-white text-gray-800': !estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
-                            'bg-gradient-to-r from-green-700 to-green-800 text-white': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !==i,
-                            'bg-gradient-to-r from-green-700 to-green-800 text-white shadow-sm scale-102': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() ===i || estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i || estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !==i, 
-                            'ring-2 ring-gray-600 bg-white ': !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !== i || !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() === i,
-                            'hover:scale-[1.05]': hoverIndex() !== i && buttonIndex() !== i
+                    <button
+                        class="w-full h-24 flex flex-wrap items-center justify-center rounded-xl 
+                        transition-all duration-200 ease-in-out m-2 border-b-4 border-r-1 border-l-1 border-t-1 border-gray-400"
+                        [ngClass]="{
+                            'border-b-4 border-gray-600 bg-white text-gray-800 hover:border-gray-500': !estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
+                            'border-b-4 border-gray-400 bg-white text-gray-800 hover:border-gray-500': !estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900 hover:border-b-4 hover:border-gray-400 ': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !==i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900  shadow-sm translate-y-1': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() ===i || estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i || estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !==i, 
+                            ' bg-white  border-b-4': !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !== i || !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() === i,
+                            'hover:translate-y-1 border-b-1 border-gray-400': hoverIndex() !== i && buttonIndex() !== i
                         }" (click)="onButtonClick(i)" (mouseenter)="onHoverState(i)"
                         (mouseleave)="hoverIndex.set(null)">
-                        <span class="text-lg font-medium">{{ i + 1 }} </span>
-                        <h6 class="leading-tight text-center mt-1">{{ estado }} </h6>
+                        <h6 class="leading-tight text-center mt-1">{{ i + 1 }}. {{ estado }} </h6>
+                        @if (estadosCompletados()[i]) {
+                        <svg class="w-4 h-4 ml-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none">
+                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                            <g id="SVGRepo_iconCarrier">
+                                <path fill="currentColor" fill-rule="evenodd"
+                                    d="M3.25 1A2.25 2.25 0 001 3.25v9.5A2.25 2.25 0 003.25 15h9.5A2.25 2.25 0 0015 12.75v-9.5A2.25 2.25 0 0012.75 1h-9.5zm7.47 4.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06l1.47 1.47 3.97-3.97z"
+                                    clip-rule="evenodd"></path>
+                            </g>
+                        </svg>
+                        }
                     </button>
                     <!-- Card cuando el estado está activo O en hover -->
                     @if (buttonIndex() === i || hoverIndex() === i) {
@@ -41,6 +53,7 @@
                 <app-documentacion-soporte [procedimientoId]="procedimientoId()" [documentoId]="documentoId()"
                     (cambioEstadoActividades)="actualizarChecklist(0, $event)" (documentoEnviado)="finalizarEstado(0)">
                 </app-documentacion-soporte>
+
                 }
                 @case (1) {
                 <app-soporte-computacional [procedimientoId]="procedimientoId()" [soporteId]="soporteId()"
@@ -57,6 +70,8 @@
                 }
                 }
             </div>
+            <app-navegacion (anterior)="navegarAnterior()" (siguiente)="navegarSiguiente()">
+            </app-navegacion>
         </div>
     </div>
 </div>

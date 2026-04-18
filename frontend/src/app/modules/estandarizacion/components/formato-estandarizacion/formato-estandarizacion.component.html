@@ -22,7 +22,7 @@
                 </div>
             </div>
             <!-- pie de pagina -->
-            <div class="institutional-footer-1 pt-1 border-t-2 border-[#ffc117] flex justify-between items-center">
+            <!-- <div class="institutional-footer-1 pt-1 border-t-2 border-[#ffc117] flex justify-between items-center">
                 <div
                     class="institutional-footer-2 pt-2 border-t-2 w-full border-[#d0d0d0] flex justify-between items-center">
                     <div class="flex items-center gap-2">
@@ -32,7 +32,7 @@
                         <img alt="Facultad de Ingeniería" class="h-8" src="assets/images/Facultad_gris.png" />
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
     <!-- Pagina Contenido -->
@@ -74,7 +74,7 @@
         <div class="watermark">π</div>
         <div class="content-wrapper flex flex-col h-full">
             <!-- Encabezado -->
-            <div class="border border-black flex shrink-0 h-[80px] w-full text-black mb-4">
+            <!-- <div class="border border-black flex shrink-0 h-[80px] w-full text-black mb-4">
                 <div class="w-1/5 border-r border-black p-1 flex items-center justify-center">
                     <img alt="Universidad de Nariño Logo" class="h-14 w-auto object-contain"
                         src="assets/images/Escudo_Universidad_Portada.jpg" />
@@ -106,7 +106,7 @@
                         <p class="m-0">17/01/2022</p>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- Contenido Dinámico -->
             <div class="content-container py-2">
                 @for (item of page; track $index) {
@@ -115,7 +115,6 @@
             </div>
 
             <!-- Pie de Página -->
-            @if (!pageHasDAAC[i]) {
             <div
                 class="institutional-footer-1 pt-1 border-t-4 border-[#ffc117] flex justify-between items-center mt-auto">
                 <div
@@ -128,7 +127,6 @@
                     </div>
                 </div>
             </div>
-            }
         </div>
     </div>
     }
