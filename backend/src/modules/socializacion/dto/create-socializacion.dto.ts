@@ -6,6 +6,9 @@ export class CreateSocializacionDto {
     @IsString()
     lugar: string;
 
+    @IsString()
+    mecanismo: string;
+
     @IsDate()
     @Type(() => Date)
     fecha: Date;

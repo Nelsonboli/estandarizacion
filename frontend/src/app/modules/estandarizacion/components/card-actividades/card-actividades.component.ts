@@ -16,7 +16,7 @@ export class CardActividadesComponent implements OnInit, OnChanges {
     indice = input<number | null>(null);
     refrescar = input<boolean>(false);
     valoresExternos = input<boolean[] | null>(null);
-    estadoCompleto = output<{ index: number; completo: boolean }>();
+    criterioCompleto = output<{ index: number; completo: boolean }>();
 
     //Servicios y dependencias
     private datosService = inject(DatosService);
@@ -50,7 +50,7 @@ export class CardActividadesComponent implements OnInit, OnChanges {
 
         effect(() => {
             if (this.refrescar()) {
-                this.verificarEstadoCompleto();
+                this.verificarCriterioCompleto();
             }
         });
     }
@@ -61,7 +61,7 @@ export class CardActividadesComponent implements OnInit, OnChanges {
             this.subopciones = this.datosService.opciones[idx] || [];
             this.initForm();
             this.listenToChanges();
-            this.verificarEstadoCompleto();
+            this.verificarCriterioCompleto();
         }
     }
 
@@ -91,24 +91,24 @@ export class CardActividadesComponent implements OnInit, OnChanges {
     }
 
     private listenToChanges() {
-        // Reducido a solo verificar estado completo, sin persistencia local
+        // Reducido a solo verificar criterio completo, sin persistencia local
         this.checks.valueChanges
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe(() => {
-                this.verificarEstadoCompleto();
+                this.verificarCriterioCompleto();
             });
     }
 
-    public verificarEstadoCompleto() {
+    public verificarCriterioCompleto() {
         const idx = this.indice();
         if (idx === null || !this.checks) return;
 
         const completo = this.checks.controls.every(c => c.value === true);
-        this.estadoCompleto.emit({ index: idx, completo });
+        this.criterioCompleto.emit({ index: idx, completo });
     }
 
     ngOnChanges(changes: SimpleChanges) {
         // ngOnChanges kept for backward compatibility if needed, 
         // but logic moved to effects for signal inputs.
     }
-}
+}

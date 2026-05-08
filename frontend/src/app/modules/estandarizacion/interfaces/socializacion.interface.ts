@@ -3,5 +3,6 @@ export interface socializacion {
     lugar: string;
     fecha: Date;
     hora: Date;
+    mecanismo: string;
     procedimiento_id?: number;
 }

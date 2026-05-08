@@ -1,0 +1,56 @@
+@if (visible()) {
+<div class="fixed inset-0 bg-black/60  z-[1050] flex items-center justify-center p-4" (click)="onBackdropClick($event)">
+    <div #formulario
+        class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl transform transition-all duration-300 ease-out overflow-hidden"
+        [class.scale-105]="escalar()" [class.scale-100]="!escalar()">
+
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-green-700 via-green-800 to-green-900 p-4 text-white">
+            <h2 class="text-xl font-bold flex items-center gap-3">
+                <img src="assets/elementos/estandarizar.svg" alt="Icon" class="w-8 h-8 brightness-0 invert">
+                Encuesta de recolección de información
+            </h2>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6">
+            <div class="space-y-4">
+                <form [formGroup]="formularioRecoleccion">
+                    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+                        <label class=" text-lg font-semibold text-gray-800 block">
+                            Describa el proceso de recolección de información para diligenciar la ficha técnica del
+                            procedimiento,
+                            incluyendo los métodos utilizados (revisión documental, entrevistas, observación directa) y
+                            los
+                            resultados obtenidos :
+                        </label>
+                        <textarea formControlName="encuesta" rows="5" class="border w-full p-3 rounded-md"></textarea>
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-2 rounded-md">
+                            <div class="flex">
+                                <div class="flex-shrink-0 text-amber-400">
+                                    <i class="fas fa-info-circle"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-amber-800">
+                                        Es importante diligenciar la forma en la que se obtuvieron los datos y los
+                                        mecanismos que se
+                                        hayan empleado para garantizar la veracidad de la estandarización.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="bg-gray-50 p-6 flex justify-end gap-3 border-t border-gray-100">
+            <button (click)="Guardar()"
+                class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-110 transition-colors duration-300">
+                <img src="assets/elementos/guardar.svg" alt="Guardar formulario" class="w-6 h-6" />
+                Guardar
+            </button>
+        </div>
+    </div>
+</div>
+}

@@ -321,35 +321,5 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
     }
   }
 
-
-  // cargarDiagramaFlujo(documentoSoporteId: number) {
-  //   this.diagramaFlujoService.obtenerPorDocumento(documentoSoporteId).subscribe({
-  //     next: (diagrama) => {
-  //       console.log('Diagrama Recibido:', diagrama);
-  //       if (diagrama && diagrama.imagenes) {
-  //         // Asumiendo que 'imagenes' es un array de strings (base64 o urls) check backend return
-  //         this.imagenesDiagrama = Array.isArray(diagrama.imagenes) ? diagrama.imagenes : [];
-  //       } else if (diagrama && diagrama.imagen) {
-  //         // Fallback for single image
-  //         this.imagenesDiagrama = [diagrama.imagen];
-  //       } else if (diagrama && diagrama.ubicacion_diagrama) {
-  //         // Possible fallback if stored here
-  //         console.log('Detectado ubicacion_diagrama');
-  //         this.imagenesDiagrama = [diagrama.ubicacion_diagrama];
-  //       } else {
-  //         this.imagenesDiagrama = [];
-  //       }
-  //       // Force update and redistribute content
-  //       this.cdr.detectChanges();
-  //       setTimeout(() => {
-  //         this.distributeContent();
-  //       }, 500);
-  //     },
-  //     error: (err) => {
-  //       console.error('Error al obtener diagrama de flujo:', err);
-  //       this.imagenesDiagrama = [];
-  //     }
-  //   });
-  // }
 }
 

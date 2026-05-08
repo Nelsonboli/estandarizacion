@@ -1,5 +1,5 @@
 <form [formGroup]="form">
-    <div class="max-w-full mx-auto bg-white shadow-lg rounded-lg p-3 space-y-2 text-sm">
+    <div class="max-w-full mx-auto bg-white border border-gray-300 shadow-sm rounded-lg p-3 space-y-2 text-sm">
         <h2 class="text-med font-medium text-gray-800 text-center">Actividades:</h2>
         <div formArrayName="checks" class="space-y-2">
             @for (opcion of subopciones; track opcion; let i = $index) {

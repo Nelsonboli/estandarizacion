@@ -10,16 +10,15 @@ import { FormularioDAACService } from '../../../estandarizacion/services/formula
 import { SoporteComputacionalService } from '../../../estandarizacion/services/soporte-computacional.service';
 import { ReglamentoBaseService } from '../../../estandarizacion/services/reglamento-base.service';
 import { DocumentoSoporteService } from '../../../estandarizacion/services/documento-soporte.service';
-import { TablasFormularioComponent } from "../../../../shared/components/tablas-formulario/tablas-formulario.component";
 import { AlertService } from '../../../../shared/services/alert.service';
-import { EstadoAsignacionService } from '../../../identificacion-requerimientos/services/estado-asignacion.service';
+import { EstadoAsignacionService } from '../../../../shared/services/estado-asignacion.service';
 import { TablaProcedimientoService } from '../../../identificacion-requerimientos/services/tabla-procedimiento.service';
 import { ProcedimientoService } from '../../../identificacion-requerimientos/services/procedimiento.service';
 import { DiagramaFlujoService } from '../../../estandarizacion/services/diagrama-flujo.service';
 import { ListaDesplegableComponent } from '../../components/lista-desplegable/lista-desplegable.component';
 import { Procedimiento } from '../../../identificacion-requerimientos/interfaces/procedimiento.interface';
 import { Criterios } from '../../../../shared/interfaces/tablas.interface';
-import { ReglamentoBase } from '../../../estandarizacion/interfaces/documento-soporte.interface';
+import { FormularioDAAC, ReglamentoBase } from '../../../estandarizacion/interfaces/documento-soporte.interface';
 import { SocializacionService } from '../../../estandarizacion/services/socializacion.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
@@ -29,6 +28,7 @@ import { NgxMaterialTimepickerModule, NgxMaterialTimepickerTheme } from 'ngx-mat
 import { socializacion } from '../../../estandarizacion/interfaces/socializacion.interface';
 import { SoporteComputacional } from '../../../estandarizacion/interfaces/soporte-computacional.interface';
 import { MatIconModule } from '@angular/material/icon';
+import { Campos } from '../../../../shared/interfaces/campos.interface';
 
 @Component({
   selector: 'app-socializacionprocedimientos',
@@ -66,6 +66,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public formularioDAAC: Criterios[] = [];
   public fechaSignal = signal<Date>(new Date());
   public lugarSignal = signal<string>('');
+  public mecanismoSignal = signal<string>('');
   public horaSignal = signal<Date>(new Date());
   public socializacionData = signal<socializacion | null>(null);
   public estaSocializado = signal<boolean>(false);
@@ -101,7 +102,8 @@ export class SocializacionprocedimientosComponent implements OnInit {
     this.socializacionForm = new FormGroup({
       fecha: new FormControl<Date | null>(null, Validators.required),
       hora: new FormControl<string>('', Validators.required),
-      lugar: new FormControl<string>('', Validators.required)
+      lugar: new FormControl<string>('', Validators.required),
+      mecanismo: new FormControl<string>('', Validators.required),
     });
   }
 
@@ -109,18 +111,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
     this.procedimientoService.getProcedimientos().subscribe({
       next: (data: Procedimiento[]) => {
         console.log('Datos cargados - Procedimientos:', data);
-        this.procedimientos = data;
-        this.tablaService.setProcedimientos(data);
-      },
-      error: (err) => {
-        console.error('Error al obtener los procedimientos:', err);
-      }
-    });
-  }
-
-  ObtenerProcedimientos() {
-    this.procedimientoService.getProcedimientos().subscribe({
-      next: (data) => {
         this.procedimientos = data;
         console.log(this.procedimientos);
         this.tablaService.setProcedimientos(data);
@@ -130,6 +120,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
       }
     });
   }
+
 
   public abrirListaSocializacion(): void {
     this.listaService.abrir();
@@ -141,7 +132,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
   }
 
   public registrarSocializacion(): void {
-    const { fecha, hora, lugar } = this.socializacionForm.value;
+    const { fecha, hora, lugar, mecanismo } = this.socializacionForm.value;
     const horaFinal = this.parsearHora(hora);
     if (this.socializacionForm.invalid) {
       this.socializacionForm.markAllAsTouched();
@@ -176,11 +167,11 @@ export class SocializacionprocedimientosComponent implements OnInit {
       fecha,
       lugar,
       hora: horaFinal,
+      mecanismo,
       procedimiento_id: procedimientoId
     };
 
     const idExistente = this.socializacionData()?.id;
-
     if (idExistente) {
       this.socializacionService.actualizarSocializacion(idExistente, data).subscribe({
         next: (res: socializacion) => {
@@ -231,7 +222,9 @@ export class SocializacionprocedimientosComponent implements OnInit {
     this.socializacionData.set(res);
     this.fechaSignal.set(data.fecha);
     this.lugarSignal.set(data.lugar);
+    this.mecanismoSignal.set(data.mecanismo);
     this.horaSignal.set(data.hora);
+
     this.alertService.infoExito(mensaje);
   }
 
@@ -248,6 +241,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
             this.socializacionForm.reset();
             this.fechaSignal.set(new Date());
             this.lugarSignal.set('');
+            this.mecanismoSignal.set('');
             this.horaSignal.set(new Date());
             this.alertService.infoExito('Socialización eliminada exitosamente');
           },
@@ -259,6 +253,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
       }
     });
   }
+
   public seleccionarProcedimiento(procedimiento: Procedimiento): void {
     const id = procedimiento.id;
     if (!id) {
@@ -285,15 +280,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
     });
   }
 
-  private mapearDatosProcedimiento(procedimiento: Procedimiento): void {
-    const excluidos = ['id', 'roles', 'actividades', 'referencias'];
-    this.datosProcedimiento = Object.entries(procedimiento)
-      .filter(([key, value]) => !excluidos.includes(key.toLowerCase()) && typeof value !== 'object')
-      .map(([key, value]) => ({
-        Criterio: key.toUpperCase(),
-        Descripcion: String(value)
-      }));
-  }
 
   public cargarSocializacion(idProcedimiento: number): void {
     this.socializacionService.obtenerPorProcedimiento(idProcedimiento).subscribe({
@@ -306,6 +292,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
           const fechaParsed = new Date(data.fecha);
           this.fechaSignal.set(fechaParsed);
           this.lugarSignal.set(data.lugar || '');
+          this.mecanismoSignal.set(data.mecanismo || '');
 
           if (typeof data.hora === 'string') {
             const [h, m] = (data.hora as string).split(':');
@@ -320,6 +307,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
           this.socializacionForm.patchValue({
             fecha: fechaParsed,
             lugar: data.lugar,
+            mecanismo: data.mecanismo,
             hora: typeof hStr === 'string' ? hStr.substring(0, 5) : ''
           });
 
@@ -362,7 +350,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
 
   public cargarFormularioDAAC(idDocumentoSoporte: number): void {
     this.formularioDAACService.obtenerPorDocumento(idDocumentoSoporte).subscribe({
-      next: (data: any) => {
+      next: (data: FormularioDAAC) => {
         console.log('Datos cargados - Formulario DAAC:', data);
         if (data) {
           this.mapearDatosDAAC(data);
@@ -441,31 +429,31 @@ export class SocializacionprocedimientosComponent implements OnInit {
     }));
   }
 
-  public descargarProcedimientoCompletado(): void {
+
+  private mapearDatosProcedimiento(procedimiento: Procedimiento): void {
+    const excluidos = ['id'];
+    this.datosProcedimiento = Object.entries(procedimiento)
+      .filter(([key]) => !excluidos.includes(key.toLowerCase()))
+      .map(([key, value]) => ({
+        Criterio: key.toUpperCase(),
+        Descripcion: Array.isArray(value)
+          ? value.map((v: any) => `• ${typeof v === 'object' ? JSON.stringify(v) : String(v)}`).join('\n')
+          : value != null ? String(value) : ''
+      }));
+  }
+
+
+  public descargarDocumentoCompletado(): void {
     if (!this.procedimientoSeleccionado?.id) {
       this.alertService.error('Debe seleccionar un procedimiento primero');
       return;
     }
-    const id = this.procedimientoSeleccionado.id;
-    this.alertService.infoExito('Preparando descarga del procedimiento completado...');
-    this.socializacionService.descargarPdfSocializacion(id).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `procedimiento_${this.procedimientoSeleccionado?.procedimiento}_completado.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        this.alertService.infoExito('Descarga iniciada');
-      },
-      error: (err) => {
-        console.error('Error al descargar el PDF:', err);
-        this.alertService.error('Error al generar o descargar el PDF. Asegúrese de que ambos formatos (DAAC y Estandarización) estén subidos en el reglamento.');
-      }
-    });
+    this.socializacionService.descargarDocumentoCompletado(
+      this.procedimientoSeleccionado.id,
+      this.procedimientoSeleccionado.procedimiento
+    );
   }
 
-}
 
+
+}

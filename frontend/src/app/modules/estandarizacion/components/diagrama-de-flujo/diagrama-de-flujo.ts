@@ -60,7 +60,8 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
   //Servicios y dependencias
   private alertService = inject(AlertService);
-  private diagramaFlujoService = inject(DiagramaFlujoService)
+  private diagramaFlujoService = inject(DiagramaFlujoService);
+  private el = inject(ElementRef); // Inyectar para cálculos de posición
 
   // Propiedades para nuevas funcionalidades
   private selectedElements: joint.dia.Element[] = [];
@@ -88,21 +89,22 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   sidebarPopoverPos = signal({ x: 0, y: 0 });
 
   mostrarTooltip(event: MouseEvent, boton: BotonSimbolos) {
-    const target = event.target as HTMLElement;
+    const target = event.currentTarget as HTMLElement;
     const rect = target.getBoundingClientRect();
+    const rootRect = this.el.nativeElement.getBoundingClientRect();
     const isTopMenu = window.innerWidth < 1280;
 
     if (isTopMenu) {
       // Si el menú está arriba, mostrar el tooltip debajo
       this.sidebarPopoverPos.set({
-        x: rect.left - 20,
-        y: rect.bottom + 10
+        x: rect.left - rootRect.left,
+        y: rect.bottom - rootRect.top + 10
       });
     } else {
       // Si el menú está al lado (sidebar), mostrar el tooltip a la derecha
       this.sidebarPopoverPos.set({
-        x: rect.right + 30,
-        y: rect.top
+        x: rect.right - rootRect.left + 10,
+        y: rect.top - rootRect.top
       });
     }
     this.botonActivo.set(boton);
@@ -236,7 +238,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         cell.attr('body/shapeRendering', 'geometricPrecision');
         if (!cell.attr('body/stroke') || cell.attr('body/stroke') === 'none') cell.attr('body/stroke', '#000000');
         if (!cell.attr('body/fill') || cell.attr('body/fill') === 'none') cell.attr('body/fill', '#FFFFFF');
-        if (!cell.attr('body/strokeWidth')) cell.attr('body/strokeWidth', 0.7);
+        if (!cell.attr('body/strokeWidth')) cell.attr('body/strokeWidth', 1);
 
         if (cell.prop('tipo') !== 'observacion' && cell.prop('tipo') !== 'separador') {
           cell.attr({
@@ -250,7 +252,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         cell.attr({
           line: {
             stroke: cell.attr('line/stroke') || '#000000',
-            strokeWidth: cell.attr('line/strokeWidth') || 0.7,
+            strokeWidth: cell.attr('line/strokeWidth') || 1,
             targetMarker: cell.attr('line/targetMarker') || { 'type': 'path', 'd': 'M 10 -5 0 0 10 5 Z' },
             shapeRendering: 'geometricPrecision'
           }
@@ -366,8 +368,45 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
   private conectarElementos(origen: joint.dia.Element, destino: joint.dia.Element) {
     const link = new joint.shapes.standard.Link();
-    link.source(origen, { anchor: { name: 'center' }, connectionPoint: { name: 'boundary' } });
-    link.target(destino, { anchor: { name: 'center' }, connectionPoint: { name: 'boundary' } });
+
+    // Configuración de anclas por defecto
+    // Configuración de anclas por defecto
+    let sourceAnchor: any = { name: 'center' };
+    let targetAnchor: any = { name: 'center' };
+
+    const esRetorno = destino.position().y < (origen.position().y + 20);
+
+    // Lógica especial para Decisiones (Desvío de flechas)
+    if (origen.prop('tipo') === 'decision') {
+      const linksExistentes = this.graph.getLinks().filter(l =>
+        (l.source().id === origen.id && l.target().id === destino.id) ||
+        (l.source().id === destino.id && l.target().id === origen.id)
+      );
+
+      const linksSalientes = this.graph.getConnectedLinks(origen, { outbound: true });
+
+      if (esRetorno || linksExistentes.length > 0) {
+        // Forzar salida lateral y ENTRADA lateral si es un retorno o ya están conectados
+        sourceAnchor = { name: 'right', args: { dx: -1 } };
+        targetAnchor = { name: 'right', args: { dx: -1 } };
+        link.router('manhattan', { step: 10, padding: 40 });
+      } else if (linksSalientes.length === 0) {
+        // Primera conexión: Recta de punta inferior a punta superior
+        sourceAnchor = { name: 'bottom' };
+        targetAnchor = { name: 'top' };
+        link.router('orthogonal', { step: 10, padding: 25 });
+      } else {
+        // Segunda conexión: Salida lateral izquierda
+        sourceAnchor = { name: 'right', args: { dx: -1 } };
+        targetAnchor = { name: 'right', args: { dx: -1 } };
+        link.router('manhattan', { step: 10, padding: 40 });
+      }
+    } else {
+      link.router('orthogonal', { step: 10, padding: 25 });
+    }
+
+    link.source(origen, { anchor: sourceAnchor, connectionPoint: { name: 'boundary' } });
+    link.target(destino, { anchor: targetAnchor, connectionPoint: { name: 'boundary' } });
 
     link.attr({
       line: {
@@ -376,7 +415,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       }
     });
 
-    link.router('orthogonal', { step: 10, padding: 10 });
     link.connector('rounded');
 
     if (origen.prop('tipo') === 'decision') {
@@ -385,13 +423,13 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
           text: {
             text: 'texto',
             fill: '#000000',
-            fontSize: 10,
+            fontSize: 14,
             pointerEvents: 'none'
           },
           rect: {
             fill: '#ffffff',
             stroke: '#9ca3af',
-            strokeWidth: 0.7,
+            strokeWidth: 1,
             rx: 3, ry: 3,
             refWidth: '120%',
             refHeight: '120%',
@@ -460,7 +498,8 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     if (!cells || !Array.isArray(cells)) return;
     cells.forEach(cell => {
       // Migración de tipos
-      if (['standard.Rectangle', 'Rectangle', 'standard.Circle', 'Circle', 'standard.Ellipse', 'Ellipse'].includes(cell.type)) {
+      // Migración de tipos legacy a standard.Path
+      if (['Rectangle', 'Circle', 'Ellipse'].includes(cell.type)) {
         const oldType = cell.type;
         cell.type = 'standard.Path';
         if (!cell.attrs) cell.attrs = {};
@@ -486,7 +525,8 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         if (cell.type === 'standard.Path' || (cell.type.includes('Path'))) {
           if (!cell.attrs.body.refD) {
             if (cell.tipoCustom === 'responsable') cell.attrs.body.refD = 'M 0 50 a 50 50 0 1 0 100 0 a 50 50 0 1 0 -100 0';
-            else if (cell.tipoCustom === 'inicio_fin') cell.attrs.body.refD = 'M 0 50 a 50 25 0 1 0 100 0 a 50 25 0 1 0 -100 0';
+            else if (cell.tipoCustom === 'inicio_fin') cell.attrs.body.refD = 'M 25 0 H 75 a 25 25 0 0 1 25 25 a 25 25 0 0 1 -25 25 H 25 a 25 25 0 0 1 -25 -25 a 25 25 0 0 1 25 -25 Z';
+            else if (cell.tipoCustom === 'actividad') cell.attrs.body.refD = 'M 0 0 H 100 V 100 H 0 Z';
           }
         } else if (cell.type.includes('Polygon')) {
           cell.attrs.body.refPoints = cell.attrs.body.refPoints || null;
@@ -496,7 +536,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         if (!cell.attrs.body) cell.attrs.body = {};
         cell.attrs.body.stroke = cell.attrs.body.stroke || '#000000';
         cell.attrs.body.fill = cell.attrs.body.fill || '#FFFFFF';
-        cell.attrs.body.strokeWidth = cell.attrs.body.strokeWidth || 0.7;
+        cell.attrs.body.strokeWidth = cell.attrs.body.strokeWidth || 1;
 
         if (!cell.attrs.root) cell.attrs.root = { pointerEvents: 'auto', cursor: 'move' };
         if (!cell.attrs.label) cell.attrs.label = { fill: '#000000' };
@@ -522,7 +562,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         if (!cell.attrs) cell.attrs = {};
         if (!cell.attrs.line) cell.attrs.line = {};
         cell.attrs.line.stroke = cell.attrs.line.stroke || '#333333';
-        cell.attrs.line.strokeWidth = cell.attrs.line.strokeWidth || 0.7;
+        cell.attrs.line.strokeWidth = cell.attrs.line.strokeWidth || 1;
         cell.attrs.line.targetMarker = cell.attrs.line.targetMarker || { 'type': 'path', 'd': 'M 10 -5 0 0 10 5 Z' };
 
         // 👉 Forzar router y connector si faltan
@@ -734,7 +774,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     link.attr({
       line: {
         stroke: '#2563eb', // Azul para destacar selección de flecha
-        strokeWidth: 2
+        strokeWidth: 1
       }
     });
     this.selectedLink = link;
@@ -797,7 +837,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     link.attr({
       line: {
         stroke: '#000000', // Color negro por defecto
-        strokeWidth: 0.7   // Grosor ultra-fino
+        strokeWidth: 1   // Grosor ultra-fino
       }
     });
   }
@@ -809,23 +849,23 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   private aplicarEstiloSeleccion(element: joint.dia.Element, modo: 'normal' | 'activo' | 'editando' | 'exito' | 'error' | 'limpiar') {
     const isObservacion = element.prop('tipo') === 'observacion';
     let stroke = '#000000';
-    let strokeWidth = isObservacion ? 1 : 0.7;
+    let strokeWidth = isObservacion ? 1 : 1;
 
     switch (modo) {
       case 'activo':
         stroke = '#2563eb'; // Azul vibrante para selección
-        strokeWidth = 1.0;   // Más grueso para destacar
+        strokeWidth = 1;
         break;
       case 'editando':
         stroke = '#22c55e'; // Verde para doble clic (modo edición)
-        strokeWidth = 1.0;
+        strokeWidth = 1;
         break;
       case 'exito': stroke = '#22c55e'; break; // Verde
       case 'error': stroke = '#ff0000'; break; // Rojo
       case 'limpiar':
       case 'normal':
         stroke = '#000000'; // Negro absoluto al deseleccionar
-        strokeWidth = isObservacion ? 1 : 0.7;
+        strokeWidth = 1;
         break;
     }
 
@@ -1087,9 +1127,9 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       } else {
         this.selectedLink.appendLabel({
           attrs: {
-            text: { text: nuevoTexto, fill: '#000000', fontSize: 10, pointerEvents: 'none' },
+            text: { text: nuevoTexto, fill: '#000000', fontSize: 14, pointerEvents: 'none' },
             rect: {
-              fill: '#ffffff', stroke: '#000000', strokeWidth: 0.7, rx: 3, ry: 3,
+              fill: '#ffffff', stroke: '#000000', strokeWidth: 1, rx: 3, ry: 3,
               refWidth: '120%', refHeight: '120%', refX: '-10%', refY: '-10%'
             }
           }
@@ -1111,24 +1151,28 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
     // Configuración base más ajustada
     let minHeight = isObservacion ? 25 : 40; // Aún más pequeño
-    if (isResponsable) minHeight = 35;
+    if (isResponsable) minHeight = 30; // Más pequeño para responsable
+    if (tipo === 'actividad' || !tipo) minHeight = 70; // Reducido de 80
 
-    const paddingVertical = 2; // Reducido
-    const charWidth = 7.2; // Más ajustado
-    const lineHeight = 12.5; // Más compacto
+    const paddingVertical = isResponsable ? 4 : 5;
+    const charWidth = isResponsable ? 6.5 : 7.2; // Fuente 11px vs 12px
+    const lineHeight = isResponsable ? 12 : 14;
 
-    const maxWidth = 350; // Más angosto para observaciones
-    const maxInitialWidth = 40; // Crecimiento más rápido hacia abajo
+    const maxWidth = 350;
+    const maxInitialWidth = 120;
     let minWidth = 120;
     if (isResponsable) minWidth = 35;
+    if (tipo === 'inicio_fin') minWidth = 100;
 
     // Calcular ancho objetivo inicial
     const estimatedTextWidth = texto.length * charWidth;
     let targetTextWidth = Math.max(minWidth, Math.min(maxInitialWidth, estimatedTextWidth));
 
-    // Si el texto es muy largo, nos quedamos en maxInitialWidth inicialmente
-    // Pero si es observación, usamos maxWidth
+    // Si es actividad o similar, forzar ancho fijo inicial casi al doble
+    if (tipo === 'actividad' || !tipo) targetTextWidth = 180; // Reducido de 200
+
     if (isObservacion) targetTextWidth = maxWidth;
+    if (isResponsable) targetTextWidth = Math.min(80, Math.max(25, estimatedTextWidth)); // Min 25px para una sola letra
 
     const paragraphs = texto.split('\n');
     let totalLinesNeeded = 0;
@@ -1139,7 +1183,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         let shapeWidthEfficiency = 1.0;
         if (type === 'standard.Circle' || refD.includes('a 50 50')) shapeWidthEfficiency = 0.85;
         else if (type === 'standard.Ellipse' || refD.includes('a 50 25')) shapeWidthEfficiency = 0.8;
-        else if (type === 'standard.Polygon' && !isObservacion) shapeWidthEfficiency = 0.7;
+        else if (type === 'standard.Polygon' && !isObservacion) shapeWidthEfficiency = 0.5; // Reducido para asegurar que quepa en el rombo
 
         const usableWidth = width * shapeWidthEfficiency;
         const pLines = Math.max(1, Math.ceil((p.length * charWidth) / usableWidth));
@@ -1148,38 +1192,44 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       return lines;
     };
 
-    if (isObservacion) {
-      targetTextWidth = maxWidth - 20;
-      // 👉 REFUERZO: Rompemos el texto manualmente
-      const brokenText = joint.util.breakText(texto, { width: targetTextWidth }, { 'font-size': 11 });
+    if (isObservacion || tipo === 'decision' || isResponsable) {
+      const margin = tipo === 'decision' ? 50 : (isResponsable ? 5 : 20);
+      const fontSize = isResponsable ? 11 : 12; // Reducido a 12 para el resto
+      targetTextWidth = (tipo === 'decision' || isResponsable ? (isResponsable ? 80 : element.size().width) : maxWidth) - margin;
+      const brokenText = joint.util.breakText(texto, { width: targetTextWidth }, { 'font-size': fontSize });
       element.attr('label/text', brokenText);
+    }
+
+    if (!isResponsable) {
+      element.attr('label/fontSize', 12);
+    } else {
+      element.attr('label/fontSize', 11); // Texto más pequeño para el círculo
     }
     totalLinesNeeded = calculateLines(targetTextWidth);
 
     // Si con el ancho inicial necesitamos demasiadas líneas, podemos intentar expandir el ancho un poco más hasta maxWidth
-    if (totalLinesNeeded > 3 && targetTextWidth < maxWidth && !isResponsable) {
+    if (totalLinesNeeded > 4 && targetTextWidth < maxWidth && !isResponsable && tipo !== 'actividad') {
       targetTextWidth = Math.min(maxWidth, targetTextWidth + 40);
       totalLinesNeeded = calculateLines(targetTextWidth);
     }
 
-    const estimatedHeight = (totalLinesNeeded * lineHeight) + (paddingVertical * 2) + 2;
+    const estimatedHeight = (totalLinesNeeded * lineHeight) + (paddingVertical * 2) + 5;
     const finalHeight = Math.max(minHeight, estimatedHeight);
 
     if (isObservacion) {
-      element.resize(10, finalHeight);
-      // Ya lo rompimos arriba con breakText, pero esto ayuda al alineamiento
+      element.resize(10, (totalLinesNeeded * 14.1) + 2); // Altura aún más ajustada para observaciones
       element.attr('label/textVerticalAnchor', 'top');
       element.attr('label/textAnchor', 'start');
-      element.removeAttr('label/textWrap'); // Limpiar para evitar conflictos
+      element.removeAttr('label/textWrap');
     } else {
-      let finalWidth = targetTextWidth + 20;
+      let finalWidth = targetTextWidth + (isResponsable ? 5 : 20); // Menos padding para responsable
       let actualHeight = finalHeight;
 
       // 👉 REFUERZO DE FORMA: Si es un círculo, forzar relación 1:1
       if (type === 'standard.Circle' || refD.includes('a 50 50')) {
         const side = Math.max(finalWidth, actualHeight);
-        finalWidth = side;
-        actualHeight = side;
+        finalWidth = isResponsable ? Math.min(80, side) : side;
+        actualHeight = isResponsable ? Math.min(80, side) : side;
       }
 
       // 👉 CRECIMIENTO SIMÉTRICO: Ajustar posición para que crezca "hacia arriba" y laterales igual
@@ -1274,7 +1324,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         element = new joint.shapes.standard.Path();
         textoDefault = 'Responsable';
         config = {
-          size: { w: 40, h: 40 },
+          size: { w: 35, h: 35 },
           attrs: { body: { refD: 'M 0 50 a 50 50 0 1 0 100 0 a 50 50 0 1 0 -100 0' }, label: { textWrap: { width: -10 } } }
         };
         break;
@@ -1282,8 +1332,8 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         element = new joint.shapes.standard.Path();
         textoDefault = 'Inicio/Fin';
         config = {
-          size: { w: 100, h: 50 },
-          attrs: { body: { refD: 'M 0 50 a 50 25 0 1 0 100 0 a 50 25 0 1 0 -100 0' }, label: { textWrap: { width: -25 } } }
+          size: { w: 100, h: 45 },
+          attrs: { body: { refD: 'M 25 0 H 75 a 25 25 0 0 1 25 25 a 25 25 0 0 1 -25 25 H 25 a 25 25 0 0 1 -25 -25 a 25 25 0 0 1 25 -25 Z' }, label: { textWrap: { width: -25 } } }
         };
         break;
       case 'observacion':
@@ -1307,7 +1357,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         break;
       case 'conector_fuera_pagina':
         element = new joint.shapes.standard.Polygon();
-        textoDefault = 'Pg';
+        textoDefault = 'Pag';
         config = {
           size: { w: 45, h: 45 },
           attrs: { body: { refPoints: '0,0 60,0 60,40 30,60 0,40' } }
@@ -1325,7 +1375,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         element = new joint.shapes.standard.Polygon();
         textoDefault = 'Decisión';
         config = {
-          size: { w: 90, h: 60 },
+          size: { w: 200, h: 200 },
           attrs: { body: { refPoints: '50,0 100,50 50,100 0,50' }, label: { textWrap: { width: -30 } } }
         };
         break;
@@ -1333,7 +1383,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         element = new joint.shapes.standard.Path();
         textoDefault = 'Actividad';
         config = {
-          size: { w: 100, h: 50 },
+          size: { w: 200, h: 70 },
           attrs: { body: { refD: 'M 0 0 H 100 V 100 H 0 Z' }, label: { textWrap: { width: -15 } } }
         };
     }
@@ -1345,9 +1395,9 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
     // Aplicar atributos base + específicos
     element.attr({
-      body: { fill: '#fff', stroke: '#000', strokeWidth: 0.7, ...config.attrs?.body },
+      body: { fill: '#fff', stroke: '#000', strokeWidth: 1, ...config.attrs?.body },
       label: {
-        text: texto, fill: 'black', fontSize: 10,
+        text: texto, fill: 'black', fontSize: 14,
         refX: '50%', refY: '50%', textAnchor: 'middle', textVerticalAnchor: 'middle',
         ...config.attrs?.label
       }
@@ -1585,7 +1635,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   }
 
   private obtenerTexto(defaultLabel: string): string {
-    return this.textoNodo.trim() || `${defaultLabel} ${this.contador}`;
+    return this.textoNodo.trim() || `${defaultLabel}`;
   }
 
   async guardarDiagrama() {

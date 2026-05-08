@@ -1,4 +1,4 @@
-﻿import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,7 +52,7 @@ export class FormreutilizableComponent implements OnInit {
       for (const campo of currentCampos) {
         const validators = [Validators.required];
         if (campo.soloTexto) {
-          validators.push(Validators.pattern(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/));
+          validators.push(Validators.pattern(/^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s.,\-()]*$/));
         }
         group[campo.key] = ['', validators];
       }

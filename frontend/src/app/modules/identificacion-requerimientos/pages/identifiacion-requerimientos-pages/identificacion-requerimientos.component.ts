@@ -1,4 +1,4 @@
-﻿import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { forkJoin, map, Subject, debounceTime, distinctUntilChanged, takeUntil, catchError, of } from 'rxjs';
@@ -7,14 +7,15 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TablaDatosComponent } from '../../../../shared/components/tabla-datos/tabla-datos.component';
 import { NavegacionComponent } from '../../../../shared/components/navegacion/navegacion';
 import { Procedimiento } from '../../interfaces/procedimiento.interface';
-import { EstadoAsignacionService } from '../../services/estado-asignacion.service';
+import { EstadoAsignacionService } from '../../../../shared/services/estado-asignacion.service';
 import { ProcedimientoService } from '../../services/procedimiento.service';
 import { EstadolistaService } from '../../../../shared/services/estado-lista.service';
 import { TablaProcedimientoService } from '../../services/tabla-procedimiento.service';
 import { AlertService } from '../../../../shared/services/alert.service';
 import { DatosService } from '../../../../shared/services/datos.service';
-import { Estados_de_asignacion } from '../../interfaces/estado-asignacion.interface';
 import { ModalComponent } from '../../components/modal/modal.component';
+import { SocializacionService } from '../../../estandarizacion/services/socializacion.service';
+import { CriteriosEstado } from '../../../../shared/interfaces/criterios-estado';
 
 @Component({
   selector: 'app-identificacion-requerimientos',
@@ -32,9 +33,11 @@ export class IdentificacionrequerimientosComponent implements OnInit, OnDestroy 
   private alertService = inject(AlertService);
   public datosService = inject(DatosService);
   private estadoAsignacionService = inject(EstadoAsignacionService);
+  private socializacionService = inject(SocializacionService);
 
   mostrarModal = signal(false);
   datoEditar: Procedimiento | null = null;
+  mostrarModalRecoleccionInformacion = signal(false);
 
   private searchSubject = new Subject<string>();
   private destroy$ = new Subject<void>();
@@ -70,7 +73,7 @@ export class IdentificacionrequerimientosComponent implements OnInit, OnDestroy 
       next: (data: Procedimiento[]) => {
         const requests = data.map(p =>
           this.estadoAsignacionService.obtenerCompletitud(p.id!).pipe(
-            map((estadoInfo: Estados_de_asignacion) => ({ ...p, estado: estadoInfo.estado })),
+            map((estadoInfo: CriteriosEstado) => ({ ...p, estado: estadoInfo.estado })),
             catchError(() => of({ ...p, estado: 'Error' }))
           )
         );
@@ -166,9 +169,17 @@ export class IdentificacionrequerimientosComponent implements OnInit, OnDestroy 
   }
 
 
-  descargarFormatoProcedimiento() {
-
+  descargarDocumentoProcedimiento(procedimiento: Procedimiento) {
+    if (procedimiento.id) {
+      this.socializacionService.descargarDocumentoCompletado(procedimiento.id, procedimiento.procedimiento);
+    }
   }
+
+  abrirFormularioRecoleccionInformacion() {
+    this.mostrarModalRecoleccionInformacion.set(true);
+    document.body.classList.add('overflow-hidden');
+  }
+
 }
 
 

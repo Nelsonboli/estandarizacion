@@ -3,75 +3,93 @@
         <div class=" text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
             Estandarización de procedimientos
         </div>
-        <div class="bg-white/80 border border-gray-200 rounded-lg p-4 m-2">
-            <div class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
-                @for (estado of datosService.estados; track estado; let i = $index) {
-                <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
-                    <!-- Botón -->
-                    <button
-                        class="w-full h-24 flex flex-wrap items-center justify-center rounded-xl 
+        <div class="bg-white/80 border border-gray-200 rounded-lg">
+            <div class="border-b border-gray-200 px-4 py-2 mb-2 glass-card">
+                <h4 class="text-center font-normal"> <strong class="font-semibold"> Procedimiento: </strong>
+                    {{nombreProcedimiento() | titlecase}}</h4>
+            </div>
+            <div class="border-b border-gray-200 px-4 py-2 mb-2 glass-card">
+
+                <div
+                    class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
+
+                    @for (estado of datosService.criterios; track estado; let i = $index) {
+                    <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
+                        <!-- Botón -->
+                        <button
+                            class="w-full h-24 flex flex-wrap items-center justify-center rounded-xl 
                         transition-all duration-200 ease-in-out m-2 border-b-4 border-r-1 border-l-1 border-t-1 border-gray-400"
-                        [ngClass]="{
-                            'border-b-4 border-gray-600 bg-white text-gray-800 hover:border-gray-500': !estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
-                            'border-b-4 border-gray-400 bg-white text-gray-800 hover:border-gray-500': !estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
-                            'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900 hover:border-b-4 hover:border-gray-400 ': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() !==i,
-                            'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900  shadow-sm translate-y-1': estadosCompletados()[i] && hoverIndex() === i && buttonIndex() ===i || estadosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i || estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !==i, 
-                            ' bg-white  border-b-4': !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() !== i || !estadosCompletados()[i] && buttonIndex() === i && hoverIndex() === i,
+                            [ngClass]="{
+                            'border-b-4 border-gray-600 bg-white text-gray-800 hover:border-gray-500': !criteriosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
+                            'border-b-4 border-gray-400 bg-white text-gray-800 hover:border-gray-500': !criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900 hover:border-b-4 hover:border-gray-400 ': criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() !==i,
+                            'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900  shadow-sm translate-y-1': criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() ===i || criteriosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i || criteriosCompletados()[i] && buttonIndex() === i && hoverIndex() !==i, 
+                            ' bg-white  border-b-4': !criteriosCompletados()[i] && buttonIndex() === i && hoverIndex() !== i || !criteriosCompletados()[i] && buttonIndex() === i && hoverIndex() === i,
                             'hover:translate-y-1 border-b-1 border-gray-400': hoverIndex() !== i && buttonIndex() !== i
                         }" (click)="onButtonClick(i)" (mouseenter)="onHoverState(i)"
-                        (mouseleave)="hoverIndex.set(null)">
-                        <h6 class="leading-tight text-center mt-1">{{ i + 1 }}. {{ estado }} </h6>
-                        @if (estadosCompletados()[i]) {
-                        <svg class="w-4 h-4 ml-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none">
-                            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-                            <g id="SVGRepo_iconCarrier">
-                                <path fill="currentColor" fill-rule="evenodd"
-                                    d="M3.25 1A2.25 2.25 0 001 3.25v9.5A2.25 2.25 0 003.25 15h9.5A2.25 2.25 0 0015 12.75v-9.5A2.25 2.25 0 0012.75 1h-9.5zm7.47 4.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06l1.47 1.47 3.97-3.97z"
-                                    clip-rule="evenodd"></path>
-                            </g>
-                        </svg>
-                        }
-                    </button>
-                    <!-- Card cuando el estado está activo O en hover -->
-                    @if (buttonIndex() === i || hoverIndex() === i) {
-                    <div class="w-full flex justify-center">
-                        <div class="w-full bg-amber-50 rounded transition-all duration-200 animate-fade-in">
-                            <app-card-actividades [indice]="i" [refrescar]="estadosCompletados()[i]"
-                                [valoresExternos]="i === 0 ? actividadesDocumentoSoporte(): (i === 1 ? actividadesSoporteComputacional(): (i === 2 ? actividadesReglamento(): null))" />
+                            (mouseleave)="hoverIndex.set(null)">
+                            <h6 class="leading-tight text-center mt-1">{{ i + 1 }}. {{ estado }} </h6>
+                            @if (criteriosCompletados()[i]) {
+                            <svg class="w-4 h-4 ml-4" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"
+                                fill="none">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier">
+                                    <path fill="currentColor" fill-rule="evenodd"
+                                        d="M3.25 1A2.25 2.25 0 001 3.25v9.5A2.25 2.25 0 003.25 15h9.5A2.25 2.25 0 0015 12.75v-9.5A2.25 2.25 0 0012.75 1h-9.5zm7.47 4.22a.75.75 0 111.06 1.06l-4.5 4.5a.75.75 0 01-1.06 0l-2-2a.75.75 0 011.06-1.06l1.47 1.47 3.97-3.97z"
+                                        clip-rule="evenodd"></path>
+                                </g>
+                            </svg>
+                            }
+                        </button>
+                        <!-- Card cuando el estado está activo O en hover -->
+                        @if (buttonIndex() === i || hoverIndex() === i) {
+                        <div class="w-full flex justify-center">
+                            <div class="w-full bg-amber-50 rounded transition-all duration-300 animate-fade-in">
+                                <app-card-actividades [indice]="i" [refrescar]="criteriosCompletados()[i]"
+                                    [valoresExternos]="i === 0 ? actividadesDocumentoSoporte(): (i === 1 ? actividadesSoporteComputacional(): (i === 2 ? actividadesReglamento(): null))" />
+                            </div>
                         </div>
+                        }
                     </div>
                     }
                 </div>
-                }
-            </div>
-            <!-- Sección dinámica-->
-            <div class="bg-white/80 border-1 border-gray-300 rounded-lg p-1 m-1">
-                <h5 class="text-center"> Procedimiento : {{nombreprocedimiento() + " (Id: "+procedimientoId()+")"}}</h5>
-                @switch (buttonIndex()) {
-                @case (0) {
-                <app-documentacion-soporte [procedimientoId]="procedimientoId()" [documentoId]="documentoId()"
-                    (cambioEstadoActividades)="actualizarChecklist(0, $event)" (documentoEnviado)="finalizarEstado(0)">
-                </app-documentacion-soporte>
+                <!-- Sección dinámica-->
+                <div class="bg-white/80 border-1 border-gray-300 rounded-lg py-2 m-2">
 
-                }
-                @case (1) {
-                <app-soporte-computacional [procedimientoId]="procedimientoId()" [soporteId]="soporteId()"
-                    (cambioEstadoActividades)="actualizarChecklist(1, $event)" (soporteEnviado)="finalizarEstado(1)">
-                </app-soporte-computacional>
-                }
-                @case (2) {
-                <app-reglamento [procedimientoId]="procedimientoId()" [reglamentoId]="reglamentoId()"
-                    (cambioEstadoActividades)="actualizarChecklist(2, $event)" (reglamentoEnviado)="finalizarEstado(2)">
-                </app-reglamento>
-                }
-                @default {
-                <app-inicio></app-inicio>
-                }
-                }
+                    @switch (buttonIndex()) {
+                    @case (0) {
+                    <app-documentacion-soporte [procedimientoId]="procedimientoId()" [documentoId]="documentoId()"
+                        (cambioEstadoActividades)="actualizarChecklist(0, $event)"
+                        (documentoEnviado)="finalizarCriterio(0)">
+                    </app-documentacion-soporte>
+
+                    }
+                    @case (1) {
+                    <app-soporte-computacional [procedimientoId]="procedimientoId()" [soporteId]="soporteId()"
+                        (cambioEstadoActividades)="actualizarChecklist(1, $event)"
+                        (soporteEnviado)="finalizarCriterio(1)">
+                    </app-soporte-computacional>
+                    }
+                    @case (2) {
+                    <app-reglamento [procedimientoId]="procedimientoId()" [reglamentoId]="reglamentoId()"
+                        (cambioEstadoActividades)="actualizarChecklist(2, $event)"
+                        (reglamentoEnviado)="finalizarCriterio(2)">
+                    </app-reglamento>
+                    }
+                    @default {
+                    <app-inicio [procedimientoId]="procedimientoId()"></app-inicio>
+                    }
+                    }
+                </div>
+                <app-navegacion (anterior)="navegarAnterior()" (siguiente)="navegarSiguiente()">
+                </app-navegacion>
             </div>
-            <app-navegacion (anterior)="navegarAnterior()" (siguiente)="navegarSiguiente()">
-            </app-navegacion>
         </div>
     </div>
+    @if(mostrarModalRecoleccion()){
+    <app-modal-recoleccion-informacion [visible]="mostrarModalRecoleccion()" [procedimientoId]="procedimientoId()"
+        (cerrar)="cerrarModalRecoleccion()" (guardarExitoso)="verificarRecoleccion()">
+    </app-modal-recoleccion-informacion>
+    }
 </div>

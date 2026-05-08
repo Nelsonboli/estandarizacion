@@ -1,7 +1,6 @@
 <div class="p-2 bg-white">
   <div class="text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
-    4. Socialización de procedimientos
-  </div>
+    4. Socialización de procedimientos </div>
   <!-- Modal de lista desplegable  -->
   <app-lista-desplegable [visible]="estaAbierto()" [items]="procedimientos" (cerrar)="cerrarModal()"
     (guardar)="seleccionarProcedimiento($event)">
@@ -36,7 +35,7 @@
         </div>
         <div class="p-4 ">
           @if (formularioDAAC.length > 0) {
-          <app-tabla-criterios [columnas]="datosTablaService.DescripcionDAAC" [filas]="formularioDAAC">
+          <app-tabla-criterios [columnas]="datosTablaService.DescripcionCaracterizacion" [filas]="formularioDAAC">
           </app-tabla-criterios>
           }
           @else {
@@ -113,9 +112,8 @@
               <li><strong>Descripción del soporte computacional:</strong> {{ soporteComputacional.descripcion
                 }}</li>
               }
-              @if (soporteComputacional.requiere_soporte !== undefined && soporteComputacional.requiere_soporte !==
-              null)
-              {
+              @if ((soporteComputacional.nombre === null || soporteComputacional.descripcion === undefined) &&
+              soporteComputacional.requiere_soporte !==null) {
               <li><strong>Requiere soporte computacional:</strong> {{
                 soporteComputacional.requiere_soporte ? 'Sí' : 'No' }}</li>
               }
@@ -140,10 +138,8 @@
         </div>
         <div class="p-4 text-center ">
           <Button class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
-             text-gray-700 px-4 py-2 rounded hover:bg-gray-200 premium-btn"
-            (click)="descargarProcedimientoCompletado() ">
-            <img src="assets/elementos/descargarDocumentoGris.svg" class="w-6 h-6" />
-            Descargar PDF del Procedimiento
+             text-gray-700 px-4 py-2 rounded hover:bg-gray-200 premium-btn" (click)="descargarDocumentoCompletado()">
+            Descargar procedimiento
           </Button>
         </div>
       </div>
@@ -180,6 +176,12 @@
                 class="white-input">
               <mat-icon matPrefix color="primary" class="mr-2">location_on</mat-icon>
             </mat-form-field>
+            <mat-form-field appearance="fill" class="w-full premium-field">
+              <mat-label>Mecanismo de socialización</mat-label>
+              <input matInput type="text" formControlName="mecanismo" placeholder="Ej. Charla, comite, etc"
+                class="white-input">
+              <mat-icon matPrefix color="primary" class="mr-2">event</mat-icon>
+            </mat-form-field>
             <button type="submit"
               class="premium-btn bg-gray-100 hover:bg-gray-200 border border-gray-200 px-6 rounded-md py-3 transition-all duration-300 flex items-center justify-center tracking-wider">
               <mat-icon class="mr-2 text-gray-700">save</mat-icon>
@@ -193,7 +195,7 @@
                 "{{procedimientoSeleccionado.procedimiento | titlecase}}"</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full text-center">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full text-center mb-4">
               <div>
                 <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Fecha</p>
                 <p class="text-lg font-medium text-gray-800">{{ fechaSignal() | date:'dd/MM/yyyy' }}</p>
@@ -205,6 +207,10 @@
               <div>
                 <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Lugar</p>
                 <p class="text-lg font-medium text-gray-800">{{ lugarSignal() }}</p>
+              </div>
+              <div>
+                <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Mecanismo</p>
+                <p class="text-lg font-medium text-gray-800">{{ mecanismoSignal() }}</p>
               </div>
             </div>
 

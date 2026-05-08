@@ -6,10 +6,10 @@ import { AlertService } from '../../../../shared/services/alert.service';
 import { DatosService } from '../../../../shared/services/datos.service';
 import { DocumentoSoporteService } from '../../services/documento-soporte.service';
 import { SoporteComputacionalService } from '../../services/soporte-computacional.service';
-import { ReglamentoComponent } from '../../components/estados/reglamento/reglamento.component';
-import { InicioComponent } from '../../components/estados/inicio/inicio.component';
-import { DocumentacionSoporteComponent } from '../../components/estados/documentacion-soporte/documentacion-soporte.component';
-import { SoporteComputacionalComponent } from '../../components/estados/soporte-computacional/soporte-computacional.component';
+import { ReglamentoComponent } from '../../components/criterios/reglamento/reglamento.component';
+import { InicioComponent } from '../../components/criterios/inicio/inicio.component';
+import { DocumentacionSoporteComponent } from '../../components/criterios/documentacion-soporte/documentacion-soporte.component';
+import { SoporteComputacionalComponent } from '../../components/criterios/soporte-computacional/soporte-computacional.component';
 import { CardActividadesComponent } from '../../components/card-actividades/card-actividades.component';
 import { SoporteComputacional } from '../../interfaces/soporte-computacional.interface';
 import { DocumentoSoporte } from '../../interfaces/documento-soporte.interface';
@@ -18,8 +18,10 @@ import { Reglamento } from '../../interfaces/reglamento.interface';
 import { ProcedimientoService } from '../../../identificacion-requerimientos/services/procedimiento.service';
 import { Procedimiento } from '../../../identificacion-requerimientos/interfaces/procedimiento.interface';
 import { NavegacionComponent } from '../../../../shared/components/navegacion/navegacion';
-import { ListaDesplegableComponent } from '../../../socializacion-procedimientos/components/lista-desplegable/lista-desplegable.component';
 import { EstadolistaService } from '../../../../shared/services/estado-lista.service';
+import { RecoleccionInformacionService } from '../../services/recoleccion-informacion.service';
+import { ModalRecoleccionInformacionComponent } from '../../../../shared/components/modal-recoleccion-informacion/modal-recoleccion-informacion.component';
+import { EstadoAsignacionService } from '../../../../shared/services/estado-asignacion.service';
 
 @Component({
   standalone: true,
@@ -33,32 +35,33 @@ import { EstadolistaService } from '../../../../shared/services/estado-lista.ser
     InicioComponent,
     DocumentacionSoporteComponent,
     SoporteComputacionalComponent,
-    NavegacionComponent
+    NavegacionComponent,
+    ModalRecoleccionInformacionComponent
   ],
   templateUrl: './estandarizacion.component.html',
   styleUrls: ['./estandarizacion.component.css'],
 })
 
 export class EstandarizarComponent {
-  //id de estados y procedimiento
+  //id de criterio y procedimiento
   procedimientoId = signal<number>(0);
   soporteId = signal<number>(0);
   documentoId = signal<number>(0);
   reglamentoId = signal<number>(0);
 
-  //Validacion de estado para procedimiento y estados del procedimiento
-  estadosCompletados = signal<boolean[]>([false, false, false]);
+  //Validacion de criterio para procedimiento y criterio del procedimiento
+  criteriosCompletados = signal<boolean[]>([false, false, false]);
   actividadesDocumentoSoporte = signal<boolean[]>([false, false, false]);
   actividadesSoporteComputacional = signal<boolean[]>([false]);
-  actividadesReglamento = signal<boolean[]>([false, false, false, false]);
+  actividadesReglamento = signal<boolean[]>([false, false]);
 
-  //Index de estados
+  //Index de criterios
   hoverIndex = signal<number | null>(null);
   buttonIndex = signal<number | null>(null);
 
-  // validacion para estado imcompleto de procedimiento
-  estadoAnterior = signal<boolean>(false);
-  nombreprocedimiento = signal<string>('');
+  // validacion para criterio imcompleto de procedimiento
+  criterioAnterior = signal<boolean>(false);
+  nombreProcedimiento = signal<string>('');
 
   //Servicios e inyeccion de dependencias
   private listaService = inject(EstadolistaService)
@@ -70,29 +73,34 @@ export class EstandarizarComponent {
   private soporteComputacionalService = inject(SoporteComputacionalService);
   private reglamentoService = inject(ReglamentoService);
   private procedimientoService = inject(ProcedimientoService);
+  private recoleccionService = inject(RecoleccionInformacionService);
+  private estadoAsignacionService = inject(EstadoAsignacionService);
+
+  mostrarModalRecoleccion = signal(false);
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.procedimientoId.set(id);
-    this.cargarEstadoDocumentoSoporte();
-    this.cargarEstadoSoporteComputacional();
-    this.cargarEstadoReglamento();
+    this.cargarCriterioDocumentoSoporte();
+    this.cargarCriterioSoporteComputacional();
+    this.cargarCriterioReglamento();
     this.datosProcedimiento();
+    this.verificarRecoleccion();
   }
 
-  //llamado a los diferentes estados
+  //llamado a los diferentes c
   onButtonClick(index: number) {
-    console.log('--- Click en botón ---', { index, nombre: this.datosService.estados[index] });
-    // Validar que TODOS los estados anteriores estén completos
-    const estadosIncompletos = this.estadosCompletados()
+    console.log('--- Click en botón ---', { index, nombre: this.datosService.criterios[index] });
+    // Validar que TODOS los criterios anteriores estén completos
+    const criteriosIncompletos = this.criteriosCompletados()
       .slice(0, index)
-      .map((estado, i) => estado ? null : this.datosService.estados[i])
+      .map((criterio, i) => criterio ? null : this.datosService.criterios[i])
       .filter(e => e !== null);
-    if (estadosIncompletos.length > 0) {
-      const mensaje = estadosIncompletos.length === 1
-        ? `debe completar el estado ${estadosIncompletos[0]}` :
-        `debe completar los estados ${estadosIncompletos.join(' y ')}`
-      this.alertService.info(`${mensaje} para pasar al estado ${this.datosService.estados[index]}`);
+    if (criteriosIncompletos.length > 0) {
+      const mensaje = criteriosIncompletos.length === 1
+        ? `debe completar el criterio ${criteriosIncompletos[0]}` :
+        `debe completar los criterios ${criteriosIncompletos.join(' y ')}`
+      this.alertService.info(`${mensaje} para pasar al criterio ${this.datosService.criterios[index]}`);
       return;
     }
     switch (index) {
@@ -104,7 +112,7 @@ export class EstandarizarComponent {
               this.procesarDocumentoSoporte(documentoSoporte);
               this.buttonIndex.set(index);
               if (documentoSoporte.documento_completado) {
-                this.alertService.infoInformacion(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
+                this.alertService.infoInformacion(`El criterio "${this.datosService.criterios[index]}" ya se encuentra completado`);
               }
             } else {
               this.documentoSoporteService.crearDocumento(this.procedimientoId()).subscribe({
@@ -134,7 +142,7 @@ export class EstandarizarComponent {
               this.procesarSoporteComputacional(soporteComputacional);
               this.buttonIndex.set(index);
               if (soporteComputacional.computacional_completado) {
-                this.alertService.infoInformacion(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
+                this.alertService.infoInformacion(`El criterio "${this.datosService.criterios[index]}" ya se encuentra completado`);
               }
             } else {
               this.soporteComputacionalService.crearSoporteComputacional(this.procedimientoId()).subscribe({
@@ -164,7 +172,7 @@ export class EstandarizarComponent {
               this.procesarReglamento(reglamento);
               this.buttonIndex.set(index);
               if (reglamento.reglamento_completado) {
-                this.alertService.infoInformacion(`El estado "${this.datosService.estados[index]}" ya se encuentra completado`);
+                this.alertService.infoInformacion(`El criterio "${this.datosService.criterios[index]}" ya se encuentra completado`);
               }
             } else {
               this.reglamentoService.crearReglamento(this.procedimientoId()).subscribe({
@@ -205,14 +213,14 @@ export class EstandarizarComponent {
     const index = this.buttonIndex();
     if (index === null) {
       this.onButtonClick(0);
-    } else if (index !== null && index < this.datosService.estados.length - 1) {
-      if (this.estadosCompletados()[index]) {
+    } else if (index !== null && index < this.datosService.criterios.length - 1) {
+      if (this.criteriosCompletados()[index]) {
         this.onButtonClick(index + 1);
       } else {
-        this.alertService.infoInformacion(`Debe completar el estado "${this.datosService.estados[index]}" para continuar`);
+        this.alertService.infoInformacion(`Debe completar el criterio "${this.datosService.criterios[index]}" para continuar`);
       }
-    } else if (index === this.datosService.estados.length - 1) {
-      if (this.estadosCompletados()[index]) {
+    } else if (index === this.datosService.criterios.length - 1) {
+      if (this.criteriosCompletados()[index]) {
         this.alertService.exito('El procedimiento ha sido completado, puede pasar a la socialización').then((result) => {
           if (result.isConfirmed) {
             this.listaService.abrir();
@@ -220,43 +228,43 @@ export class EstandarizarComponent {
           }
         });
       } else {
-        this.alertService.infoInformacion(`Debe completar el último estado para finalizar`);
+        this.alertService.infoInformacion(`Debe completar el último criterio para finalizar`);
       }
     }
   }
 
   onHoverState(index: number) {
     if (this.hoverIndex() === index) return;
-    console.log('--- Hover en botón ---', { index, nombre: this.datosService.estados[index] });
+    console.log('--- Hover en botón ---', { index, nombre: this.datosService.criterios[index] });
     this.hoverIndex.set(index);
     if (this.buttonIndex() === index) return;
-    if (index === 0 && !this.estadosCompletados()[0]) this.cargarEstadoDocumentoSoporte();
-    else if (index === 1 && !this.estadosCompletados()[1]) this.cargarEstadoSoporteComputacional();
-    else if (index === 2 && !this.estadosCompletados()[2]) this.cargarEstadoReglamento();
+    if (index === 0 && !this.criteriosCompletados()[0]) this.cargarCriterioDocumentoSoporte();
+    else if (index === 1 && !this.criteriosCompletados()[1]) this.cargarCriterioSoporteComputacional();
+    else if (index === 2 && !this.criteriosCompletados()[2]) this.cargarCriterioReglamento();
   }
 
   // Funciones Documento Soporte
-  cargarEstadoDocumentoSoporte() {
+  cargarCriterioDocumentoSoporte() {
     this.documentoSoporteService.getPorProcedimiento(this.procedimientoId()).subscribe({
       next: (doc: DocumentoSoporte) => {
-        console.log('Datos cargados - Estado Documento Soporte:', doc);
+        console.log('Datos cargados - Criterio Documento Soporte:', doc);
         if (doc) {
           this.procesarDocumentoSoporte(doc);
         } else {
-          this.restaurarEstadoDocumentoSoporte();
+          this.restaurarCriterioDocumentoSoporte();
         }
       },
       error: (err) => {
-        console.error('cargarEstadoDocumentoSoporte error', err);
-        this.restaurarEstadoDocumentoSoporte();
+        console.error('cargarCriterioDocumentoSoporte error', err);
+        this.restaurarCriterioDocumentoSoporte();
       }
     });
   }
 
-  private restaurarEstadoDocumentoSoporte() {
-    this.estadosCompletados.update(estados => {
-      estados[0] = false;
-      return [...estados];
+  private restaurarCriterioDocumentoSoporte() {
+    this.criteriosCompletados.update(criterios => {
+      criterios[0] = false;
+      return [...criterios];
     });
     this.actividadesDocumentoSoporte.set([false, false, false]);
   }
@@ -273,35 +281,35 @@ export class EstandarizarComponent {
     } else {
       this.actividadesDocumentoSoporte.set([false, false, false]);
     }
-    this.estadosCompletados.update(estados => {
-      estados[0] = !!doc.documento_completado;
-      return [...estados];
+    this.criteriosCompletados.update(criterios => {
+      criterios[0] = !!doc.documento_completado;
+      return [...criterios];
     });
-    this.estadoCompletado();
+    this.criterioCompletado();
   }
 
   // Funciones Soporte Computacional
-  cargarEstadoSoporteComputacional() {
+  cargarCriterioSoporteComputacional() {
     this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId()).subscribe({
       next: (soporte: SoporteComputacional) => {
-        console.log('Datos cargados - Estado Soporte Computacional:', soporte);
+        console.log('Datos cargados - Criterio Soporte Computacional:', soporte);
         if (soporte) {
           this.procesarSoporteComputacional(soporte);
         } else {
-          this.restaurarEstadoSoporteComputacional();
+          this.restaurarCriterioSoporteComputacional();
         }
       },
       error: (err) => {
-        console.error('cargarSoporteComputacional error', err);
-        this.restaurarEstadoSoporteComputacional();
+        console.error('cargarCriterioSoporteComputacional error', err);
+        this.restaurarCriterioSoporteComputacional();
       }
     });
   }
 
-  private restaurarEstadoSoporteComputacional() {
-    this.estadosCompletados.update(estados => {
-      estados[1] = false;
-      return [...estados];
+  private restaurarCriterioSoporteComputacional() {
+    this.criteriosCompletados.update(criterios => {
+      criterios[1] = false;
+      return [...criterios];
     });
     this.actividadesSoporteComputacional.set([false]);
   }
@@ -316,37 +324,37 @@ export class EstandarizarComponent {
       completado = soporte.requiere_soporte !== null && soporte.requiere_soporte !== undefined;
     }
     this.actividadesSoporteComputacional.set([completado]);
-    this.estadosCompletados.update(estados => {
-      estados[1] = !!soporte.computacional_completado;
-      return [...estados];
+    this.criteriosCompletados.update(criterios => {
+      criterios[1] = !!soporte.computacional_completado;
+      return [...criterios];
     });
-    this.estadoCompletado();
+    this.criterioCompletado();
   }
 
   // Funciones Reglamento
-  cargarEstadoReglamento() {
+  cargarCriterioReglamento() {
     this.reglamentoService.obtenerReglamento(this.procedimientoId()).subscribe({
       next: (reglamento: Reglamento) => {
-        console.log('Datos cargados - Estado Reglamento:', reglamento);
+        console.log('Datos cargados - Criterio Reglamento:', reglamento);
         if (reglamento) {
           this.procesarReglamento(reglamento);
         } else {
-          this.restaurarEstadoReglamento();
+          this.restaurarCriterioReglamento();
         }
       },
       error: (err) => {
         console.error('cargarReglamento error', err, this.procedimientoId());
-        this.restaurarEstadoReglamento();
+        this.restaurarCriterioReglamento();
       }
     });
   }
 
-  private restaurarEstadoReglamento() {
-    this.estadosCompletados.update(estados => {
-      estados[2] = false;
-      return [...estados];
+  private restaurarCriterioReglamento() {
+    this.criteriosCompletados.update(criterios => {
+      criterios[2] = false;
+      return [...criterios];
     });
-    this.actividadesReglamento.set([false, false, false, false]);
+    this.actividadesReglamento.set([false, false]);
   }
 
   private procesarReglamento(reglamento: Reglamento) {
@@ -357,24 +365,22 @@ export class EstandarizarComponent {
       this.actividadesReglamento.set([
         !!acts.descarga_daac_completada,
         !!acts.subida_daac_completada,
-        !!acts.descarga_estandarizacion_completada,
-        !!acts.subida_estandarizacion_completada,
       ]);
     } else {
-      this.actividadesReglamento.set([false, false, false, false]);
+      this.actividadesReglamento.set([false, false]);
     }
-    this.estadosCompletados.update(estados => {
-      estados[2] = !!reglamento.reglamento_completado;
-      return [...estados];
+    this.criteriosCompletados.update(criterios => {
+      criterios[2] = !!reglamento.reglamento_completado;
+      return [...criterios];
     });
-    this.estadoCompletado();
+    this.criterioCompletado();
   }
 
-  actualizarChecklist(index: number, estados: boolean[]) {
-    console.log('actualizarChecklist called', { index, estados });
-    const todosCompletos = estados.length > 0 && estados.every(e => e === true);
-    this.estadoCompletado();
-    this.estadosCompletados.update(completos => {
+  actualizarChecklist(index: number, criterios: boolean[]) {
+    console.log('actualizarChecklist called', { index, criterios: criterios });
+    const todosCompletos = criterios.length > 0 && criterios.every(e => e === true);
+    this.criterioCompletado();
+    this.criteriosCompletados.update(completos => {
       const nuevosCompletos = [...completos];
       nuevosCompletos[index] = todosCompletos;
       console.log('nuevosCompletos', nuevosCompletos);
@@ -385,48 +391,55 @@ export class EstandarizarComponent {
       this.actividadesSoporteComputacional,
       this.actividadesReglamento
     ];
-    map[index].set([...estados]);
-    this.estadoCompletado();
+    map[index].set([...criterios]);
+    this.criterioCompletado();
   }
 
-  finalizarEstado(index: number) {
-    console.log('finalizarEstado called', { index });
+  finalizarCriterio(index: number) {
+    console.log('finalizarCriterio called', { index });
     // Solo marcamos como completado si no lo estaba ya
-    if (!this.estadosCompletados()[index]) {
-      this.estadosCompletados.update(estados => {
-        const nuevosEstados = [...estados];
-        nuevosEstados[index] = true;
-        return nuevosEstados;
+    if (!this.criteriosCompletados()[index]) {
+      this.criteriosCompletados.update(criterios => {
+        const nuevosCriterios = [...criterios];
+        nuevosCriterios[index] = true;
+        return nuevosCriterios;
       });
-      this.estadoCompletado();
+      this.criterioCompletado();
     }
     if (index === 0) {
       setTimeout(() => {
         console.log('Marcado Documento Soporte');
-        this.cargarEstadoDocumentoSoporte();
+        this.cargarCriterioDocumentoSoporte();
       }, 100);
     } else if (index === 1) {
       setTimeout(() => {
         console.log('Marcado Soporte Computacional');
-        this.cargarEstadoSoporteComputacional();
+        this.cargarCriterioSoporteComputacional();
       }, 100);
     } else if (index === 2) {
       setTimeout(() => {
         console.log('Marcado Reglamento');
-        this.cargarEstadoReglamento();
+        this.cargarCriterioReglamento();
       }, 100);
     }
   }
 
-  estadoCompletado() {
-    const todosCompletos = this.estadosCompletados().every(e => e === true);
-    console.log('estadoCompletos para alerta', todosCompletos, 'estadoAnterior:', this.estadoAnterior());
+  criterioCompletado() {
+    const todosCompletos = this.criteriosCompletados().every(e => e === true);
+    console.log('criteriosCompletados para alerta', todosCompletos, 'criterioAnterior:', this.criterioAnterior());
+
+    // Actualizar el estado en el backend (AsignacionEstado)
+    this.estadoAsignacionService.actualizarEstadoProcedimiento(this.procedimientoId(), this.criteriosCompletados()).subscribe({
+      next: (res) => console.log('Estado de asignación actualizado:', res),
+      error: (err) => console.error('Error al actualizar estado de asignación:', err)
+    });
+
     if (!todosCompletos) {
-      this.estadoAnterior.set(true);
-    } else if (todosCompletos && this.estadoAnterior()) {
-      this.estadoAnterior.set(false);
+      this.criterioAnterior.set(true);
+    } else if (todosCompletos && this.criterioAnterior()) {
+      this.criterioAnterior.set(false);
       setTimeout(() => {
-        this.alertService.exito(`El procedimiento "${this.nombreprocedimiento()}" esta Completo`);
+        this.alertService.exito(`El procedimiento "${this.nombreProcedimiento()}" esta Completo`);
       }, 300);
     }
   }
@@ -435,12 +448,35 @@ export class EstandarizarComponent {
     this.procedimientoService.getProcedimiento(this.procedimientoId()).subscribe({
       next: (procedimiento: Procedimiento) => {
         console.log('Datos cargados - Procedimiento (datos):', procedimiento);
-        this.nombreprocedimiento.set(procedimiento.procedimiento);
+        this.nombreProcedimiento.set(procedimiento.procedimiento);
       },
       error: (err) => {
         console.error('Error al obtener el procedimiento', err);
         this.alertService.error('Error al obtener el procedimiento');
       }
     });
+  }
+
+  verificarRecoleccion() {
+    if (this.procedimientoId() > 0) {
+      this.recoleccionService.getPorProcedimiento(this.procedimientoId()).subscribe({
+        next: (res) => {
+          if (!res || (!res.encuesta.trim())) {
+            this.abrirModalRecoleccion();
+          }
+        },
+        error: () => this.abrirModalRecoleccion()
+      });
+    }
+  }
+
+  abrirModalRecoleccion() {
+    this.mostrarModalRecoleccion.set(true);
+    document.body.classList.add('overflow-hidden');
+  }
+
+  cerrarModalRecoleccion() {
+    this.mostrarModalRecoleccion.set(false);
+    document.body.classList.remove('overflow-hidden');
   }
 }

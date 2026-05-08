@@ -30,16 +30,16 @@
   --color-naranja-oscuro: #d49645;
   
 }
-.estados-basic-button {
+.criterios-basic-button {
   @apply font-sans ring-1 ring-background shadow-sm scale-105 bg-transparent text-4xl font-bold text-center;
 }
 
-.estado-group-hover {
+.criterios-group-hover {
   @apply group-hover:ring-1 duration-200 group-hover:m-1 group-hover:text-white group-hover:ring-background group-hover:shadow
 }
 
-/* Boton cuando estados ya esten cumplidos */
-.estados-select-button {
+/* Boton cuando criterios ya esten cumplidos */
+.criterios-select-button {
   @apply text-gris-oscuro
 }
 

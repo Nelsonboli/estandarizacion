@@ -1,7 +1,8 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { socializacion } from "../interfaces/socializacion.interface";
+import { AlertService } from "../../../shared/services/alert.service";
 
 @Injectable({
     providedIn: 'root'
@@ -9,7 +10,8 @@ import { socializacion } from "../interfaces/socializacion.interface";
 export class SocializacionService {
     private baseSocializacion = 'http://localhost:3000/socializacion';
 
-    constructor(private http: HttpClient) { }
+    private http = inject(HttpClient);
+    private alertService = inject(AlertService);
 
     guardarSocializacion(data: socializacion): Observable<any> {
         return this.http.post(`${this.baseSocializacion}`, data);
@@ -36,4 +38,25 @@ export class SocializacionService {
             responseType: 'blob'
         });
     }
-} 
+
+    descargarDocumentoCompletado(procedimientoId: number, nombreProcedimiento: string): void {
+        this.alertService.infoInformacion('Preparando descarga del procedimiento completado...');
+        this.descargarPdfSocializacion(procedimientoId).subscribe({
+            next: (blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `procedimiento_${nombreProcedimiento}_completado.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                this.alertService.infoExito('Descarga iniciada');
+            },
+            error: (err) => {
+                console.error('Error al descargar el PDF:', err);
+                this.alertService.error('Error al generar o descargar el PDF. Verifique que el formato DAAC firmado exista y que los datos de estandarizacion esten completos.');
+            }
+        });
+    }
+}

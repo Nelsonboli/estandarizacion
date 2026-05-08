@@ -1,8 +1,10 @@
-import { DocumentoSoporte } from 'src/modules/estandarizacion/Estados/documento-soporte/documento-soporte/entities/documento-soporte.entity';
-import { SoporteComputacional } from 'src/modules/estandarizacion/Estados/soporte-computacional/entities/soporte-computacional.entity';
+import { DocumentoSoporte } from 'src/modules/estandarizacion/criterios/documento-soporte/documento-soporte/entities/documento-soporte.entity';
+import { SoporteComputacional } from 'src/modules/estandarizacion/criterios/soporte-computacional/entities/soporte-computacional.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
-import { Reglamento } from 'src/modules/estandarizacion/Estados/reglamento/entities/reglamento.entity';
+import { Reglamento } from 'src/modules/estandarizacion/criterios/reglamento/entities/reglamento.entity';
 import { Socializacion } from 'src/modules/socializacion/entities/socializacion.entity';
+import { RecoleccionInformacion } from 'src/modules/estandarizacion/recoleccion-informacion/entities/recoleccion-informacion.entity';
+import { AsignacionEstado } from 'src/modules/asignacion-estado/entities/asignacion_estado.entity';
 
 @Entity('procedimientos')
 export class Procedimiento {
@@ -27,7 +29,7 @@ export class Procedimiento {
   @Column({ type: 'json', nullable: true })
   referencias: any;
 
-  @OneToOne(() => DocumentoSoporte, doc => doc.procedimiento)
+  @OneToOne(() => DocumentoSoporte, doc => doc.procedimiento,)
   documentoSoporte: DocumentoSoporte;
 
   @OneToOne(() => SoporteComputacional, doc => doc.procedimiento)
@@ -38,5 +40,11 @@ export class Procedimiento {
 
   @OneToOne(() => Socializacion, doc => doc.procedimiento)
   socializacion: Socializacion;
+
+  @OneToOne(() => RecoleccionInformacion, doc => doc.procedimiento)
+  recoleccionInformacion: RecoleccionInformacion;
+
+  @OneToOne(() => AsignacionEstado, doc => doc.procedimiento)
+  asignacion_estado: AsignacionEstado;
 
 } 

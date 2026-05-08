@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { estado } from '../interfaces/estado.interfaces';
 import { FichaTecnica } from '../interfaces/ficha-tecnica.interface';
 import { Campos } from '../interfaces/campos.interface';
 import { Criterios, Clasificacion } from '../interfaces/tablas.interface';
 import { DocumentoReferencia } from '../interfaces/enlaces.interface';
+import { Estado } from '../interfaces/estado.interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -40,8 +40,8 @@ export class DatosService {
     { col1: 'C', col2: 'completo', col3: ' x ', col4: ' x ', col5: 'x', col6: ' x' },
   ];
 
-  //Datos Formulario DAAC
-  public readonly DescripcionDAAC = ["Formulario División de Autoevaluación y Acreditación de la Calidad"];
+  //Datos Formulario de Caracterización
+  public readonly DescripcionCaracterizacion = ["Caracterización"];
   public readonly columnasDAAC: Campos[] = [
     { key: 'objetivo', label: 'Objetivo', Tooltip: 'Establece el propósito que tiene el Procedimiento.', required: true, soloTexto: true },
     { key: 'alcance', label: 'Alcance', Tooltip: 'Hace referencia al cubrimiento de las actividades del Procedimiento.', required: true, soloTexto: true },
@@ -144,7 +144,7 @@ export class DatosService {
 
   public readonly encabezadoFichaTecnica = ['Ficha técnica de procedimiento'];
 
-  public readonly estados = [
+  public readonly criterios = [
     "Documento de Soporte",
     "Soporte Computacional",
     "Reglamento"
@@ -159,7 +159,7 @@ export class DatosService {
     { Criterio: 'REFERENTES', Descripcion: '', Tooltip: 'En esta columna se puede ubicar el consecutivo de algún procedimiento definido por la Universidad, en caso de que exista, pueden presentarse dos situaciones: i. Que sea un procedimiento similar, que puede servir de guía para la estandarización del procedimiento. ii. Que sea un procedimiento que hace parte de alguna actividad del procedimiento a estandarizar. También se puede registrar, notas, comentarios u observaciones relevantes.' },
   ];
 
-  public readonly Estado_actual_procedimiento: estado[] = [
+  public readonly Estado_actual_procedimiento: Estado[] = [
     {
       estado: 'Inicial ',
       descripcion: 'Teniendo en cuenta que este procedimiento se encuentra en un estado inicial, se ha identificado que para llegar'
@@ -190,7 +190,7 @@ export class DatosService {
   public readonly opciones = [
     ["Reglamento base", "Formulario de procedimiento DAAC", "Diagrama de procedimiento"],
     ["Soporte computacional"],
-    ["Ficha de procedimiento descargada", "Ficha de procedimiento aprobada por la DAAC", "Formato de estandarización descargado", "Formato de estandarización subido"]
+    ["Ficha de procedimiento descargada", "Ficha de procedimiento aprobada por la DAAC"]
 
   ];
 

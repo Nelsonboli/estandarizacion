@@ -45,18 +45,4 @@ export class ReglamentoService {
     return this.http.put<Reglamento>(`${this.baseReglamento}/${id}/marcar-descarga`, { fileName });
   }
 
-  subirFormatoEstandarizacion(id: number, file: File): Observable<File> {
-    const formData = new FormData();
-    formData.append('file', file);
-    return this.http.post<File>(`${this.baseReglamento}/${id}/subir-formato-estandarizacion`, formData);
-  }
-
-  eliminarFormatoEstandarizacion(id: number): Observable<Reglamento> {
-    return this.http.delete<Reglamento>(`${this.baseReglamento}/${id}/eliminar-formato-estandarizacion`);
-  }
-
-  marcarDescargaFormatoEstandarizacion(id: number, fileName: string): Observable<Reglamento> {
-    return this.http.put<Reglamento>(`${this.baseReglamento}/${id}/marcar-descarga-estandarizacion`, { fileName });
-  }
-
 }

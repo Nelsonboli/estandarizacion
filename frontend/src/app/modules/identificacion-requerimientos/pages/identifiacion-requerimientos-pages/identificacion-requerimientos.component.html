@@ -48,7 +48,9 @@
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex flex-wrap justify-center space-x-1 gap-2">
                 <button [routerLink]="['/identificacionrequerimientos/estandarizar', dato.id]"
-                    class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded flex items-center justify-center gap-1">
+                    class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded flex items-center justify-center gap-1"
+                    (click)="abrirFormularioRecoleccionInformacion()">
+
                     <span class="hidden md:inline">Estandarizar</span>
                     <img src="assets/elementos/estandarizar.svg" alt="Estandarizar"
                         class="hover:brightness-120 w-3 h-3 md:hidden">
@@ -60,8 +62,9 @@
                 <button (click)="editarProcedimiento(dato)" title="Editar procedimiento" aria-label="Editar">
                     <img class="hover:brightness-120 w-4 h-4" src="assets/elementos/editar.svg" alt="Editar" />
                 </button>
-                <button (click)="descargarFormatoProcedimiento()" title="Descargar formato procedimiento"
-                    aria-label="Descargar formato procedimiento">
+                <button (click)="descargarDocumentoProcedimiento (dato)" [disabled]="dato.estado !== 'Completo'"
+                    [ngClass]="{'opacity-50 grayscale cursor-not-allowed': dato.estado !== 'Completo'}"
+                    title="Descargar formato procedimiento" aria-label="Descargar formato procedimiento">
                     <img class="hover:brightness-120 w-4 h-4" src="assets/elementos/descargarFormato.svg"
                         alt="Descargar formato procedimiento" />
                 </button>

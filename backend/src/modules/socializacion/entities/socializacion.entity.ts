@@ -11,6 +11,9 @@ export class Socializacion {
     @Column({ type: 'varchar', length: 255 })
     lugar: string;
 
+    @Column({ type: 'varchar', length: 255, nullable: true })
+    mecanismo: string;
+
     @Column({ type: 'date' })
     fecha: Date;
 

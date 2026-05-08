@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProcedimientoModule } from './modules/identificacion-requerimientos/procedimiento.module';
-import { DocumentoSoporteModule } from './modules/estandarizacion/Estados/documento-soporte/documento-soporte/documento-soporte.module';
-import { FormulariodaacModule } from './modules/estandarizacion/Estados/documento-soporte/components/formulariodaac/formulariodaac.module';
-import { ReglamentoBaseModule } from './modules/estandarizacion/Estados/documento-soporte/components/reglamento-base/reglamento-base.module';
-import { SoporteComputacionalModule } from './modules/estandarizacion/Estados/soporte-computacional/soporte-computacional.module';
-import { ReglamentoModule } from './modules/estandarizacion/Estados/reglamento/reglamento.module';
-import { ReportsModule } from './modules/estandarizacion/reports/reports.module';
+import { DocumentoSoporteModule } from './modules/estandarizacion/criterios/documento-soporte/documento-soporte/documento-soporte.module';
+import { FormulariodaacModule } from './modules/estandarizacion/criterios/documento-soporte/components/formulariodaac/formulariodaac.module';
+import { ReglamentoBaseModule } from './modules/estandarizacion/criterios/documento-soporte/components/reglamento-base/reglamento-base.module';
+import { SoporteComputacionalModule } from './modules/estandarizacion/criterios/soporte-computacional/soporte-computacional.module';
+import { ReglamentoModule } from './modules/estandarizacion/criterios/reglamento/reglamento.module';
+import { ReportsModule } from './modules/estandarizacion/reportes/reporte-DAAC/reports.module';
+import { FormatoEstandarizacionModule } from './modules/estandarizacion/reportes/formato-estandarizacion/formato-estandarizacion.module';
 import { SocializacionModule } from './modules/socializacion/socializacion.module';
+import { RecoleccionInformacionModule } from './modules/estandarizacion/recoleccion-informacion/recoleccion-informacion.module';
+import { AsignacionEstadoModule } from './modules/asignacion-estado/asignacion-estado.module';
 
 @Module({
   imports: [
@@ -28,7 +31,10 @@ import { SocializacionModule } from './modules/socializacion/socializacion.modul
     SoporteComputacionalModule,
     ReglamentoModule,
     ReportsModule,
+    FormatoEstandarizacionModule,
     SocializacionModule,
+    RecoleccionInformacionModule,
+    AsignacionEstadoModule
   ],
   controllers: [],
   providers: [],

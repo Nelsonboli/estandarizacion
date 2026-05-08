@@ -43,9 +43,14 @@ export class ProcedimientoService {
     });
   }
 
-  // Descargar reporte PDF
+  // Descargar reporte DAAC
   descargarReporte(id: number): Observable<Blob> {
-    return this.http.get(`http://localhost:3000/report/${id}`, { responseType: 'blob' });
+    return this.http.get(`http://localhost:3000/reporte-daac/${id}`, { responseType: 'blob' });
+  }
+
+  // Descargar formato de estandarización
+  descargarFormatoEstandarizacion(id: number): Observable<Blob> {
+    return this.http.get(`http://localhost:3000/formato-estandarizacion/${id}`, { responseType: 'blob' });
   }
 
 }

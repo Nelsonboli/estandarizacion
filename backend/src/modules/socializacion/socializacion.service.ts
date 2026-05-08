@@ -5,10 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Socializacion } from './entities/socializacion.entity';
 import { Repository } from 'typeorm';
 import { Procedimiento } from '../identificacion-requerimientos/entities/procedimiento.entity';
-import { Reglamento } from '../estandarizacion/Estados/reglamento/entities/reglamento.entity';
+import { Reglamento } from '../estandarizacion/criterios/reglamento/entities/reglamento.entity';
 import { PDFDocument } from 'pdf-lib';
 import * as fs from 'fs-extra';
-
+import { ReportService } from '../estandarizacion/reportes/reporte-DAAC/reports.service';
+import { FormatoEstandarizacionService } from '../estandarizacion/reportes/formato-estandarizacion/formato-estandarizacion.service';
 
 @Injectable()
 export class SocializacionService {
@@ -18,7 +19,8 @@ export class SocializacionService {
     @InjectRepository(Procedimiento)
     private procedimientoRepository: Repository<Procedimiento>,
     @InjectRepository(Reglamento)
-    private reglamentoRepository: Repository<Reglamento>
+    private reglamentoRepository: Repository<Reglamento>,
+    private formatoEstandarizacionService: FormatoEstandarizacionService
   ) { }
 
   async unirPdfsPorProcedimiento(procedimientoId: number): Promise<Buffer> {
@@ -26,38 +28,52 @@ export class SocializacionService {
       where: { procedimiento: { id: procedimientoId } }
     });
     if (!reglamento) {
-      throw new HttpException('No se encontró reglamento para el procedimiento', HttpStatus.NOT_FOUND);
+      throw new HttpException('No se encontro reglamento para el procedimiento', HttpStatus.NOT_FOUND);
     }
-    const { formato_daac_subido, formato_estandarizacion_subido } = reglamento;
+    const { formato_daac_subido } = reglamento;
 
-    if (!formato_daac_subido || !formato_estandarizacion_subido) {
-      throw new HttpException('Faltan documentos en el reglamento para realizar la unión', HttpStatus.BAD_REQUEST);
+    if (!formato_daac_subido) {
+      throw new HttpException('Falta el formato DAAC firmado para realizar la union', HttpStatus.BAD_REQUEST);
     }
-    return await this.unirpdfs(formato_daac_subido, formato_estandarizacion_subido);
-  }
 
-  async unirpdfs(ruta2: string, ruta1: string): Promise<Buffer> {
     try {
-      if (!await fs.pathExists(ruta1) || !await fs.pathExists(ruta2)) {
-        throw new Error('Uno o ambos archivos no existen en la ruta especificada');
+      if (!await fs.pathExists(formato_daac_subido)) {
+        throw new HttpException('No se encontro el archivo DAAC firmado en almacenamiento', HttpStatus.NOT_FOUND);
       }
 
-      const pdf1Bytes = await fs.readFile(ruta1);
-      const pdf2bytes = await fs.readFile(ruta2);
+      const rutaReporteEstandarizacion = await this.formatoEstandarizacionService.generarReporteEstandarizacion(procedimientoId);
+      if (!await fs.pathExists(rutaReporteEstandarizacion)) {
+        throw new HttpException('No se pudo generar el reporte de estandarizacion', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
 
-      const pdfDoc1 = await PDFDocument.load(pdf1Bytes);
-      const pdfDoc2 = await PDFDocument.load(pdf2bytes);
+      const [pdfEstandarizacionBytes, pdfDaacBytes] = await Promise.all([
+        fs.readFile(rutaReporteEstandarizacion),
+        fs.readFile(formato_daac_subido)
+      ]);
+
+      return this.unirpdfs(pdfEstandarizacionBytes, pdfDaacBytes);
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new HttpException(`Error al preparar archivos PDF: ${error.message}`, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async unirpdfs(pdfEstandarizacionBytes: Buffer, pdfDaacBytes: Buffer): Promise<Buffer> {
+    try {
+      const pdfDocDaac = await PDFDocument.load(pdfDaacBytes);
+      const pdfDocEstandarizacion = await PDFDocument.load(pdfEstandarizacionBytes);
 
       const pdfFinal = await PDFDocument.create();
 
-      const paginas1 = await pdfFinal.copyPages(pdfDoc1, pdfDoc1.getPageIndices());
-      paginas1.forEach(p => pdfFinal.addPage(p));
+      const paginasEstandarizacion = await pdfFinal.copyPages(pdfDocEstandarizacion, pdfDocEstandarizacion.getPageIndices());
+      paginasEstandarizacion.forEach(p => pdfFinal.addPage(p));
 
-      const paginas2 = await pdfFinal.copyPages(pdfDoc2, pdfDoc2.getPageIndices());
-      paginas2.forEach(p => pdfFinal.addPage(p));
+      const paginasDaac = await pdfFinal.copyPages(pdfDocDaac, pdfDocDaac.getPageIndices());
+      paginasDaac.forEach(p => pdfFinal.addPage(p));
 
       const pdfBytes = await pdfFinal.save();
-
       return Buffer.from(pdfBytes);
     } catch (error) {
       console.error('Error al unir PDFs:', error);
@@ -69,7 +85,6 @@ export class SocializacionService {
     const procedimiento = await this.procedimientoRepository.findOne({ where: { id: createSocializacionDto.procedimiento_id } });
     if (!procedimiento) throw new HttpException('procedimiento no encontrado', HttpStatus.NOT_FOUND);
 
-    // Si hora es un objeto Date (gracias a @Type), lo formateamos a string HH:mm:ss
     const horaStr = createSocializacionDto.hora instanceof Date
       ? createSocializacionDto.hora.toTimeString().split(' ')[0]
       : createSocializacionDto.hora;

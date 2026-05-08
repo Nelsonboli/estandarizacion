@@ -1,4 +1,4 @@
-<div class="w-full max-w-full">
+<div class="w-full max-w-full relative">
     <div class="flex flex-col xl:flex-row w-full items-start">
         <!-- Sidebar / Top Menu -->
         <aside
@@ -26,12 +26,6 @@
                         </button>
                         <hr class="hidden xl:block w-full my-2 border-gray-600">
                         <div class="flex flex-row xl:flex-col gap-2 w-full flex-wrap justify-center">
-                            <!-- <button type="submit" (click)="exportar()"
-                                class="flex-1 min-w-[110px] flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande">
-                                <img src="assets/elementos/descargarDocumentoGris.svg" alt="Descargar"
-                                    class="w-5 h-5" />
-                                <span class="hidden sm:inline">Descargar</span>
-                            </button> -->
                             <button type="submit" (click)="guardarDiagrama()"
                                 class="relative flex-1 min-w-[110px] flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded transition-colors duration-300 border border-gray-300 justify-center text-semigrande">
                                 <img src="assets/elementos/guardar.svg" alt="Guardar diagrama"
@@ -89,7 +83,7 @@
                                 <button
                                     class="bg-gray-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-gray-600 transition-colors"
                                     (click)="popoverVisible.set(false)"> Cerrar
-                                </button>
+                                </button> v
                             </div>
                             <!-- Flechita hacia abajo -->
                             <div
@@ -122,21 +116,12 @@
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="flex justify-end gap-2 pt-2">
-
-                <button (click)="cancelarDiagrama.emit(true)"
-                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-150 transition-colors duration-300">
-                    <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
-                    Cancelar
-                </button>
-            </div> -->
         </main>
     </div>
 
-    <!-- Tooltip Sidebar (Fixed position) -->
+    <!-- Tooltip Sidebar (Absolute position relative to component root) -->
     @if (botonActivo()) {
-    <div class="fixed w-80 min-h-58 max-h-58 bg-white shadow-lg rounded-lg py-1 ml-6 border border-gray-200 z-[9999] pointer-events-none"
+    <div class="absolute w-80 min-h-58 max-h-58 bg-white shadow-lg rounded-lg py-1 border border-gray-200 z-[9999] pointer-events-none"
         [style.left.px]="sidebarPopoverPos().x" [style.top.px]="sidebarPopoverPos().y">
         <img [src]="botonActivo()?.imagen" alt="simbolo" class="w-26 h-26 mx-auto" />
         <h3 class="text-center font-bold text-gray-800">
