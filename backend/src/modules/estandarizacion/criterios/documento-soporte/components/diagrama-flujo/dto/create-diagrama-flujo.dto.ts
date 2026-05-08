@@ -15,3 +15,4 @@ export class CreateDiagramaFlujoDto {
 
     @IsOptional()
     imagenes?: string[];
+}
