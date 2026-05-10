@@ -5,12 +5,14 @@ import { SoporteComputacionalService } from '../../../services/soporte-computaci
 import { AlertService } from '../../../../../shared/services/alert.service';
 import { SoporteComputacional } from '../../../interfaces/soporte-computacional.interface';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TablaDatosComponent } from '../../../../../shared/components/tabla-datos/tabla-datos.component';
+import { Campos } from '../../../../../shared/interfaces/campos.interface';
 
 
 @Component({
   standalone: true,
   selector: 'app-soporte-computacional',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, TablaDatosComponent,],
   templateUrl: './soporte-computacional.component.html',
   styleUrl: './soporte-computacional.component.css'
 })
@@ -26,6 +28,16 @@ export class SoporteComputacionalComponent implements OnInit {
   estadoSoporteComputacional = signal({
     formularioCompleto: false
   });
+
+  mostrarTabla = signal(false);
+  datosTabla = signal<any[]>([]);
+
+  columnasSoporte: Campos[] = [
+    { key: 'tiene_soporte_texto', label: '¿Cuenta con soporte?' },
+    { key: 'nombre_texto', label: 'Nombre del soporte' },
+    { key: 'descripcion_texto', label: 'Descripción' },
+    { key: 'requiere_soporte_texto', label: '¿Requiere soporte?' }
+  ];
 
   //Servicios e Inyeccion de dependencias
   private soporteComputacionalService = inject(SoporteComputacionalService);
@@ -112,6 +124,11 @@ export class SoporteComputacionalComponent implements OnInit {
               descripcion: data.descripcion,
               requiere_soporte: data.requiere_soporte
             });
+
+            if (data.computacional_completado) {
+              this.prepararDatosTabla(data);
+              this.mostrarTabla.set(true);
+            }
           } else {
             this.crearSoporteNuevo();
           }
@@ -159,7 +176,25 @@ export class SoporteComputacionalComponent implements OnInit {
       .subscribe({
         next: () => {
           this.alertService.infoExito('Soporte computacional actualizado correctamente');
-          this.verificarActividadesSoporteComputacional();
+          this.prepararDatosTabla({
+            id: currentSoporteId,
+            tiene_soporte: formData.tiene_soporte ?? null,
+            nombre: formData.nombre ?? null,
+            descripcion: formData.descripcion ?? null,
+            requiere_soporte: formData.requiere_soporte ?? null,
+            computacional_completado: true
+          });
+          this.mostrarTabla.set(true);
+
+          // Emitir inmediatamente para actualizar la UI del padre
+          const completado = (formData.tiene_soporte === true)
+            ? !!(formData.nombre && formData.descripcion)
+            : (formData.tiene_soporte === false && formData.requiere_soporte !== null);
+
+          if (completado) {
+            this.cambioEstadoActividades.emit([true]);
+            this.actualizarActividadesSoporteComputacional();
+          }
         },
         error: (err) => {
           console.error('Error al actualizar soporte:', err);
@@ -227,6 +262,62 @@ export class SoporteComputacionalComponent implements OnInit {
         );
       }
     });
+  }
+
+  prepararDatosTabla(soporte: SoporteComputacional) {
+    const row = {
+      ...soporte, // Incluir todos los datos originales para la edición
+      tiene_soporte_texto: soporte.tiene_soporte ? 'Sí' : 'No',
+      nombre_texto: soporte.tiene_soporte ? (soporte.nombre || 'Vacío') : 'Vacío',
+      descripcion_texto: soporte.tiene_soporte ? (soporte.descripcion || 'Vacío') : 'Vacío',
+      requiere_soporte_texto: !soporte.tiene_soporte ? (soporte.requiere_soporte !== null ? (soporte.requiere_soporte ? 'Sí' : 'No') : 'No especificado') : 'No aplica'
+    };
+    this.datosTabla.set([row]);
+  }
+
+  editarSoporte(soporte: SoporteComputacional) {
+    this.form.patchValue({
+      tiene_soporte: soporte.tiene_soporte,
+      nombre: soporte.nombre,
+      descripcion: soporte.descripcion,
+      requiere_soporte: soporte.requiere_soporte
+    });
+    this.mostrarTabla.set(false);
+  }
+
+  eliminarSoporte(soporte: SoporteComputacional) {
+    const id = this.soporteId();
+    if (!id) return;
+
+    this.alertService.confirmar('¿Estás seguro de eliminar el registro de soporte computacional?', 'Esta acción restablecerá los datos.')
+      .then((result) => {
+        if (result.isConfirmed) {
+          const resetData: Partial<SoporteComputacional> = {
+            tiene_soporte: null,
+            nombre: null,
+            descripcion: null,
+            requiere_soporte: null,
+            computacional_completado: false
+          };
+
+          this.soporteComputacionalService.actualizarSoporteComputacional(id, resetData)
+            .subscribe({
+              next: () => {
+                this.alertService.infoExito('Registro eliminado correctamente');
+                this.form.reset();
+                this.mostrarTabla.set(false);
+                this.verificarActividadesSoporteComputacional();
+              },
+              error: () => {
+                this.alertService.error('Error al eliminar el registro');
+              }
+            });
+        }
+      });
+  }
+
+  regresarAlFormulario() {
+    this.mostrarTabla.set(false);
   }
 }
 

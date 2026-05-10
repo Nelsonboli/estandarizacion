@@ -2,6 +2,7 @@ import { Component, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { Subject, fromEvent, takeUntil } from 'rxjs';
 import { NavegacionComponent } from '../../shared/components/navegacion/navegacion';
+import { SidebarService } from '../../shared/services/sidebar.service';
 
 
 @Component({
@@ -17,6 +18,8 @@ export class DocumentacionComponent implements OnDestroy, AfterViewInit {
   private sections: HTMLElement[] = [];
 
   @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLElement>;
+
+  constructor(public sidebarService: SidebarService) { }
 
   ngOnDestroy(): void {
     this.destroy$.next();

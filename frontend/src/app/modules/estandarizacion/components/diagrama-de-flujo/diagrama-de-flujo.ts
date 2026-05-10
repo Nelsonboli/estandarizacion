@@ -60,8 +60,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
   //Servicios y dependencias
   private alertService = inject(AlertService);
-  private diagramaFlujoService = inject(DiagramaFlujoService);
-  private el = inject(ElementRef); // Inyectar para cálculos de posición
+  private diagramaFlujoService = inject(DiagramaFlujoService)
 
   // Propiedades para nuevas funcionalidades
   private selectedElements: joint.dia.Element[] = [];
@@ -89,22 +88,21 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   sidebarPopoverPos = signal({ x: 0, y: 0 });
 
   mostrarTooltip(event: MouseEvent, boton: BotonSimbolos) {
-    const target = event.currentTarget as HTMLElement;
+    const target = event.target as HTMLElement;
     const rect = target.getBoundingClientRect();
-    const rootRect = this.el.nativeElement.getBoundingClientRect();
     const isTopMenu = window.innerWidth < 1280;
 
     if (isTopMenu) {
       // Si el menú está arriba, mostrar el tooltip debajo
       this.sidebarPopoverPos.set({
-        x: rect.left - rootRect.left,
-        y: rect.bottom - rootRect.top + 10
+        x: rect.left - 20,
+        y: rect.bottom + 10
       });
     } else {
       // Si el menú está al lado (sidebar), mostrar el tooltip a la derecha
       this.sidebarPopoverPos.set({
-        x: rect.right - rootRect.left + 10,
-        y: rect.top - rootRect.top
+        x: rect.right + 30,
+        y: rect.top
       });
     }
     this.botonActivo.set(boton);
@@ -790,11 +788,10 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       this.popoverText.set(typeof existingText === 'string' ? existingText : '');
       this.popoverVisible.set(true);
 
-      // Posicionar popover EXACTAMENTE arriba del texto o punto medio del link
       if (x !== undefined && y !== undefined) {
         this.popoverPos.set({
-          x: x - 100,
-          y: y - 50 // Aparecer inmediatamente arriba del clic
+          x: x - 140, // Centrado horizontal (para popover de 280px)
+          y: y - 200  // Posicionado arriba del clic
         });
       } else {
         const linkView = link.findView(this.paper);
@@ -804,8 +801,8 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
             const midPoint = connection.getPointAtLength(connection.getTotalLength() / 2);
 
             this.popoverPos.set({
-              x: midPoint.x - 100,
-              y: midPoint.y - 135
+              x: midPoint.x - 140,
+              y: midPoint.y - 200
             });
           }
         }
@@ -938,11 +935,10 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
   private actualizarPosPopover(view: joint.dia.ElementView) {
     const bbox = view.getBBox();
-    // BBox ya son coordenadas locales del paper. 
-    // Como el contenedor es relativo, posicionamos absolutamente usando estas mismas coordenadas.
+    // Centrado horizontal para un popover de ~280px y posicionado arriba
     this.popoverPos.set({
-      x: bbox.x + (bbox.width / 2) - 100, // Centrado horizontal
-      y: bbox.y - 135 // Posición optimizada para elementos
+      x: bbox.x + (bbox.width / 2) - 140, 
+      y: bbox.y - 200 
     });
   }
   private eliminarElemento() {
@@ -1152,11 +1148,11 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     // Configuración base más ajustada
     let minHeight = isObservacion ? 25 : 40; // Aún más pequeño
     if (isResponsable) minHeight = 30; // Más pequeño para responsable
-    if (tipo === 'actividad' || !tipo) minHeight = 70; // Reducido de 80
+    if (tipo === 'actividad' || !tipo) minHeight = 80;
 
     const paddingVertical = isResponsable ? 4 : 5;
-    const charWidth = isResponsable ? 6.5 : 7.2; // Fuente 11px vs 12px
-    const lineHeight = isResponsable ? 12 : 14;
+    const charWidth = isResponsable ? 7.2 : 8.2; // Fuente más pequeña para responsable
+    const lineHeight = isResponsable ? 12 : 15;
 
     const maxWidth = 350;
     const maxInitialWidth = 120;
@@ -1169,10 +1165,10 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     let targetTextWidth = Math.max(minWidth, Math.min(maxInitialWidth, estimatedTextWidth));
 
     // Si es actividad o similar, forzar ancho fijo inicial casi al doble
-    if (tipo === 'actividad' || !tipo) targetTextWidth = 180; // Reducido de 200
+    if (tipo === 'actividad' || !tipo) targetTextWidth = 200;
 
     if (isObservacion) targetTextWidth = maxWidth;
-    if (isResponsable) targetTextWidth = Math.min(80, Math.max(25, estimatedTextWidth)); // Min 25px para una sola letra
+    if (isResponsable) targetTextWidth = 80; // Ancho fijo para responsable
 
     const paragraphs = texto.split('\n');
     let totalLinesNeeded = 0;
@@ -1194,15 +1190,13 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
     if (isObservacion || tipo === 'decision' || isResponsable) {
       const margin = tipo === 'decision' ? 50 : (isResponsable ? 5 : 20);
-      const fontSize = isResponsable ? 11 : 12; // Reducido a 12 para el resto
+      const fontSize = isResponsable ? 11 : 14;
       targetTextWidth = (tipo === 'decision' || isResponsable ? (isResponsable ? 80 : element.size().width) : maxWidth) - margin;
       const brokenText = joint.util.breakText(texto, { width: targetTextWidth }, { 'font-size': fontSize });
       element.attr('label/text', brokenText);
     }
 
-    if (!isResponsable) {
-      element.attr('label/fontSize', 12);
-    } else {
+    if (isResponsable) {
       element.attr('label/fontSize', 11); // Texto más pequeño para el círculo
     }
     totalLinesNeeded = calculateLines(targetTextWidth);
@@ -1222,14 +1216,14 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       element.attr('label/textAnchor', 'start');
       element.removeAttr('label/textWrap');
     } else {
-      let finalWidth = targetTextWidth + (isResponsable ? 5 : 20); // Menos padding para responsable
+      let finalWidth = targetTextWidth + 20;
       let actualHeight = finalHeight;
 
       // 👉 REFUERZO DE FORMA: Si es un círculo, forzar relación 1:1
       if (type === 'standard.Circle' || refD.includes('a 50 50')) {
         const side = Math.max(finalWidth, actualHeight);
-        finalWidth = isResponsable ? Math.min(80, side) : side;
-        actualHeight = isResponsable ? Math.min(80, side) : side;
+        finalWidth = isResponsable ? 80 : side;
+        actualHeight = isResponsable ? 80 : side;
       }
 
       // 👉 CRECIMIENTO SIMÉTRICO: Ajustar posición para que crezca "hacia arriba" y laterales igual
@@ -1383,7 +1377,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         element = new joint.shapes.standard.Path();
         textoDefault = 'Actividad';
         config = {
-          size: { w: 200, h: 70 },
+          size: { w: 220, h: 80 },
           attrs: { body: { refD: 'M 0 0 H 100 V 100 H 0 Z' }, label: { textWrap: { width: -15 } } }
         };
     }

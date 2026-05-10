@@ -17,10 +17,10 @@ export class SoporteComputacional {
     @Column({ type: 'boolean', nullable: true })
     tiene_soporte: boolean | null;
 
-    @Column({ type: 'varchar', length: 1000, nullable: true })
+    @Column({ type: 'varchar', length: 150, nullable: true })
     nombre: string | null;
 
-    @Column({ type: 'varchar', length: 1000, nullable: true })
+    @Column({ type: 'varchar', length: 2000, nullable: true })
     descripcion: string | null;
 
     @Column({ type: 'boolean', nullable: true })

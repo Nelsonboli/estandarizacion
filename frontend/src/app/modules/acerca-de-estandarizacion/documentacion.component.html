@@ -1,8 +1,8 @@
 <div class="p-2 bg-white">
   <div #scrollContainer class="flex flex-col md:flex-row bg-white font-sans overflow-y-auto">
     <!-- MENÚ LATERAL -->
-    <aside
-      class="hidden md:block md:w-50 text-azul-fondo px-2 py-2 border-r border-gray-200 rounded-sm bg-white overflow-y-auto">
+    <aside [ngClass]="(sidebarService.colapsado$ | async) ? 'md:hidden' : 'md:block'"
+      class="hidden md:w-50 text-azul-fondo px-2 py-2 border-r border-gray-200 rounded-sm bg-white overflow-y-auto">
 
       <nav class="ml-58 mt-4 text-sm">
         <h2 class="text-xl font-bold mb-3 mt-2 item-center justify-center">Contenido</h2>
@@ -31,27 +31,20 @@
         </div>
       </nav>
     </aside>
-
     <!-- CONTENIDO PRINCIPAL -->
     <main class="flex-1 px-2 py-2 md:p-10 space-y-1 bg-white md:rounded-sm">
       <div class="text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
         1. Acerca de Estandarización de Procedimientos
       </div>
       <!-- TÍTULO -->
-
       <div class="border border-gray-200 rounded-md p-4">
         <header class="px-4 text-grande">
           <h1 class="text-2xl font-extrabold text-gray-800">Introducción</h1>
-
-
-
-
           <p class="text-justify leading-relaxed">
             Este módulo esta basado en la <a
-              href="https://electronica.udenar.edu.co/wp-content/uploads/2020/10/Estatuto-General.pdf" target="_blank"
+              href="/assets/documentos/Guia_metodologica_para_estandarizacion_de _procedimientos.pdf" target="_blank"
               class="no-underline font-medium text-azul-oscuro hover:no-underline hover:text-blue-600  ">
-              Guía Metodológica para la Estandarización de Procedimientos de la
-              Facultad de Ingeniería de la Universidad de Nariño. </a> La guía ofrece una estrategia para llevar a
+              riño. </a> La guía ofrece una estrategia para llevar a
             cualquier procedimiento a un estado completo.
             Es decir, procedimientos debidamente documentados, con herramientas computacionales de soporte (si es
             necesario) y reglamentado, la guía está enfocada en brindar el acompañamiento en el proceso de
@@ -185,6 +178,7 @@
         </section>
 
         <!-- SECCIÓN: METODOLOGÍA -->
+
         <section id="metodologia" class="px-6 py-2">
           <div class="bg-white/80 rounded-lg p-4 border-l-2 border-l-azul-fondo/70 border-r-2 border-r-gray-100 
           border-t-2 border-t-gray-100 border-b-2 border-b-gray-100 text-justify text-grande">

@@ -28,7 +28,6 @@ import { NgxMaterialTimepickerModule, NgxMaterialTimepickerTheme } from 'ngx-mat
 import { socializacion } from '../../../estandarizacion/interfaces/socializacion.interface';
 import { SoporteComputacional } from '../../../estandarizacion/interfaces/soporte-computacional.interface';
 import { MatIconModule } from '@angular/material/icon';
-import { Campos } from '../../../../shared/interfaces/campos.interface';
 
 @Component({
   selector: 'app-socializacionprocedimientos',

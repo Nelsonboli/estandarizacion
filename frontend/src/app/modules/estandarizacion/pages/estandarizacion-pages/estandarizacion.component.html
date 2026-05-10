@@ -9,11 +9,10 @@
                     {{nombreProcedimiento() | titlecase}}</h4>
             </div>
             <div class="border-b border-gray-200 px-4 py-2 mb-2 glass-card">
-
                 <div
-                    class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-4 m-2">
-
+                    class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-3 m-2">
                     @for (estado of datosService.criterios; track estado; let i = $index) {
+
                     <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
                         <!-- Botón -->
                         <button
@@ -55,7 +54,7 @@
                     }
                 </div>
                 <!-- Sección dinámica-->
-                <div class="bg-white/80 border-1 border-gray-300 rounded-lg py-2 m-2">
+                <div class="bg-white/80 border-1 border-gray-300 rounded-lg  m-2">
 
                     @switch (buttonIndex()) {
                     @case (0) {

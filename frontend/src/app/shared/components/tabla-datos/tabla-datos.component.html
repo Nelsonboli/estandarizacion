@@ -1,7 +1,7 @@
 <!-- Encabezado general -->
 <div class="overflow-x-auto w-full">
   <table [ngClass]="{'w-full': mostrarOpciones(), 'w-1/4': !mostrarOpciones()}"
-    class="table-fixed mx-auto border border-gray-300 text-center text-peq border-collapse">
+    class="table-fixed mx-auto border border-gray-300 text-center text-med border-collapse">
     <thead>
       <tr>
         <th [attr.colspan]="columnas().length + (mostrarOpciones() ? 1 : 0)"
@@ -30,7 +30,7 @@
       <tr class="hover:bg-gray-100">
         @for (nombre of columnas(); track nombre.key) {
         <td class="px-2 py-2 border border-gray-300 text-center align-top whitespace-pre-line break-words">
-          {{ item[nombre.key] | formatearArray:'custom':'•' | titlecase }}
+          {{ item[nombre.key] | formatearArray:'custom':'•' }}
         </td>
         }
         @if (mostrarOpciones()) {

@@ -21,8 +21,8 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 export class ReglamentoComponent implements OnInit {
   descargaActiva: 'descargarProcedimiento' | 'descargarEstandarizacion' | null = null;
   subidaActiva: 'subirProcedimiento' | 'subirEstandarizacion' | null = null;
-  formatoEstandarizacion = "Formato de Estandarizacion"
-  fichaProcedimiento = "Ficha de Procedimiento"
+  formatoEstandarizacion = "formato de estandarización"
+  formatoProcedimiento = "formato de procedimiento"
   procedimientoId = input<number>();
   reglamentoEnviado = output<void>();
   cambioEstadoActividades = output<boolean[]>();
@@ -68,7 +68,7 @@ export class ReglamentoComponent implements OnInit {
   }
 
 
-  descargarReporteDAAC() {
+  descargarFormatoProcedimientoDAAC() {
     const pId = this.procedimientoId();
     if (!pId) {
       this.alertService.error('No se ha seleccionado un procedimiento para descargar el reporte.');

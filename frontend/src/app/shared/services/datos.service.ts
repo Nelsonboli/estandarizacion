@@ -188,9 +188,9 @@ export class DatosService {
 
   // Opciones para el componente card
   public readonly opciones = [
-    ["Reglamento base", "Formulario de procedimiento DAAC", "Diagrama de procedimiento"],
+    ["Reglamento base", "Caracterización", "Diagrama de Flujo"],
     ["Soporte computacional"],
-    ["Ficha de procedimiento descargada", "Ficha de procedimiento aprobada por la DAAC"]
+    ["Formato de procedimiento descargado", "Formato de procedimiento aprobado por la DAAC"]
 
   ];
 

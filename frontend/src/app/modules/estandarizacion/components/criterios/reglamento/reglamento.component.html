@@ -1,55 +1,52 @@
+<div class=" text-med bg-gray-100 font-medium text-black p-2  border rounded-md text-center">
+    <h6 class="text-azul-oscuro">3. Reglamento</h6>
+</div>
 <div class="sm:grid-cols-1 grid-cols-2 justify-center items-center gap-4 m-4">
-    <!-- 🔹 Ficha de Procedimiento -->
+
     <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4 m-2">
-        @if (descargaActiva !== 'descargarProcedimiento') {
-        <button
-            class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70"
-            (click)="descargaActiva = 'descargarProcedimiento'; subidaActiva= null">
-            <img src="assets/elementos/descargarDocumento.svg" alt="{{fichaProcedimiento}}" class="w-6 h-6" />
-            {{ fichaProcedimiento }}
-        </button>
-        }
-        @if (descargaActiva === 'descargarProcedimiento') {
+        @if (subidaActiva !== 'subirProcedimiento') {
         <ng-container>
             <div
-                class="flex flex-col justify-center items-center text-center space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
-                <strong>Descargar la Ficha de Procedimiento para la DAAC</strong>
-                <p class="text-med m-2 pt-2 mb-4">
-                    <span class="text-med text-blue-600 font-medium">Información:</span>
-                    Descargue la Ficha de Procedimiento y envíe el documento a la División
-                    de Autoevaluación, Acreditación y Certificación (DAAC) de la Universidad
-                    de Nariño para su aprobación.
-                    Envíelo al correo:
-                    <span class="text-med text-blue-600">
+                class="flex flex-col justify-center items-center text-center text-grande space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
+                <strong class="text-azul-oscuro text-grande">Descargar formato de procedimiento para la DAAC</strong>
+                <p class="text-grande m-2 pt-2 mb-4">
+                    <span class="text-grande text-azul-oscuro font-medium">Información:</span>
+                    Descargue el formato de procedimiento y envíe el documento a la División
+                    de Autoevaluación Acreditación y Certificación (DAAC) de la Universidad
+                    de Nariño, para su aprobación. Envíe el documento al correo:
+                    <span class="text-grande text-blue-600">
                         acreditacioninstitucional&#64;udenar.edu.co
                     </span>
                 </p>
-                <button (click)="descargarReporteDAAC()"
+
+                <button (click)="descargarFormatoProcedimientoDAAC(); subidaActiva = 'subirProcedimiento';"
                     class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
-                    <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Ficha" class="w-6 h-6" />
-                    Descargar {{ fichaProcedimiento }}
+                    <img src="assets/elementos/descargarDocumento.svg" alt="Descargar formato de procedimiento"
+                        class="w-6 h-6" />
+                    Descargar {{formatoProcedimiento}}
                 </button>
-                <p class="text-med m-2 pt-2">
-                    Luego de recibir la aprobación por parte de la DAAC, deberá subir la
-                    Ficha de Procedimiento aprobada para continuar con el Formato de
+                <p class="text-grande m-2 pt-2">
+                    Luego de recibir la aprobación por parte de la DAAC, deberá subir el
+                    formato de procedimiento aprobado para continuar con el Formato de
                     Estandarización.
                 </p>
             </div>
         </ng-container>
         }
 
-        @if (subidaActiva !== 'subirProcedimiento') {
+        @if (estadoReglamento().descarga_daac_completada && subidaActiva !== 'subirProcedimiento') {
         <button
-            class="flex items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-500 px-4 py-2 rounded min-w-70 group"
-            (click)="subidaActiva = 'subirProcedimiento'; descargaActiva = null">
+            class="flex text-grande items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-500 px-4 py-2 rounded min-w-70 group"
+            (click)="subidaActiva = 'subirProcedimiento'">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
                 class="w-6 h-6 mr-2 fill-gray-500 group-hover:fill-gray-600 transition-colors duration-300">
                 <path
                     d="M444-336v-342L339-573l-51-51 192-192 192 192-51 51-105-105v342h-72ZM263.72-192Q234-192 213-213.15T192-264v-72h72v72h432v-72h72v72q0 29.7-21.16 50.85Q725.68-192 695.96-192H263.72Z" />
             </svg>
-            Subir {{ fichaProcedimiento }}
+            Subir {{formatoProcedimiento}}
         </button>
         }
+
         @if (subidaActiva === 'subirProcedimiento'){
         <div class=" w-full px-4 py-2 ">
             @if (!estadoReglamento().subida_daac_completada) {
@@ -74,22 +71,13 @@
                     Cerrar
                 </button>
             </div>
-
             }
         </div>
         }
     </div>
     <!-- 🔹 Formato de Estandarización -->
     <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4 m-2">
-        @if (descargaActiva !== 'descargarEstandarizacion') {
-        <button
-            class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70"
-            (click)="descargaActiva = 'descargarEstandarizacion'; subidaActiva=null">
-            <img src="assets/elementos/descargarDocumento.svg" alt="{{formatoEstandarizacion}}" class="w-6 h-6" />
-            {{ formatoEstandarizacion }}
-        </button>
-        }
-        @if (descargaActiva === 'descargarEstandarizacion') {
+        @if ( estadoReglamento().subida_daac_completada) {
         <ng-container>
             <app-formato-estandarizacion #formatoRefEstandarizacion
                 [procedimientoId]="procedimientoId()!"></app-formato-estandarizacion>
@@ -97,15 +85,15 @@
                 class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
 
                 <div class="flex flex-col items-center text-center space-y-3">
-                    <p class="text-med m-2 pt-2 mb-4">
+                    <p class="text-grande m-2 pt-2 mb-4">
                         A continuación puede descargar el Formato de Estandarización para su revisión y aprobación.
                     </p>
                     <button (click)="descargarFormatoEstandarizacion()"
-                        class="flex items-center justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
+                        class="flex items-center text-grande justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                         <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato" class="w-6 h-6" />
                         {{ formatoEstandarizacion }}
                     </button>
-                    <p class="text-med m-2 pt-2">
+                    <p class="text-grande m-2 pt-2">
                         Luego de recibir la aprobación por la Dependencia, deberá subir el
                         Formato de Estandarización para continuar con la Socialización del
                         procedimiento.

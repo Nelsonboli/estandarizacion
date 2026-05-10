@@ -4,6 +4,7 @@ import { FooterComponent } from '../footer/footer.component';
 import { Router, RouterOutlet } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { MenulateralComponent } from '../menu-lateral/menu-lateral.component';
+import { SidebarService } from '../../shared/services/sidebar.service';
 
 
 @Component({
@@ -17,18 +18,22 @@ export class LayoutComponent {
   colapsar = false;
   esMenuPrincipal = false;   // bandera para saber si estoy en la ruta del menú principal
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private sidebarService: SidebarService) {
     this.router.events.subscribe(() => {
       const url = this.router.url;
-      this.esMenuPrincipal = url === '/'; // ajusta al path real
-      this.colapsar = false; // cada vez que navega, sidebar inicia expandido
+      // Consideramos menú principal tanto la raíz como /menuprincipal
+      this.esMenuPrincipal = url === '/' || url === '/menuprincipal'; 
+      this.colapsar = false; 
+      this.sidebarService.setColapsado(false);
     });
 
+    // Sincronizar el estado local con el servicio
+    this.sidebarService.colapsado$.subscribe(val => this.colapsar = val);
   }
 
   toggleSidebar() {
     if (!this.esMenuPrincipal) {
-      this.colapsar = !this.colapsar;
+      this.sidebarService.toggle();
     }
   }
 }

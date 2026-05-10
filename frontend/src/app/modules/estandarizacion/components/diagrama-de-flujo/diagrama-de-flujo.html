@@ -1,4 +1,4 @@
-<div class="w-full max-w-full relative">
+<div class="w-full max-w-full">
     <div class="flex flex-col xl:flex-row w-full items-start">
         <!-- Sidebar / Top Menu -->
         <aside
@@ -67,13 +67,13 @@
 
                         <!-- Popover flotante -->
                         @if (popoverVisible()) {
-                        <div class="absolute z-50 bg-white border border-gray-300 shadow-sm rounded-lg py-2 px-4 flex flex-col gap-1 custom-popover"
-                            [style.left.px]="popoverPos().x-6" [style.top.px]="popoverPos().y-32">
+                        <div class="absolute z-50 bg-white border border-gray-300 shadow-md rounded-xl py-3 px-3 flex flex-col gap-2 min-w-[280px] custom-popover"
+                            [style.left.px]="popoverPos().x" [style.top.px]="popoverPos().y-10">
                             <!-- Campo editable -->
-                            <label class="mt-2 text-center text-sm font-medium">Texto para el símbolo:</label>
+                            <label class="text-center text-sm font-bold text-gray-700">Editar Texto</label>
                             <textarea [(ngModel)]="popoverText"
-                                class="border border-gray-300 rounded px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto resize-none"
-                                placeholder="Escribe aquí..." autofocus></textarea>
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto resize-none h-20"
+                                placeholder="Escribe el contenido aquí..." autofocus></textarea>
                             <!-- Botones -->
                             <div class="flex flex-row gap-2 justify-center mt-1">
                                 <button
@@ -83,7 +83,7 @@
                                 <button
                                     class="bg-gray-500 text-white text-sm px-3 py-1 w-full rounded hover:bg-gray-600 transition-colors"
                                     (click)="popoverVisible.set(false)"> Cerrar
-                                </button> v
+                                </button>
                             </div>
                             <!-- Flechita hacia abajo -->
                             <div
@@ -116,12 +116,21 @@
                     </div>
                 </div>
             </div>
+
+            <!-- <div class="flex justify-end gap-2 pt-2">
+
+                <button (click)="cancelarDiagrama.emit(true)"
+                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-150 transition-colors duration-300">
+                    <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
+                    Cancelar
+                </button>
+            </div> -->
         </main>
     </div>
 
-    <!-- Tooltip Sidebar (Absolute position relative to component root) -->
+    <!-- Tooltip Sidebar (Fixed position) -->
     @if (botonActivo()) {
-    <div class="absolute w-80 min-h-58 max-h-58 bg-white shadow-lg rounded-lg py-1 border border-gray-200 z-[9999] pointer-events-none"
+    <div class="fixed w-80 min-h-58 max-h-58 bg-white shadow-lg rounded-lg py-1 ml-6 border border-gray-200 z-[9999] pointer-events-none"
         [style.left.px]="sidebarPopoverPos().x" [style.top.px]="sidebarPopoverPos().y">
         <img [src]="botonActivo()?.imagen" alt="simbolo" class="w-26 h-26 mx-auto" />
         <h3 class="text-center font-bold text-gray-800">

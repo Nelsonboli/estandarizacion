@@ -3,11 +3,12 @@ import { Component, ElementRef, inject, input, OnInit, output, signal, ViewChild
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RecoleccionInformacionService } from '../../../modules/estandarizacion/services/recoleccion-informacion.service';
 import { AlertService } from '../../services/alert.service';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-modal-recoleccion-informacion',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule],
   templateUrl: './modal-recoleccion-informacion.component.html',
   styleUrl: './modal-recoleccion-informacion.component.css'
 })
@@ -26,6 +27,7 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
   private fb = inject(FormBuilder);
   private recoleccionService = inject(RecoleccionInformacionService);
   private alertService = inject(AlertService);
+  private router = inject(Router);
 
   ngOnInit() {
     this.iniciarFormulario();
@@ -48,6 +50,12 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
     this.cerrar.emit();
     this.formularioRecoleccion.reset();
   }
+
+  Cancelar() {
+    this.Cerrar();
+    this.router.navigate(['/identificacionrequerimientos']);
+  }
+
 
   Guardar() {
     if (this.formularioRecoleccion.invalid) return;
