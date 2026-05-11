@@ -31,7 +31,7 @@
   
 }
 .criterios-basic-button {
-  @apply font-sans ring-1 ring-background shadow-sm scale-105 bg-transparent text-4xl font-bold text-center;
+  @apply font-sans ring-1 ring-background shadow scale-105 bg-transparent text-4xl font-bold text-center;
 }
 
 .criterios-group-hover {
