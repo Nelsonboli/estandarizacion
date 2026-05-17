@@ -66,10 +66,21 @@
     </div>
     }
 
-    <!-- Botón enviar -->
-    <button type="submit" class="mt-6 bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">
-      Guardar
-    </button>
+    <!-- Botones Cancelar y Guardar -->
+    <div class="flex justify-end gap-2 pt-2 mt-4">
+      <button type="submit"
+        class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-110 transition-colors duration-300">
+        <img src="assets/elementos/guardar.svg" alt="Guardar formulario" class="w-6 h-6" />
+        Guardar
+      </button>
+      @if (datosTabla().length > 0) {
+      <button type="button" (click)="cancelarEdicion()"
+        class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-150 transition-colors duration-300">
+        <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
+        Cancelar
+      </button>
+      }
+    </div>
   </form>
   } @else {
   <div class="bg-white/80 border border-gray-200 rounded-md p-6 mt-4">

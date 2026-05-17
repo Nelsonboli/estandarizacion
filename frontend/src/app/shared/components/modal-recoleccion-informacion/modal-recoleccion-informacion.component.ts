@@ -23,6 +23,7 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
 
   escalar = signal(false);
   formularioRecoleccion!: FormGroup;
+  private recoleccionId: number | null = null;
 
   private fb = inject(FormBuilder);
   private recoleccionService = inject(RecoleccionInformacionService);
@@ -31,12 +32,29 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
 
   ngOnInit() {
     this.iniciarFormulario();
+    this.cargarDatosExistentes();
   }
 
   private iniciarFormulario() {
     this.formularioRecoleccion = this.fb.group({
       encuesta: ['', Validators.required]
     });
+  }
+
+  private cargarDatosExistentes() {
+    if (this.procedimientoId() > 0) {
+      this.recoleccionService.getPorProcedimiento(this.procedimientoId()).subscribe({
+        next: (data) => {
+          if (data && data.encuesta && data.encuesta.trim() !== '') {
+            this.recoleccionId = data.id || null;
+            this.formularioRecoleccion.patchValue({
+              encuesta: data.encuesta
+            });
+          }
+        },
+        error: (err) => console.error('Error al cargar datos existentes:', err)
+      });
+    }
   }
 
   onBackdropClick(event: MouseEvent): void {
@@ -49,11 +67,16 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
   Cerrar() {
     this.cerrar.emit();
     this.formularioRecoleccion.reset();
+    this.recoleccionId = null;
   }
 
   Cancelar() {
-    this.Cerrar();
-    this.router.navigate(['/identificacionrequerimientos']);
+    if (this.recoleccionId) {
+      this.Cerrar();
+    } else {
+      this.Cerrar();
+      this.router.navigate(['/identificacionrequerimientos']);
+    }
   }
 
 
@@ -62,18 +85,31 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
 
     const values = this.formularioRecoleccion.value;
 
-    this.recoleccionService.crear(this.procedimientoId()).subscribe({
-      next: (res) => {
-        this.recoleccionService.actualizar(res.id!, values).subscribe({
-          next: () => {
-            this.alertService.exito('Información de recolección guardada');
-            this.guardarExitoso.emit();
-            this.Cerrar();
-          },
-          error: () => this.alertService.error('Error al actualizar la información')
-        });
-      },
-      error: () => this.alertService.error('Error al procesar la recolección de información')
-    });
+    if (this.recoleccionId) {
+      // Actualizar registro existente
+      this.recoleccionService.actualizar(this.recoleccionId, values).subscribe({
+        next: () => {
+          this.alertService.exito('Información de recolección actualizada correctamente');
+          this.guardarExitoso.emit();
+          this.Cerrar();
+        },
+        error: () => this.alertService.error('Error al actualizar la información')
+      });
+    } else {
+      // Crear registro nuevo
+      this.recoleccionService.crear(this.procedimientoId()).subscribe({
+        next: (res) => {
+          this.recoleccionService.actualizar(res.id!, values).subscribe({
+            next: () => {
+              this.alertService.exito('Información de recolección guardada');
+              this.guardarExitoso.emit();
+              this.Cerrar();
+            },
+            error: () => this.alertService.error('Error al completar el guardado')
+          });
+        },
+        error: () => this.alertService.error('Error al crear la recolección de información')
+      });
+    }
   }
 }

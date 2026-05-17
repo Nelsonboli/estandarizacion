@@ -148,7 +148,7 @@ export class ReglamentoComponent implements OnInit {
   eliminarFormatoDAAC() {
     const regId = this.reglamentoId();
     if (!regId) return;
-    this.alertService.confirmar('¿Está seguro de eliminar el formato de caracterizacion DAAC?', 'Esta acción no se puede deshacer').then((result) => {
+    this.alertService.confirmar('¿Está seguro de eliminar el formato de procedimiento ?', 'Esta acción no se puede deshacer').then((result) => {
       if (result.isConfirmed) {
         this.reglamentoService.eliminarFormatoDAAC(regId).subscribe({
           next: () => {

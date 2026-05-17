@@ -77,7 +77,8 @@
                     </app-reglamento>
                     }
                     @default {
-                    <app-inicio [procedimientoId]="procedimientoId()"></app-inicio>
+                    <app-inicio #inicioComp [procedimientoId]="procedimientoId()"
+                        (solicitarEdicion)="abrirModalRecoleccion()"></app-inicio>
                     }
                     }
                 </div>

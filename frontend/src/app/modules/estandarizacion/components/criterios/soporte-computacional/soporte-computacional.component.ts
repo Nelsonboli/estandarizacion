@@ -319,5 +319,18 @@ export class SoporteComputacionalComponent implements OnInit {
   regresarAlFormulario() {
     this.mostrarTabla.set(false);
   }
+
+  cancelarEdicion() {
+    this.mostrarTabla.set(true);
+    const soporte = this.datosTabla()[0];
+    if (soporte) {
+      this.form.patchValue({
+        tiene_soporte: soporte.tiene_soporte,
+        nombre: soporte.nombre,
+        descripcion: soporte.descripcion,
+        requiere_soporte: soporte.requiere_soporte
+      });
+    }
+  }
 }
 

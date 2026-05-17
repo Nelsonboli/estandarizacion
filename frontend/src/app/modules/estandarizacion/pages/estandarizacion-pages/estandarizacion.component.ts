@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -43,6 +43,7 @@ import { EstadoAsignacionService } from '../../../../shared/services/estado-asig
 })
 
 export class EstandarizarComponent {
+  @ViewChild('inicioComp') inicioComp?: InicioComponent;
   //id de criterio y procedimiento
   procedimientoId = signal<number>(0);
   soporteId = signal<number>(0);
@@ -461,11 +462,17 @@ export class EstandarizarComponent {
     if (this.procedimientoId() > 0) {
       this.recoleccionService.getPorProcedimiento(this.procedimientoId()).subscribe({
         next: (res) => {
+          // Si no hay encuesta, abrir el modal
           if (!res || (!res.encuesta.trim())) {
             this.abrirModalRecoleccion();
           }
+          // Siempre intentar refrescar el componente de inicio si está presente
+          this.inicioComp?.obtenerRecoleccionInformacion();
         },
-        error: () => this.abrirModalRecoleccion()
+        error: () => {
+          this.abrirModalRecoleccion();
+          this.inicioComp?.obtenerRecoleccionInformacion();
+        }
       });
     }
   }

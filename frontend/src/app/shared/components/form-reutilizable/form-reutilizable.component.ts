@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { AlertService } from '../../services/alert.service';
 import { MatIconModule } from '@angular/material/icon';
 import { TablasFormularioComponent } from "../tablas-formulario/tablas-formulario.component";
-import { TitleCasePipe, NgClass } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Campos } from '../../interfaces/campos.interface';
 
 @Component({
   selector: 'app-formreutilizable',
-  imports: [ReactiveFormsModule, FormsModule, MatIconModule, TablasFormularioComponent, TitleCasePipe, NgClass],
+  imports: [ReactiveFormsModule, FormsModule, MatIconModule, TablasFormularioComponent, NgClass],
   templateUrl: './form-reutilizable.component.html',
   styleUrl: './form-reutilizable.component.css'
 })
@@ -16,7 +16,7 @@ export class FormreutilizableComponent implements OnInit {
   // Inputs y outputs con Signals
   titulo = input<string[]>();
   campos = input<Campos[]>([]);
-  datoEditar = input<any>(null); // Se mantiene any por la naturaleza genérica, pero se podría refactorizar a Record<string, any>
+  datoEditar = input<any>(null);
   guardar = output<any>();
   cerrar = output<void>();
   cancelar = output<void>();

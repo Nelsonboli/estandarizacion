@@ -1,4 +1,4 @@
-<div class="w-full max-w-full">
+<div #mainContainer class="w-full max-w-full relative">
     <div class="flex flex-col xl:flex-row w-full items-start">
         <!-- Sidebar / Top Menu -->
         <aside
@@ -95,7 +95,7 @@
                         </div>
                         }
 
-                        <!-- 🖱️ Menú Contextual (Custom) -->
+                        <!-- 🖱️ Menú Contextal (Custom) -->
                         @if (contextMenuVisible()) {
                         <div class="absolute z-[100] bg-white border border-gray-300 shadow-md rounded overflow-hidden flex flex-col min-w-[150px]"
                             [style.left.px]="contextMenuPos().x" [style.top.px]="contextMenuPos().y">
@@ -116,21 +116,12 @@
                     </div>
                 </div>
             </div>
-
-            <!-- <div class="flex justify-end gap-2 pt-2">
-
-                <button (click)="cancelarDiagrama.emit(true)"
-                    class="flex items-center gap-2 hover:scale-105 transition-110 text-gray-800 px-4 py-2 rounded hover:brightness-150 transition-colors duration-300">
-                    <img src="assets/elementos/cancelar.svg" alt="Cancelar formulario" class="w-6 h-6" />
-                    Cancelar
-                </button>
-            </div> -->
         </main>
     </div>
 
-    <!-- Tooltip Sidebar (Fixed position) -->
+    <!-- Tooltip Sidebar (Absolute position) -->
     @if (botonActivo()) {
-    <div class="fixed w-80 min-h-58 max-h-58 bg-white shadow-lg rounded-lg py-1 ml-6 border border-gray-200 z-[9999] pointer-events-none"
+    <div class="absolute w-80 min-h-58 max-h-58 bg-white shadow-lg rounded-lg py-1 border border-gray-200 z-[9999] pointer-events-none"
         [style.left.px]="sidebarPopoverPos().x" [style.top.px]="sidebarPopoverPos().y">
         <img [src]="botonActivo()?.imagen" alt="simbolo" class="w-26 h-26 mx-auto" />
         <h3 class="text-center font-bold text-gray-800">

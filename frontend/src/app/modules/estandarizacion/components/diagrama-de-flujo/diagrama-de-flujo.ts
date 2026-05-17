@@ -42,6 +42,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   private scrollHandler: any;
   private keydownHandler: any;
 
+  @ViewChild('mainContainer') mainContainerRef!: ElementRef;
   @ViewChild('canvas') canvasRef!: ElementRef;
   textoNodo: string = '';
   private graph = new joint.dia.Graph();
@@ -88,21 +89,30 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   sidebarPopoverPos = signal({ x: 0, y: 0 });
 
   mostrarTooltip(event: MouseEvent, boton: BotonSimbolos) {
-    const target = event.target as HTMLElement;
+    const target = (event.currentTarget || event.target) as HTMLElement;
     const rect = target.getBoundingClientRect();
     const isTopMenu = window.innerWidth < 1280;
+
+    let containerLeft = 0;
+    let containerTop = 0;
+
+    if (this.mainContainerRef) {
+      const containerRect = this.mainContainerRef.nativeElement.getBoundingClientRect();
+      containerLeft = containerRect.left;
+      containerTop = containerRect.top;
+    }
 
     if (isTopMenu) {
       // Si el menú está arriba, mostrar el tooltip debajo
       this.sidebarPopoverPos.set({
-        x: rect.left - 20,
-        y: rect.bottom + 10
+        x: rect.left - containerLeft,
+        y: rect.bottom - containerTop + 10
       });
     } else {
       // Si el menú está al lado (sidebar), mostrar el tooltip a la derecha
       this.sidebarPopoverPos.set({
-        x: rect.right + 30,
-        y: rect.top
+        x: rect.right - containerLeft + 15,
+        y: rect.top - containerTop
       });
     }
     this.botonActivo.set(boton);
@@ -644,15 +654,23 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
 
       if (event.key === 'Delete' || event.key === 'Backspace') {
+        let algoEliminado = false;
         if (this.selectedLink) {
           this.selectedLink.remove();
           this.selectedLink = null;
+          algoEliminado = true;
         } else if (this.selectedElements.length > 0) {
           this.selectedElements.forEach(el => el.remove());
           this.selectedElements = [];
           this.popoverVisible.set(false);
+          algoEliminado = true;
         } else if (this.selectedElement) {
           this.eliminarElemento();
+          algoEliminado = true;
+        }
+
+        if (algoEliminado) {
+          this.alertService.infoEliminar('Elemento eliminado');
         }
       }
       if (event.ctrlKey && event.key === 'c') this.copiarElementos();
@@ -937,8 +955,8 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     const bbox = view.getBBox();
     // Centrado horizontal para un popover de ~280px y posicionado arriba
     this.popoverPos.set({
-      x: bbox.x + (bbox.width / 2) - 140, 
-      y: bbox.y - 200 
+      x: bbox.x + (bbox.width / 2) - 140,
+      y: bbox.y - 200
     });
   }
   private eliminarElemento() {
@@ -1633,6 +1651,13 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
   }
 
   async guardarDiagrama() {
+    // Validar que haya elementos en el sistema
+    const elementosReal = this.graph.getElements().filter(el => el.prop('tipo') !== 'separador');
+    if (elementosReal.length === 0) {
+      this.alertService.infoInformacion('Para guardar el diagrama debe agregar elementos');
+      return;
+    }
+
     // 1. Generar PDF principal
     const pdfBase64 = await this.exportarPDF(true);
     if (!pdfBase64 || !this.documentoId) {
