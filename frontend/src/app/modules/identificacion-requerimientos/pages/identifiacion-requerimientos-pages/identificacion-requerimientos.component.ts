@@ -47,7 +47,6 @@ export class IdentificacionrequerimientosComponent implements OnInit, OnDestroy 
   ngOnInit(): void {
     this.cargarProcedimientos();
     this.setupSearchHandler();
-    console.log("this is console of datosTablaProcedimiento:", this.datosTablaProcedimiento());
   }
 
   ngOnDestroy(): void {

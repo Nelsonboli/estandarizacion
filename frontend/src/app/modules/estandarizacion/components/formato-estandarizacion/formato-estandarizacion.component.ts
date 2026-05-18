@@ -56,13 +56,10 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
   }
 
   async generarPDF() {
-    console.log('Iniciando generación de PDF...');
-
     try {
       // Usar querySelectorAll restringido al elemento raíz si es posible, 
       // o asegurar que solo capturamos las páginas visibles de este componente
       const pages = document.querySelectorAll('.a4-page:not([style*="display: none"])');
-      console.log(`Buscando .a4-page... Encontradas: ${pages.length}`);
 
       if (pages.length === 0) {
         const errorMensaje = 'Error: No se encontraron elementos con la clase ".a4-page". Verifica el HTML.';
@@ -78,7 +75,6 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
 
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i] as HTMLElement;
-        console.log(`Preparando captura de página ${i + 1} de ${pages.length}`);
 
         const canvas = await html2canvas(page, {
           scale: 2,
@@ -121,12 +117,10 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
           }
         });
 
-        console.log(`Página ${i + 1}: Canvas capturado con éxito (${canvas.width}x${canvas.height})`);
         const imgData = canvas.toDataURL('image/png');
 
         if (i > 0) {
           pdf.addPage();
-          console.log(`Página ${i + 1}: Nueva página añadida al PDF`);
         }
 
         // Ajustar imagen al tamaño A4 (210x297mm)
@@ -134,7 +128,6 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
       }
 
       pdf.save(filename);
-      console.log('PDF generado con éxito');
       alert('PDF generado y descargado con éxito');
 
     } catch (globalError) {

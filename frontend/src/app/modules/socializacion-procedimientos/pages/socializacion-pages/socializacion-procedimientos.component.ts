@@ -109,9 +109,7 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public obtenerProcedimientos(): void {
     this.procedimientoService.getProcedimientos().subscribe({
       next: (data: Procedimiento[]) => {
-        console.log('Datos cargados - Procedimientos:', data);
         this.procedimientos = data;
-        console.log(this.procedimientos);
         this.tablaService.setProcedimientos(data);
       },
       error: (err) => {
@@ -174,7 +172,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
     if (idExistente) {
       this.socializacionService.actualizarSocializacion(idExistente, data).subscribe({
         next: (res: socializacion) => {
-          console.log('Datos actualizados - Socialización:', res);
           this.procesarExitoSocializacion(res, data, 'Socialización actualizada exitosamente');
         },
         error: (err) => {
@@ -185,7 +182,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
     } else {
       this.socializacionService.guardarSocializacion(data).subscribe({
         next: (res: socializacion) => {
-          console.log('Datos guardados - Socialización:', res);
           this.procesarExitoSocializacion(res, data, 'Socialización registrada exitosamente');
         },
         error: (err) => {
@@ -283,7 +279,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public cargarSocializacion(idProcedimiento: number): void {
     this.socializacionService.obtenerPorProcedimiento(idProcedimiento).subscribe({
       next: (data: socializacion | null) => {
-        console.log('Datos cargados - Socialización del procedimiento:', data);
         if (data) {
           this.socializacionData.set(data);
           this.estaSocializado.set(true);
@@ -326,7 +321,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public cargarDatosAdicionalesProcedimiento(idProcedimiento: number): void {
     this.documentoSoporteService.getPorProcedimiento(idProcedimiento).subscribe({
       next: (documentoSoporte: any) => {
-        console.log('Datos cargados - Documento Soporte:', documentoSoporte);
         if (documentoSoporte?.id) {
           this.cargarFormularioDAAC(documentoSoporte.id);
           this.cargarDocumentosBase(documentoSoporte.id);
@@ -350,7 +344,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public cargarFormularioDAAC(idDocumentoSoporte: number): void {
     this.formularioDAACService.obtenerPorDocumento(idDocumentoSoporte).subscribe({
       next: (data: FormularioDAAC) => {
-        console.log('Datos cargados - Formulario DAAC:', data);
         if (data) {
           this.mapearDatosDAAC(data);
         } else {
@@ -367,7 +360,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public cargarDocumentosBase(idDocumentoSoporte: number): void {
     this.reglamentoBaseService.obtenerReglamentoBasePorDocumento(idDocumentoSoporte).subscribe({
       next: (reglamentoBase: ReglamentoBase | ReglamentoBase[]) => {
-        console.log('Datos cargados - Documentos Base:', reglamentoBase);
         const docs = Array.isArray(reglamentoBase) ? reglamentoBase : (reglamentoBase ? [reglamentoBase] : []);
         this.documentosBase = docs.map((doc) => ({
           Criterio: `Documento `,
@@ -384,7 +376,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public cargarDiagramaFlujo(idDocumentoSoporte: number): void {
     this.diagramaFlujoService.getDiagramaPdf(idDocumentoSoporte).subscribe({
       next: (diagramaFlujo: any) => {
-        console.log('Datos cargados - Diagrama de Flujo (PDF):', diagramaFlujo ? 'Contiene base64' : null);
         this.imagenDiagrama = diagramaFlujo?.pdfBase64 || null;
       },
       error: (err) => {
@@ -397,7 +388,6 @@ export class SocializacionprocedimientosComponent implements OnInit {
   public cargarSoporteComputacional(idProcedimiento: number): void {
     this.soporteComputacionalService.getSoporteComputacional(idProcedimiento).subscribe({
       next: (soporte: SoporteComputacional) => {
-        console.log('Datos cargados - Soporte Computacional:', soporte);
         this.soporteComputacional = soporte;
       },
       error: (err) => {

@@ -183,7 +183,6 @@ export class DocumentacionSoporteComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        console.log("error al cargar el formulario", error);
         this.tablaFormularioDAACService.setDatosFormularioDAAC([]);
         this.mostrarFormularioDAAC.set(true);
         this.cdr.markForCheck();

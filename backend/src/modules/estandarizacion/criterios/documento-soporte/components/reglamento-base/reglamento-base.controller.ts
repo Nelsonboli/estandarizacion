@@ -9,7 +9,6 @@ export class ReglamentoBaseController {
 
   @Post()
   create(@Body() createReglamentoBaseDto: CreateReglamentoBaseDto) {
-    console.log("📩 DTO recibido:", createReglamentoBaseDto);
     return this.reglamentoBaseService.createByDocumentoSoporte(createReglamentoBaseDto);
   }
 

@@ -209,7 +209,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       'Link': joint.shapes.standard.Link,
       'standard.Path': joint.shapes.standard.Path,
       'standard.Polygon': joint.shapes.standard.Polygon,
-      'standard.Rectangle': joint.shapes.standard.Path, // Normalización
+      'standard.Rectangle': joint.shapes.standard.Path, 
       'standard.Circle': joint.shapes.standard.Path,
       'standard.Ellipse': joint.shapes.standard.Path
     };
@@ -238,7 +238,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     this.paper.unfreeze();
     this.paper.setInteractivity(true);
 
-    // Refuerzo centralizado de atributos para nuevas celdas
     (this.graph as any).on('add', (cell: joint.dia.Cell) => {
       if (cell.isElement()) {
         cell.attr('root/pointerEvents', 'auto');
@@ -331,7 +330,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     this.paper.on('blank:pointerdown', (evt: any, x: number, y: number) => {
       this.limpiarTodo();
       this.contextMenuVisible.set(false);
-      this.popoverVisible.set(false); // Refuerzo para asegurar que se cierre
+      this.popoverVisible.set(false); 
       this.iniciarSeleccionArea(x, y);
     });
 
@@ -370,21 +369,18 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       this.contextMenuVisible.set(false);
     });
 
-    // Prevenir menú nativo
+
     this.canvasRef.nativeElement.addEventListener('contextmenu', (e: Event) => e.preventDefault());
   }
 
   private conectarElementos(origen: joint.dia.Element, destino: joint.dia.Element) {
     const link = new joint.shapes.standard.Link();
 
-    // Configuración de anclas por defecto
-    // Configuración de anclas por defecto
     let sourceAnchor: any = { name: 'center' };
     let targetAnchor: any = { name: 'center' };
 
     const esRetorno = destino.position().y < (origen.position().y + 20);
 
-    // Lógica especial para Decisiones (Desvío de flechas)
     if (origen.prop('tipo') === 'decision') {
       const linksExistentes = this.graph.getLinks().filter(l =>
         (l.source().id === origen.id && l.target().id === destino.id) ||
@@ -475,8 +471,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         const elements = cells.filter((c: any) => !c.type || !c.type.includes('Link'));
         const links = cells.filter((c: any) => c.type && c.type.includes('Link'));
 
-        console.log('📦 [LOAD] Iniciando carga:', { elementos: elements.length, links: links.length });
-
         // 1. Cargar solo elementos primero
         this.migrarCeldasLegacy(elements, cellNamespace);
         this.graph.fromJSON({ cells: elements }, { cellNamespace });
@@ -484,7 +478,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
         // 👉 EXTRAER ALTURA GUARDADA (Si existe)
         const savedHeight = jsonData.paperHeight || diag.json_diagrama?.paperHeight;
         if (savedHeight) {
-          console.log('📏 [LOAD] Restaurando altura guardada:', savedHeight);
           this.paper.setDimensions(825, savedHeight);
           this.currentPaperHeight = savedHeight;
         }
@@ -1672,13 +1665,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     const procedimientoSanitizado = this.procedimiento().replace(/[/\\?%*:|"<>]/g, '-');
     const nombreArchivo = 'diagrama de flujo ' + procedimientoSanitizado + '.pdf';
 
-    console.log('🚀 Intentando guardar diagrama:', {
-      documentoId: this.documentoId(),
-      procedimiento: this.procedimiento(),
-      nombreArchivo: nombreArchivo,
-      cantidadImagenes: imagenes.length
-    });
-
     const jsonDiagrama: any = this.graph.toJSON();
     // 👉 PERSISTIR ALTURA DEL PAPER
     jsonDiagrama.paperHeight = this.paper.options.height;
@@ -1754,12 +1740,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       });
     }
 
-    console.log('💾 Guardando JSON del diagrama:', {
-      procedimiento: this.procedimiento,
-      totalCeldas: jsonDiagrama.cells?.length || 0,
-      links: jsonDiagrama.cells?.filter((c: any) => c.type.includes('Link')).length
-    });
-
     const data = {
       pdf_diagrama: pdfBase64,
       json_diagrama: jsonDiagrama as JsonDiagrama,
@@ -1810,7 +1790,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
     });
 
     if (validLinks.length > 0) {
-      console.log(`🔧 [RECONECTAR] Añadiendo ${validLinks.length} links al grafo...`);
       this.graph.addCells(validLinks);
       validLinks.forEach(link => {
         const view = link.findView(this.paper);
@@ -1819,7 +1798,6 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
           if (typeof (view as any).requestConnectionUpdate === 'function') (view as any).requestConnectionUpdate();
         }
       });
-      console.log('✅ [RECONECTAR] Batch de links completado.');
     }
   }
 }

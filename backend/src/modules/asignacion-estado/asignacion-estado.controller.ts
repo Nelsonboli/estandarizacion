@@ -28,7 +28,6 @@ export class AsignacionEstadoController {
 
   @Put(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateAsignacionEstadoDto) {
-    console.log('Actualizando estado asignacion:', id);
     return this.asignacionEstadoService.update(id, dto);
   }
 

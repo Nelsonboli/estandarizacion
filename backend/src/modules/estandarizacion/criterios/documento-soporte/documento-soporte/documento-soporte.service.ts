@@ -65,7 +65,6 @@ export class DocumentoSoporteService {
 
   async update(id: number, docSoporte: UpdateDocumentoSoporteDto) {
     const docFound = await this.findOne(id);
-    console.log("el documento actualizado es:", docFound);
     if (!docFound) throw new HttpException('Documento desoporte no encontrado', HttpStatus.NOT_FOUND)
     const updateDocSoporte = Object.assign(docFound, docSoporte);
     return this.documentoRepo.save(updateDocSoporte);

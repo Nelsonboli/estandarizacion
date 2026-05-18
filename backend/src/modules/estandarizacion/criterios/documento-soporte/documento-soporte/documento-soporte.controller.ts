@@ -29,7 +29,6 @@ export class DocumentoSoporteController {
 
   @Put(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateDocumentoSoporteDto) {
-    console.log('Actualizando documento soporte:', id, 'con datos:', dto);
     return this.documentoService.update(id, dto);
   }
 

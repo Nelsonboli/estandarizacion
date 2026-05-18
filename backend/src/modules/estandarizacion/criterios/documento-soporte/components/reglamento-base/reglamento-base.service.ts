@@ -52,8 +52,6 @@ export class ReglamentoBaseService {
         : existente.documentoSoporte,
     });
 
-    console.log("🛠 Datos para actualizar:", existente);
-
     return await this.reglamentoBaseRepository.save(existente);
   }
 

@@ -91,7 +91,6 @@ export class EstandarizarComponent {
 
   //llamado a los diferentes c
   onButtonClick(index: number) {
-    console.log('--- Click en botón ---', { index, nombre: this.datosService.criterios[index] });
     // Validar que TODOS los criterios anteriores estén completos
     const criteriosIncompletos = this.criteriosCompletados()
       .slice(0, index)
@@ -108,7 +107,6 @@ export class EstandarizarComponent {
       case 0:
         this.documentoSoporteService.getPorProcedimiento(this.procedimientoId()).subscribe({
           next: (documentoSoporte: DocumentoSoporte) => {
-            console.log('Datos cargados - Documento Soporte:', documentoSoporte);
             if (documentoSoporte) {
               this.procesarDocumentoSoporte(documentoSoporte);
               this.buttonIndex.set(index);
@@ -118,7 +116,6 @@ export class EstandarizarComponent {
             } else {
               this.documentoSoporteService.crearDocumento(this.procedimientoId()).subscribe({
                 next: (soporteNuevo: DocumentoSoporte) => {
-                  console.log('Datos creados - Documento Soporte Nuevo:', soporteNuevo);
                   this.procesarDocumentoSoporte(soporteNuevo);
                   this.buttonIndex.set(index);
                 },
@@ -138,7 +135,6 @@ export class EstandarizarComponent {
       case 1:
         this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId()).subscribe({
           next: (soporteComputacional: SoporteComputacional) => {
-            console.log('Datos cargados - Soporte Computacional:', soporteComputacional);
             if (soporteComputacional) {
               this.procesarSoporteComputacional(soporteComputacional);
               this.buttonIndex.set(index);
@@ -148,7 +144,6 @@ export class EstandarizarComponent {
             } else {
               this.soporteComputacionalService.crearSoporteComputacional(this.procedimientoId()).subscribe({
                 next: (computacionalNuevo: SoporteComputacional) => {
-                  console.log('Datos creados - Soporte Computacional Nuevo:', computacionalNuevo);
                   this.procesarSoporteComputacional(computacionalNuevo);
                   this.buttonIndex.set(index);
                 },
@@ -168,7 +163,6 @@ export class EstandarizarComponent {
       case 2:
         this.reglamentoService.obtenerReglamento(this.procedimientoId()).subscribe({
           next: (reglamento: Reglamento) => {
-            console.log('Datos cargados - Reglamento:', reglamento);
             if (reglamento) {
               this.procesarReglamento(reglamento);
               this.buttonIndex.set(index);
@@ -178,7 +172,6 @@ export class EstandarizarComponent {
             } else {
               this.reglamentoService.crearReglamento(this.procedimientoId()).subscribe({
                 next: (reglamentoNuevo: Reglamento) => {
-                  console.log('Datos creados - Reglamento Nuevo:', reglamentoNuevo);
                   this.procesarReglamento(reglamentoNuevo);
                   this.buttonIndex.set(index);
                 },
@@ -236,7 +229,6 @@ export class EstandarizarComponent {
 
   onHoverState(index: number) {
     if (this.hoverIndex() === index) return;
-    console.log('--- Hover en botón ---', { index, nombre: this.datosService.criterios[index] });
     this.hoverIndex.set(index);
     if (this.buttonIndex() === index) return;
     if (index === 0 && !this.criteriosCompletados()[0]) this.cargarCriterioDocumentoSoporte();
@@ -248,7 +240,6 @@ export class EstandarizarComponent {
   cargarCriterioDocumentoSoporte() {
     this.documentoSoporteService.getPorProcedimiento(this.procedimientoId()).subscribe({
       next: (doc: DocumentoSoporte) => {
-        console.log('Datos cargados - Criterio Documento Soporte:', doc);
         if (doc) {
           this.procesarDocumentoSoporte(doc);
         } else {
@@ -271,7 +262,6 @@ export class EstandarizarComponent {
   }
 
   private procesarDocumentoSoporte(doc: DocumentoSoporte) {
-    console.log('Procesando Documento Soporte...', doc);
     this.documentoId.set(doc.id);
     if (doc.actividades_completadas) {
       this.actividadesDocumentoSoporte.set([
@@ -293,7 +283,6 @@ export class EstandarizarComponent {
   cargarCriterioSoporteComputacional() {
     this.soporteComputacionalService.getSoporteComputacional(this.procedimientoId()).subscribe({
       next: (soporte: SoporteComputacional) => {
-        console.log('Datos cargados - Criterio Soporte Computacional:', soporte);
         if (soporte) {
           this.procesarSoporteComputacional(soporte);
         } else {
@@ -316,7 +305,6 @@ export class EstandarizarComponent {
   }
 
   private procesarSoporteComputacional(soporte: SoporteComputacional) {
-    console.log('Procesando Soporte Computacional...', soporte);
     this.soporteId.set(soporte.id!); // Asignar el ID crucial
     let completado = false;
     if (soporte.tiene_soporte === true) {
@@ -336,7 +324,6 @@ export class EstandarizarComponent {
   cargarCriterioReglamento() {
     this.reglamentoService.obtenerReglamento(this.procedimientoId()).subscribe({
       next: (reglamento: Reglamento) => {
-        console.log('Datos cargados - Criterio Reglamento:', reglamento);
         if (reglamento) {
           this.procesarReglamento(reglamento);
         } else {
@@ -359,7 +346,6 @@ export class EstandarizarComponent {
   }
 
   private procesarReglamento(reglamento: Reglamento) {
-    console.log('Procesando Reglamento...', reglamento);
     this.reglamentoId.set(reglamento.id!);
     if (reglamento.actividades_completadas) {
       const acts = reglamento.actividades_completadas as any;
@@ -378,13 +364,11 @@ export class EstandarizarComponent {
   }
 
   actualizarChecklist(index: number, criterios: boolean[]) {
-    console.log('actualizarChecklist called', { index, criterios: criterios });
     const todosCompletos = criterios.length > 0 && criterios.every(e => e === true);
     this.criterioCompletado();
     this.criteriosCompletados.update(completos => {
       const nuevosCompletos = [...completos];
       nuevosCompletos[index] = todosCompletos;
-      console.log('nuevosCompletos', nuevosCompletos);
       return nuevosCompletos;
     });
     const map = [
@@ -397,7 +381,6 @@ export class EstandarizarComponent {
   }
 
   finalizarCriterio(index: number) {
-    console.log('finalizarCriterio called', { index });
     // Solo marcamos como completado si no lo estaba ya
     if (!this.criteriosCompletados()[index]) {
       this.criteriosCompletados.update(criterios => {
@@ -409,17 +392,14 @@ export class EstandarizarComponent {
     }
     if (index === 0) {
       setTimeout(() => {
-        console.log('Marcado Documento Soporte');
         this.cargarCriterioDocumentoSoporte();
       }, 100);
     } else if (index === 1) {
       setTimeout(() => {
-        console.log('Marcado Soporte Computacional');
         this.cargarCriterioSoporteComputacional();
       }, 100);
     } else if (index === 2) {
       setTimeout(() => {
-        console.log('Marcado Reglamento');
         this.cargarCriterioReglamento();
       }, 100);
     }
@@ -427,11 +407,9 @@ export class EstandarizarComponent {
 
   criterioCompletado() {
     const todosCompletos = this.criteriosCompletados().every(e => e === true);
-    console.log('criteriosCompletados para alerta', todosCompletos, 'criterioAnterior:', this.criterioAnterior());
 
     // Actualizar el estado en el backend (AsignacionEstado)
     this.estadoAsignacionService.actualizarEstadoProcedimiento(this.procedimientoId(), this.criteriosCompletados()).subscribe({
-      next: (res) => console.log('Estado de asignación actualizado:', res),
       error: (err) => console.error('Error al actualizar estado de asignación:', err)
     });
 
@@ -448,7 +426,6 @@ export class EstandarizarComponent {
   datosProcedimiento() {
     this.procedimientoService.getProcedimiento(this.procedimientoId()).subscribe({
       next: (procedimiento: Procedimiento) => {
-        console.log('Datos cargados - Procedimiento (datos):', procedimiento);
         this.nombreProcedimiento.set(procedimiento.procedimiento);
       },
       error: (err) => {

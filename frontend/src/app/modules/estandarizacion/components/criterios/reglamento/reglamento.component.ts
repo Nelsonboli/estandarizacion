@@ -52,7 +52,6 @@ export class ReglamentoComponent implements OnInit {
       const currentReglamentoId = this.reglamentoId();
       if (currentReglamentoId) {
         this.verificarActividadesReglamento();
-        console.log('Reglamento ID:', this.reglamentoId());
       }
     });
   }
@@ -100,7 +99,6 @@ export class ReglamentoComponent implements OnInit {
         if (regId) {
           this.reglamentoService.marcarDescargaFormatoDAAC(regId, nombreProcedimiento).subscribe({
             next: () => {
-              console.log('Reglamento marcado como descargado');
               this.verificarActividadesReglamento();
             },
             error: (err) => console.error('Error al marcar como descargado:', err)
@@ -130,7 +128,6 @@ export class ReglamentoComponent implements OnInit {
         next: () => {
           this.alertService.exito('Formato de caracterizacion DAAC subido correctamente');
           this.verificarActividadesReglamento();
-          console.log(this.subiendo());
         },
         error: () => {
           this.alertService.error('Error al subir el formato de caracterizacion DAAC');
@@ -257,7 +254,6 @@ export class ReglamentoComponent implements OnInit {
         this.alertService.error('Error al actualizar actividades del reglamento. Por favor intente nuevamente.');
       }
     });
-    console.log("reglamento_completado", todascompletas);
   }
 
   cerrarDocumento() {

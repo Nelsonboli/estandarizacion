@@ -2,10 +2,30 @@
     <div class="text-med bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
         5. Manual de Usuario
     </div>
-    <div class="mb-1 font-medium bg-white text-med py-2 px-4 rounded-sm border border-gray-200 max-w-screen mx-auto">
+    <div class="mb-1 font-medium bg-white text-med rounded-sm border border-gray-200 max-w-screen mx-auto">
 
         <!-- Contenido Manual de Usuario -->
-        <div class="flex justify-center">
+        <div class="flex flex-col items-center justify-center  w-full">
+            <div
+                class="w-full h-[75vh] border border-gray-300 rounded-lg shadow-md overflow-hidden bg-gray-50 relative">
+                <iframe src="assets/documentos/Manual_estandarizacion_de_procedimientos.pdf#zoom=FitH"
+                    class="w-full h-full border-none" type="application/pdf">
+                </iframe>
+            </div>
+
+            <div class="text-sm text-gray-500 mt-3 text-center">
+                ¿No puedes visualizar el documento?
+                <a href="assets/documentos/Manual_estandarizacion_de_procedimientos.pdf" target="_blank"
+                    class="text-azul-oscuro hover:text-azul-fondo transition-colors hover:underline font-semibold ml-1">
+                    <span class="inline-flex items-center gap-1">
+                        Abrir en ventana nueva
+                        <span class="material-symbols-outlined text-[16px] align-middle">open_in_new</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="flex justify-center mt-4">
             <app-navegacion [rutaAnterior]="'/socializacionprocedimientos'" [rutaSiguiente]="''"
                 (anterior)="abrirListaSocializacion()">
             </app-navegacion>
