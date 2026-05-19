@@ -1,7 +1,7 @@
 <!-- MENÚ LATERAL -->
 <aside class="text-justify bg-azul-fondo h-[calc(100vh-12rem)] overflow-y-auto w-56">
   <div class="text-grande font-sans flex justify-center items-center p-2 bg-azul-oscuro text-white border-white/20">
-    <a routerLink='/menuprincipal' class="text-white no-underline hover:font-medium">Menú principal</a>
+    <button routerLink='/menuprincipal' class="text-white no-underline hover:font-medium">Menú principal</button>
   </div>
   <ul class="flex flex-col p-0 space-y-0.1 space-x-0.2 text-semigrande">
     <li class="list-none">
@@ -22,12 +22,12 @@
       </button>
     </li>
     <li class="list-none">
-      <a routerLink="/identificacionrequerimientos"
+      <button routerLink="/identificacionrequerimientos"
         routerLinkActive="text-white border-l-3 border-amber-400 bg-gradient-to-r from-green-700 to-green-900 w-full"
         class="flex items-center gap-1 py-2 text-left menu-button no-underline min-h-8">
         <img src="assets/icons/identificacion.svg" alt="Identificación de procedimientos" class="w-10 h-10" />
         <span class="text-md font-sans"><span class="font-medium">3.</span> Identificación de requerimientos</span>
-      </a>
+      </button>
     </li>
     <li class="list-none">
       <button routerLink="/socializacionprocedimientos" (click)="ListaProcedimientos()"

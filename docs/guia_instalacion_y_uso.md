@@ -163,10 +163,3 @@ npm run test:e2e
     `C:\Users\Udenar\Desktop\Estandarizacion de procedimientos\Diagrama de flujo`
   - Verificar existencia de imágenes `pagina_1.png`, `pagina_2.png`, etc.
 
-## 13) Recomendación para publicación académica
-
-Antes de compartir al jurado:
-
-- Incluir este documento en el repositorio.
-- Incluir un respaldo de base de datos (`.sql`) opcional para pruebas rápidas.
-- Si es posible, reemplazar credenciales fijas por variables de entorno para facilitar despliegue en otros equipos.

@@ -1,5 +1,5 @@
 <div class="p-2 bg-white">
-  <div class="text-md bg-azul-oscuro font-medium text-white p-2 border rounded-md mb-2 uppercase px-2">
+  <div class="text-md bg-azul-oscuro font-sans text-white p-2 border rounded-md mb-2 uppercase px-2">
     4. Socialización de procedimientos </div>
   <!-- Modal de lista desplegable  -->
   <app-lista-desplegable [visible]="estaAbierto()" [items]="procedimientos" (cerrar)="cerrarModal()"
@@ -7,7 +7,7 @@
   </app-lista-desplegable>
   @if (procedimientoSeleccionado) {
   <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white animate-fade-in">
-    <div class="border-b border-gray-200 px-4 py-3 mb-3 glass-card">
+    <div class="border-b border-gray-200 px-4 py-2 mb-3 glass-card">
       <h4 class="font-normal text-center"> <strong>Procedimiento: </strong>
         {{procedimientoSeleccionado.procedimiento | titlecase}}
       </h4>
@@ -15,10 +15,10 @@
     <div class="px-4">
       <!-- Mostrar Ficha tecnica del procedimiento -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Ficha Técnica del Procedimiento
-          </h1>
+          </h5>
         </div>
         <div class="p-4 ">
           <app-tabla-criterios [columnas]="datosTablaService.encabezadoFichaTecnica" [filas]="datosProcedimiento">
@@ -28,10 +28,10 @@
 
       <!-- Mostrar el formulario DAAC -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card ">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card ">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Formulario División de Autoevaluación y Acreditación de la Calidad
-          </h1>
+          </h5>
         </div>
         <div class="p-4 ">
           @if (formularioDAAC.length > 0) {
@@ -49,10 +49,10 @@
 
       <!-- Documento base -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Documento Base
-          </h1>
+          </h5>
         </div>
         <div class="p-4 ">
           @if (documentosBase && documentosBase.length > 0) {
@@ -70,10 +70,10 @@
 
       <!-- Mostrar Diagrama de flujo -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
+          <h5 class="text-lg font-medium text-azul-fondo text-center">
             Diagrama de Flujo
-          </h1>
+          </h5>
         </div>
         <div class="p-4 text-center ">
           @if (imagenDiagrama) {
@@ -93,10 +93,10 @@
 
       <!-- Soporte computacional -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
+          <h5 class="text-lg font-medium text-azul-fondo text-center">
             Soporte Computacional
-          </h1>
+          </h5>
         </div>
         <div class="p-4 ">
           @if (soporteComputacional) {
@@ -131,10 +131,10 @@
 
       <!-- Formato de Estandarización -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
-        <div class="bg-gray-50 border-b border-gray-200 px-4 glass-card">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+        <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Formato de Estandarización
-          </h1>
+          </h5>
         </div>
         <div class="p-4 text-center ">
           <Button class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
@@ -147,9 +147,9 @@
       <!-- Registro de socialización -->
       <div class="max-w-screen mx-auto mb-4 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
         <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
-          <h1 class="text-lg font-medium text-azul-fondo text-center">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Registro de Socialización
-          </h1>
+          </h5>
         </div>
         <div class="p-6">
           @if (!estaSocializado()) {

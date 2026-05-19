@@ -9,8 +9,12 @@
     <div>
       <label class="text-grande block font-bold mb-3">¿El procedimiento
         cuenta con soporte computacional?</label>
-      <label class="ml-6 text-grande"><input type="radio" formControlName="tiene_soporte" [value]="true" /> Sí </label>
-      <label class="ml-6 text-grande"><input type="radio" formControlName="tiene_soporte" [value]="false" /> No</label>
+      <div>
+        <label class="ml-6 text-grande"><input type="radio" formControlName="tiene_soporte" [value]="true" /> Sí
+        </label>
+        <label class="ml-6 text-grande"><input type="radio" formControlName="tiene_soporte" [value]="false" />
+          No</label>
+      </div>
     </div>
 
     @if (form.get('tiene_soporte')?.value === true) {
@@ -41,10 +45,12 @@
     <div>
       <label class="text-grande block font-bold mb-3 mt-3">¿El procedimiento
         requiere de un soporte computacional?</label>
-      <label class="ml-6 text-grande"><input type="radio" formControlName="requiere_soporte" [value]="true" /> Sí
-      </label>
-      <label class="ml-6 text-grande"><input type="radio" formControlName="requiere_soporte" [value]="false" />
-        No</label>
+      <div>
+        <label class="ml-6 text-grande"><input type="radio" formControlName="requiere_soporte" [value]="true" /> Sí
+        </label>
+        <label class="ml-6 text-grande"><input type="radio" formControlName="requiere_soporte" [value]="false" />
+          No</label>
+      </div>
 
       @if (form.get('requiere_soporte')?.value === true) {
       <div class="mt-3">
