@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
 @Injectable()
 export class StorageService {
@@ -9,7 +10,14 @@ export class StorageService {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_KEY;
     if (supabaseUrl && supabaseKey) {
-      this.supabase = createClient(supabaseUrl, supabaseKey);
+      this.supabase = createClient(supabaseUrl, supabaseKey, {
+        auth: {
+          persistSession: false,
+        },
+        realtime: {
+          transport: ws as any,
+        },
+      });
     } else {
       console.warn('Advertencia: SUPABASE_URL o SUPABASE_KEY no están definidas en las variables de entorno.');
     }
