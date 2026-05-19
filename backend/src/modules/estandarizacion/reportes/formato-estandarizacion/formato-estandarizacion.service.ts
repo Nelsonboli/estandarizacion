@@ -176,10 +176,14 @@ export class FormatoEstandarizacionService {
 
     // 4️⃣ Ejecutar Jasper
     return new Promise((resolve, reject) => {
+      const isWindows = process.platform === 'win32';
+      const cpSeparator = isWindows ? ';' : ':';
+      const classpath = `..${cpSeparator}../lib/*`;
+
       const jasperProcess = spawn('java', [
         '-Xmx256m',
         '-cp',
-        '..;../lib/*',
+        classpath,
         'JasperRenderer',
         'formato_estandarizacion.jasper',
         '.',

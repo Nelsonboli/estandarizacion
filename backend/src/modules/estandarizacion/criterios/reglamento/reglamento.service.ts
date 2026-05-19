@@ -4,8 +4,7 @@ import { Reglamento } from './entities/reglamento.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Procedimiento } from 'src/modules/identificacion-requerimientos/entities/procedimiento.entity';
-import * as fs from 'fs-extra';
-import { join } from 'path';
+import { StorageService } from 'src/modules/storage/storage.service';
 
 @Injectable()
 export class ReglamentoService {
@@ -13,7 +12,8 @@ export class ReglamentoService {
     @InjectRepository(Reglamento)
     private readonly reglamentoRepository: Repository<Reglamento>,
     @InjectRepository(Procedimiento)
-    private readonly procedimientoRepository: Repository<Procedimiento>
+    private readonly procedimientoRepository: Repository<Procedimiento>,
+    private readonly storageService: StorageService,
   ) { }
 
   async createReglamentoPorProcedimiento(procedimiento_id: number) {
@@ -31,8 +31,6 @@ export class ReglamentoService {
       actividades_completadas: {
         descarga_daac_completada: false,
         subida_daac_completada: false,
-
-
       },
     });
     return this.reglamentoRepository.save(nuevo);
@@ -53,7 +51,6 @@ export class ReglamentoService {
     return inf || null;
   }
 
-
   async update(id: number, updateReglamentoDto: UpdateReglamentoDto) {
     const reglamento = await this.reglamentoRepository.findOne({ where: { id } });
     if (!reglamento) throw new HttpException('Reglamento no encontrado', HttpStatus.NOT_FOUND);
@@ -68,7 +65,10 @@ export class ReglamentoService {
 
     if (reglamento.formato_daac_subido) {
       try {
-        await fs.remove(reglamento.formato_daac_subido);
+        const parts = reglamento.formato_daac_subido.split('reglamentos/');
+        if (parts.length > 1) {
+          await this.storageService.eliminarArchivo('reglamentos', parts[1]);
+        }
       } catch (error) {
         console.error('Error al eliminar archivo durante remoción de reglamento:', error);
       }
@@ -81,24 +81,25 @@ export class ReglamentoService {
     const reglamento = await this.reglamentoRepository.findOne({ where: { id } });
     if (!reglamento) throw new HttpException('Reglamento no encontrado', HttpStatus.NOT_FOUND);
 
-    const uploadDir = 'C:\\Users\\Udenar\\Desktop\\Estandarizacion de procedimientos\\Reglamento\\Formato DAAC';
-    await fs.ensureDir(uploadDir);
+    const bucketName = 'reglamentos';
+    const storagePath = `reglamento_${id}/${Date.now()}-${file.originalname}`;
 
-    const fileName = `${Date.now()}-${file.originalname}`;
-    const filePath = join(uploadDir, fileName);
-
-    await fs.writeFile(filePath, file.buffer);
+    // Subir el archivo directo a Supabase
+    const publicUrl = await this.storageService.subirArchivo(bucketName, storagePath, file.buffer, file.mimetype);
 
     // Eliminar archivo anterior si existe
     if (reglamento.formato_daac_subido) {
       try {
-        await fs.remove(reglamento.formato_daac_subido);
+        const parts = reglamento.formato_daac_subido.split('reglamentos/');
+        if (parts.length > 1) {
+          await this.storageService.eliminarArchivo('reglamentos', parts[1]);
+        }
       } catch (error) {
         console.error('Error al eliminar archivo anterior:', error);
       }
     }
 
-    reglamento.formato_daac_subido = filePath;
+    reglamento.formato_daac_subido = publicUrl;
     const currentActividades = reglamento.actividades_completadas || {
       descarga_daac_completada: false,
       subida_daac_completada: false,
@@ -122,7 +123,10 @@ export class ReglamentoService {
 
     if (reglamento.formato_daac_subido) {
       try {
-        await fs.remove(reglamento.formato_daac_subido);
+        const parts = reglamento.formato_daac_subido.split('reglamentos/');
+        if (parts.length > 1) {
+          await this.storageService.eliminarArchivo('reglamentos', parts[1]);
+        }
       } catch (error) {
         console.error('Error al eliminar archivo:', error);
       }
@@ -154,7 +158,6 @@ export class ReglamentoService {
     const currentActividades = reglamento.actividades_completadas || {
       descarga_daac_completada: false,
       subida_daac_completada: false,
-
     };
 
     reglamento.actividades_completadas = {
@@ -168,100 +171,4 @@ export class ReglamentoService {
 
     return this.reglamentoRepository.save(reglamento);
   }
-
-  // async subirFormatoEstandarizacion(id: number, file: Express.Multer.File) {
-  //   const reglamento = await this.reglamentoRepository.findOne({ where: { id } });
-  //   if (!reglamento) throw new HttpException('Reglamento no encontrado', HttpStatus.NOT_FOUND);
-
-  //   const uploadDir = 'C:\\Users\\Udenar\\Desktop\\Estandarizacion de procedimientos\\Reglamento\\Formato Estandarizacion';
-  //   await fs.ensureDir(uploadDir);
-
-  //   const fileName = `${Date.now()}-${file.originalname}`;
-  //   const filePath = join(uploadDir, fileName);
-
-  //   await fs.writeFile(filePath, file.buffer);
-
-  //   if (reglamento.formato_estandarizacion_subido) {
-  //     try {
-  //       await fs.remove(reglamento.formato_estandarizacion_subido);
-  //     } catch (error) {
-  //       console.error('Error al eliminar archivo anterior:', error);
-  //     }
-  //   }
-
-  //   reglamento.formato_estandarizacion_subido = filePath;
-
-  //   const currentActividades = reglamento.actividades_completadas || {
-  //     descarga_daac_completada: false,
-  //     subida_daac_completada: false,
-
-  //   };
-
-  //   reglamento.actividades_completadas = {
-  //     ...currentActividades,
-  //     subida_estandarizacion_completada: true
-  //   };
-
-  //   reglamento.reglamento_completado =
-  //     reglamento.actividades_completadas.descarga_daac_completada &&
-  //     reglamento.actividades_completadas.subida_daac_completada &&
-
-
-  //   return this.reglamentoRepository.save(reglamento);
-  // }
-
-  // async eliminarFormatoEstandarizacion(id: number) {
-  //   const reglamento = await this.reglamentoRepository.findOne({ where: { id } });
-  //   if (!reglamento) throw new HttpException('Reglamento no encontrado', HttpStatus.NOT_FOUND);
-
-  //   if (reglamento.formato_estandarizacion_subido) {
-  //     try {
-  //       await fs.remove(reglamento.formato_estandarizacion_subido);
-  //     } catch (error) {
-  //       console.error('Error al eliminar archivo:', error);
-  //     }
-  //   }
-
-  //   reglamento.formato_estandarizacion_subido = null;
-
-  //   const currentActividades = reglamento.actividades_completadas || {
-  //     descarga_daac_completada: false,
-  //     subida_daac_completada: false,
-
-  //   };
-
-  //   reglamento.actividades_completadas = {
-  //     ...currentActividades,
-  //     subida_estandarizacion_completada: false
-  //   };
-
-  //   reglamento.reglamento_completado = false;
-
-  //   return this.reglamentoRepository.save(reglamento);
-  // }
-
-  // async marcarComoDescargadoEstandarizacion(id: number, fileName: string) {
-  //   const reglamento = await this.reglamentoRepository.findOne({ where: { id } });
-  //   if (!reglamento) throw new HttpException('Reglamento no encontrado', HttpStatus.NOT_FOUND);
-
-  //   reglamento.formato_estandarizacion_descargado = fileName;
-
-  //   const currentActividades = reglamento.actividades_completadas || {
-  //     descarga_daac_completada: false,
-  //     subida_daac_completada: false,
-
-  //   };
-
-  //   reglamento.actividades_completadas = {
-  //     ...currentActividades,
-  //     descarga_estandarizacion_completada: true
-  //   };
-
-  //   reglamento.reglamento_completado =
-  //     (reglamento.actividades_completadas.descarga_daac_completada &&
-  //       reglamento.actividades_completadas.subida_daac_completada ) || false;
-
-  //   return this.reglamentoRepository.save(reglamento);
-  // }
-
 }

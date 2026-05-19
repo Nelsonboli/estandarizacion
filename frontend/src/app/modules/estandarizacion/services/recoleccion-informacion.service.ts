@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { RecoleccionInformacion } from '../interfaces/recoleccion-informacion.interface';
@@ -8,7 +9,7 @@ import { RecoleccionInformacion } from '../interfaces/recoleccion-informacion.in
 })
 export class RecoleccionInformacionService {
 
-  private baseApi = 'http://localhost:3000/recoleccion-informacion';
+  private baseApi = `${environment.apiUrl}/recoleccion-informacion`;
 
   constructor(private http: HttpClient) { }
 

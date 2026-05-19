@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { SoporteComputacional } from '../interfaces/soporte-computacional.interface';
 
@@ -8,7 +9,7 @@ import { SoporteComputacional } from '../interfaces/soporte-computacional.interf
 })
 export class SoporteComputacionalService {
 
-  private baseSoporteComputacional = 'http://localhost:3000/soporte-computacional';
+  private baseSoporteComputacional = `${environment.apiUrl}/soporte-computacional`;
 
   constructor(private http: HttpClient) { }
 

@@ -11,16 +11,17 @@ import { FormatoEstandarizacionModule } from './modules/estandarizacion/reportes
 import { SocializacionModule } from './modules/socializacion/socializacion.module';
 import { RecoleccionInformacionModule } from './modules/estandarizacion/recoleccion-informacion/recoleccion-informacion.module';
 import { AsignacionEstadoModule } from './modules/asignacion-estado/asignacion-estado.module';
+import { StorageModule } from './modules/storage/storage.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'udenar123',
-      database: 'estandarizacion_de_procedimientos',
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+      username: process.env.DB_USERNAME || 'root',
+      password: process.env.DB_PASSWORD || 'udenar123',
+      database: process.env.DB_DATABASE || 'estandarizacion_de_procedimientos',
       autoLoadEntities: true,
       synchronize: true,
     }),
@@ -34,7 +35,8 @@ import { AsignacionEstadoModule } from './modules/asignacion-estado/asignacion-e
     FormatoEstandarizacionModule,
     SocializacionModule,
     RecoleccionInformacionModule,
-    AsignacionEstadoModule
+    AsignacionEstadoModule,
+    StorageModule
   ],
   controllers: [],
   providers: [],

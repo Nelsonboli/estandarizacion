@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, inject } from "@angular/core";
+import { environment } from "../../../../environments/environment";
 import { Observable } from "rxjs";
 import { socializacion } from "../interfaces/socializacion.interface";
 import { AlertService } from "../../../shared/services/alert.service";
@@ -8,7 +9,7 @@ import { AlertService } from "../../../shared/services/alert.service";
     providedIn: 'root'
 })
 export class SocializacionService {
-    private baseSocializacion = 'http://localhost:3000/socializacion';
+    private baseSocializacion = `${environment.apiUrl}/socializacion`;
 
     private http = inject(HttpClient);
     private alertService = inject(AlertService);

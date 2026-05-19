@@ -5,13 +5,16 @@ import * as fs from 'fs';
 import { FormulariodaacService } from 'src/modules/estandarizacion/criterios/documento-soporte/components/formulariodaac/formulariodaac.service';
 import { DocumentoSoporteService } from 'src/modules/estandarizacion/criterios/documento-soporte/documento-soporte/documento-soporte.service';
 import { ProcedimientoService } from 'src/modules/identificacion-requerimientos/procedimiento.service';
+import { StorageService } from 'src/modules/storage/storage.service';
 
 @Injectable()
 export class ReportService {
 
-    constructor(private readonly procedimientoService: ProcedimientoService,
+    constructor(
+        private readonly procedimientoService: ProcedimientoService,
         private documentoSoporteService: DocumentoSoporteService,
-        private formulariodaacService: FormulariodaacService
+        private formulariodaacService: FormulariodaacService,
+        private readonly storageService: StorageService,
     ) { }
 
     private logToFile(message: string) {
@@ -76,45 +79,28 @@ export class ReportService {
         // Aseguramos que el ID sea el correcto (el del procedimiento solicitado)
         processedData['id'] = id;
 
-        // 1.5️⃣ Obtener imágenes del diagrama de flujo si existen
-        // Estas imágenes son generadas por el componente frontend y guardadas en una carpeta específica en el escritorio
-        const baseDirDiagramas = 'C:\\Users\\Udenar\\Desktop\\Estandarizacion de procedimientos\\Diagrama de flujo';
-        let nombreProcedimiento = (rawData.procedimiento?.trim() || 'sin-nombre').replace(/[/\\?%*:|"<>]/g, '-');
-        let procDir = path.join(baseDirDiagramas, nombreProcedimiento);
-
-        // Fallback: Si no existe con el nombre trim, intentar con el nombre original (para carpetas antiguas con espacios)
-        if (!fs.existsSync(procDir)) {
-            const rawNombre = (rawData.procedimiento || 'sin-nombre').replace(/[/\\?%*:|"<>]/g, '-');
-            const rawCheck = path.join(baseDirDiagramas, rawNombre);
-            if (fs.existsSync(rawCheck)) {
-                this.logToFile(`Encontrado directorio con nombre original (sin trim): ${rawCheck}`);
-                procDir = rawCheck;
-                nombreProcedimiento = rawNombre; // Actualizamos para logs posteriores si es necesario
-            } else {
-                this.logToFile(`No encontrado ni con trim (${procDir}) ni original (${rawCheck})`);
-            }
+        // Crear directorio temporal local para descargar las imágenes del diagrama de flujo desde Supabase Storage
+        const tmpDir = path.join(process.cwd(), 'tmp', `reporte_${id}`);
+        if (!fs.existsSync(tmpDir)) {
+            fs.mkdirSync(tmpDir, { recursive: true });
         }
 
         let diagramImages: { ruta: string }[] = [];
-        if (fs.existsSync(procDir)) {
-            try {
-                const files = fs.readdirSync(procDir);
-                // Filtrar solo las imágenes de página (pagina_1.png, pagina_2.png, etc.) y ordenarlas numéricamente
-                diagramImages = files
-                    .filter(file => file.startsWith('pagina_') && file.endsWith('.png'))
-                    .sort((a, b) => {
-                        const numA = parseInt(a.replace('pagina_', '').replace('.png', ''), 10);
-                        const numB = parseInt(b.replace('pagina_', '').replace('.png', ''), 10);
-                        return numA - numB;
-                    })
-                    .map(file => ({ ruta: path.join(procDir, file).replace(/\\/g, '/') })); // Reemplazamos \ por / para Jasper compatibility
-
-                this.logToFile(`Encontradas ${diagramImages.length} imágenes para el procedimiento: ${nombreProcedimiento}`);
-            } catch (error) {
-                this.logToFile(`Error leyendo directorio de imágenes: ${error.message}`);
+        if (documentoSoporte) {
+            const idDoc = documentoSoporte.id;
+            // Descargar secuencialmente imágenes desde Supabase Storage a la carpeta local del servidor
+            for (let i = 1; i <= 20; i++) {
+                try {
+                    const buffer = await this.storageService.descargarArchivo('diagramas', `procedimiento_${idDoc}/pagina_${i}.png`);
+                    const localImgPath = path.join(tmpDir, `pagina_${i}.png`);
+                    fs.writeFileSync(localImgPath, buffer);
+                    diagramImages.push({ ruta: localImgPath.replace(/\\/g, '/') }); // Reemplazamos \ por / para Jasper compatibility
+                } catch (error) {
+                    // Salir del bucle si ya no hay más páginas en Supabase
+                    break;
+                }
             }
-        } else {
-            this.logToFile(`No se encontró el directorio de imágenes: ${procDir}`);
+            this.logToFile(`Descargadas ${diagramImages.length} imágenes desde Supabase para el procedimiento ID Doc: ${idDoc}`);
         }
         processedData['imagenes'] = diagramImages;
 
@@ -135,11 +121,15 @@ export class ReportService {
 
         // 4️⃣ Ejecutar Jasper
         return new Promise((resolve, reject) => {
+            const isWindows = process.platform === 'win32';
+            const cpSeparator = isWindows ? ';' : ':';
+            const classpath = `..${cpSeparator}../lib/*`;
+
             // Añadimos -Xmx256m para limitar el uso de memoria de Java y evitar errores de paginación
             const jasperProcess = spawn('java', [
                 '-Xmx256m',
                 '-cp',
-                '..;../lib/*',
+                classpath,
                 'JasperRenderer',
                 'ReporteDAAC.jasper',
                 '.',
@@ -156,6 +146,13 @@ export class ReportService {
             });
 
             jasperProcess.on('close', (code) => {
+                // Limpiar la carpeta temporal local con las imágenes descargadas
+                try {
+                    fs.rmSync(tmpDir, { recursive: true, force: true });
+                } catch (e) {
+                    console.warn(`No se pudo eliminar el directorio temporal ${tmpDir}: ${e.message}`);
+                }
+
                 if (code === 0) {
                     if (fs.existsSync(pdfPath)) {
                         resolve(pdfPath);

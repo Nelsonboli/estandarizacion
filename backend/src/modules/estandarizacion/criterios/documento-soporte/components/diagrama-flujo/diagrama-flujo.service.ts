@@ -4,8 +4,7 @@ import { Repository } from 'typeorm';
 import { DiagramaFlujo } from './entities/diagrama-flujo.entity';
 import { DocumentoSoporte } from 'src/modules/estandarizacion/criterios/documento-soporte/documento-soporte/entities/documento-soporte.entity';
 import { CreateDiagramaFlujoDto } from './dto/create-diagrama-flujo.dto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { StorageService } from 'src/modules/storage/storage.service';
 
 @Injectable()
 export class DiagramaFlujoService {
@@ -14,6 +13,7 @@ export class DiagramaFlujoService {
     private readonly diagramaRepo: Repository<DiagramaFlujo>,
     @InjectRepository(DocumentoSoporte)
     private readonly documentoRepo: Repository<DocumentoSoporte>,
+    private readonly storageService: StorageService,
   ) { }
 
   async guardarDiagrama(idDoc: number, data: CreateDiagramaFlujoDto) {
@@ -31,42 +31,21 @@ export class DiagramaFlujoService {
         throw new Error('El documento no tiene un procedimiento asociado');
       }
 
-      const procedimientoNombre = (doc.procedimiento.procedimiento?.trim() || 'sin-nombre').replace(/[/\\?%*:|"<>]/g, '-');
-      const baseDir = 'C:\\Users\\Udenar\\Desktop\\Estandarizacion de procedimientos\\Diagrama de flujo';
-
-      // Crear carpeta específica del procedimiento
-      const procDir = path.join(baseDir, procedimientoNombre);
-
-      if (!fs.existsSync(procDir)) {
-        fs.mkdirSync(procDir, { recursive: true });
-      }
-
-      // Guardar imágenes individuales si existen
+      // Guardar imágenes individuales en Supabase Storage
       if (data.imagenes && data.imagenes.length > 0) {
-        // 👉 REFUERZO: Limpiar archivos antiguos para que no queden páginas huérfanas en el disco
-        if (fs.existsSync(procDir)) {
-          const files = fs.readdirSync(procDir);
-          for (const file of files) {
-            if (file.endsWith('.png')) {
-              try {
-                fs.unlinkSync(path.join(procDir, file));
-              } catch (e) {
-                console.warn(`No se pudo eliminar archivo antiguo: ${file}`);
-              }
-            }
-          }
-        }
-
-        data.imagenes.forEach((imgBase64, index) => {
-          if (!imgBase64) return;
+        for (let i = 0; i < data.imagenes.length; i++) {
+          const imgBase64 = data.imagenes[i];
+          if (!imgBase64) continue;
+          
           const cleanBase64 = imgBase64.includes(',') ? imgBase64.split(',')[1] : imgBase64;
           const imgBuffer = Buffer.from(cleanBase64, 'base64');
-          const imgPath = path.join(procDir, `pagina_${index + 1}.png`);
-          fs.writeFileSync(imgPath, imgBuffer);
-        });
+          
+          const storagePath = `procedimiento_${idDoc}/pagina_${i + 1}.png`;
+          await this.storageService.subirArchivo('diagramas', storagePath, imgBuffer, 'image/png');
+        }
       }
 
-      // Guardar PDF principal
+      // Guardar PDF principal en Supabase Storage
       if (!data.pdf_diagrama) {
         throw new Error('No se recibió el PDF del diagrama');
       }
@@ -75,9 +54,9 @@ export class DiagramaFlujoService {
       const pdfBuffer = Buffer.from(cleanBase64Score, 'base64');
 
       const fileName = data.documento_diagrama || `diagrama_${idDoc}.pdf`;
-      const pdfPath = path.join(baseDir, fileName);
-
-      fs.writeFileSync(pdfPath, pdfBuffer);
+      const storagePath = `procedimiento_${idDoc}/diagrama_${idDoc}.pdf`;
+      
+      const publicUrl = await this.storageService.subirArchivo('diagramas', storagePath, pdfBuffer, 'application/pdf');
 
       // Buscar o crear el diagrama de forma más robusta usando el ID directo
       let diag = await this.diagramaRepo.findOne({
@@ -93,12 +72,9 @@ export class DiagramaFlujoService {
       // Asegurar que el ID se mantenga si ya existía (upsert)
       diag.documento_soporte_id = idDoc;
 
-      // Asegurar que el ID se mantenga si ya existía (upsert)
-      diag.documento_soporte_id = idDoc;
-
       // Actualizar datos
       diag.documento_diagrama = fileName;
-      diag.ubicacion_diagrama = pdfPath;
+      diag.ubicacion_diagrama = publicUrl; // Ahora guarda la URL pública de Supabase
       diag.json_diagrama = data.json_diagrama;
 
       // Guardar el diagrama primero
@@ -137,16 +113,16 @@ export class DiagramaFlujoService {
       throw new NotFoundException('Diagrama de flujo no encontrado');
     }
 
-    const filePath = diag.ubicacion_diagrama;
-    if (!fs.existsSync(filePath)) {
-      throw new NotFoundException('El archivo físico del diagrama no existe');
+    const storagePath = `procedimiento_${idDoc}/diagrama_${idDoc}.pdf`;
+    try {
+      const pdfBuffer = await this.storageService.descargarArchivo('diagramas', storagePath);
+      return {
+        pdfBase64: pdfBuffer.toString('base64'),
+        nombreArchivo: diag.documento_diagrama
+      };
+    } catch (e) {
+      throw new NotFoundException('El archivo del diagrama no existe en Supabase Storage: ' + e.message);
     }
-
-    const pdfBuffer = fs.readFileSync(filePath);
-    return {
-      pdfBase64: pdfBuffer.toString('base64'),
-      nombreArchivo: diag.documento_diagrama
-    };
   }
 
   async obtenerPorDocumento(idDoc: number) {
@@ -167,27 +143,23 @@ export class DiagramaFlujoService {
       }
 
       const diag = doc.diagramaFlujo;
-      const baseDir = 'C:\\Users\\Udenar\\Desktop\\Estandarizacion de procedimientos\\Diagrama de flujo';
+      const baseStoragePath = `procedimiento_${idDoc}`;
 
-      // 1. Eliminar PDF
-      if (diag.ubicacion_diagrama && fs.existsSync(diag.ubicacion_diagrama)) {
-        try {
-          fs.unlinkSync(diag.ubicacion_diagrama);
-        } catch (e) {
-          console.warn(`No se pudo eliminar el archivo PDF físico: ${diag.ubicacion_diagrama}`);
-        }
+      // 1. Eliminar PDF en Supabase
+      try {
+        await this.storageService.eliminarArchivo('diagramas', `${baseStoragePath}/diagrama_${idDoc}.pdf`);
+      } catch (e) {
+        console.warn(`No se pudo eliminar el PDF de Supabase: ${e.message}`);
       }
 
-      // 2. Eliminar carpeta de imágenes
-      if (doc.procedimiento) {
-        const procedimientoNombre = (doc.procedimiento.procedimiento || 'sin-nombre').replace(/[/\\?%*:|"<>]/g, '-');
-        const procDir = path.join(baseDir, procedimientoNombre);
-        if (fs.existsSync(procDir)) {
-          try {
-            fs.rmSync(procDir, { recursive: true, force: true });
-          } catch (e) {
-            console.warn(`No se pudo eliminar la carpeta de imágenes: ${procDir}`);
-          }
+      // 2. Eliminar carpeta de imágenes en Supabase (páginas individuales)
+      // Como Supabase es almacenamiento de objetos flat, eliminamos secuencialmente las páginas que existan (hasta 20 páginas)
+      for (let i = 1; i <= 20; i++) {
+        try {
+          await this.storageService.eliminarArchivo('diagramas', `${baseStoragePath}/pagina_${i}.png`);
+        } catch (e) {
+          // Dejar de iterar si falla o no existe
+          break;
         }
       }
 

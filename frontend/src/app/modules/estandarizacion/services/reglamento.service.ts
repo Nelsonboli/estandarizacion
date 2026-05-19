@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Reglamento } from '../interfaces/reglamento.interface';
 
@@ -8,7 +9,7 @@ import { Reglamento } from '../interfaces/reglamento.interface';
 })
 export class ReglamentoService {
 
-  private baseReglamento = 'http://localhost:3000/reglamento';
+  private baseReglamento = `${environment.apiUrl}/reglamento`;
 
   constructor(private http: HttpClient) { }
 

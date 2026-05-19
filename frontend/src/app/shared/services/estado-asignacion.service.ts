@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { Observable, forkJoin, map, of, catchError, switchMap } from 'rxjs';
 import { DocumentoSoporteService } from '../../modules/estandarizacion/services/documento-soporte.service';
 import { SoporteComputacionalService } from '../../modules/estandarizacion/services/soporte-computacional.service';
@@ -14,7 +15,7 @@ import { CriteriosEstado } from '../interfaces/criterios-estado';
 })
 export class EstadoAsignacionService {
 
-    private baseAsignacionEstado = 'http://localhost:3000/asignacion_estado';
+    private baseAsignacionEstado = `${environment.apiUrl}/asignacion_estado`;
 
     constructor(private http: HttpClient) { }
 

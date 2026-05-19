@@ -13,7 +13,7 @@
       "skipChangeDetectionOnPush": true
     }
   },
-  "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.colorTheme": "Default Dark Modern",
   "java.project.referencedLibraries": [
     "backend/jasper/lib/*.jar"
   ]

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DiagramaFlujoService {
-    private baseDiagramaDeFlujo = 'http://localhost:3000/diagrama_flujo';
+    private baseDiagramaDeFlujo = `${environment.apiUrl}/diagrama_flujo`;
     private imagen: string | null = null;
 
     constructor(private http: HttpClient) { }

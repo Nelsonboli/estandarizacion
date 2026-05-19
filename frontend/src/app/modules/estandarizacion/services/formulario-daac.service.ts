@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FormularioDAAC } from '../interfaces/documento-soporte.interface';
@@ -6,7 +7,7 @@ import { FormularioDAAC } from '../interfaces/documento-soporte.interface';
 @Injectable({ providedIn: 'root' })
 export class FormularioDAACService {
 
-  private baseFormularioDAAC = 'http://localhost:3000/formulariodaac';
+  private baseFormularioDAAC = `${environment.apiUrl}/formulariodaac`;
 
   constructor(private http: HttpClient) { }
 

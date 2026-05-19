@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Procedimiento } from '../interfaces/procedimiento.interface';
@@ -8,7 +9,7 @@ import { Procedimiento } from '../interfaces/procedimiento.interface';
   providedIn: 'root'
 })
 export class ProcedimientoService {
-  private apiUrl = 'http://localhost:3000/identificacionrequerimientos';
+  private apiUrl = `${environment.apiUrl}/identificacionrequerimientos`;
 
   constructor(private http: HttpClient) { }
 
@@ -45,12 +46,12 @@ export class ProcedimientoService {
 
   // Descargar reporte DAAC
   descargarReporte(id: number): Observable<Blob> {
-    return this.http.get(`http://localhost:3000/reporte-daac/${id}`, { responseType: 'blob' });
+    return this.http.get(`${environment.apiUrl}/reporte-daac/${id}`, { responseType: 'blob' });
   }
 
   // Descargar formato de estandarización
   descargarFormatoEstandarizacion(id: number): Observable<Blob> {
-    return this.http.get(`http://localhost:3000/formato-estandarizacion/${id}`, { responseType: 'blob' });
+    return this.http.get(`${environment.apiUrl}/formato-estandarizacion/${id}`, { responseType: 'blob' });
   }
 
 }
