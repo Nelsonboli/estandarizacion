@@ -8,9 +8,11 @@ import { json, urlencoded } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
   app.enableCors({
-    origin: [frontendUrl, 'http://localhost:4200'],
+    origin: [
+      'http://localhost:4200',
+      'https://estandarizacion.vercel.app',
+    ],
     methods: 'GET,POST,PATCH,DELETE,PUT,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
   });
