@@ -1471,7 +1471,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
 
   exportar() {
     this.toggleSeparadores(false);
-    htmlToImage.toPng(this.canvasRef.nativeElement, { fontEmbedCSS: '' }).then(dataUrl => {
+    htmlToImage.toPng(this.canvasRef.nativeElement, { fontEmbedCSS: '', pixelRatio: 1 }).then(dataUrl => {
       const a = document.createElement('a');
       a.href = dataUrl;
       a.download = 'diagrama de flujo ' + this.procedimiento + '.png';
@@ -1528,6 +1528,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       const totalHeight = this.currentPaperHeight;
       const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, {
         fontEmbedCSS: '',
+        pixelRatio: 1,
         width: 825,
         height: totalHeight,
         style: {
@@ -1591,6 +1592,7 @@ export class DiagramaDeFlujoComponent implements AfterViewInit, OnDestroy {
       const totalHeight = this.currentPaperHeight;
       const canvas = await htmlToImage.toCanvas(this.canvasRef.nativeElement, {
         fontEmbedCSS: '',
+        pixelRatio: 1,
         width: 825,
         height: totalHeight,
         style: {
