@@ -182,6 +182,7 @@ export class FormatoEstandarizacionService {
 
       const jasperProcess = spawn('java', [
         '-Xmx256m',
+        '-Dnet.sf.jasperreports.awt.ignore.missing.font=true',
         '-cp',
         classpath,
         'JasperRenderer',

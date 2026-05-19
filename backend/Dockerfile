@@ -19,6 +19,8 @@ WORKDIR /usr/src/app
 # Instalar Java JRE para ejecutar el motor JasperReports (Java)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-17-jre-headless \
+    fontconfig \
+    fonts-liberation \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

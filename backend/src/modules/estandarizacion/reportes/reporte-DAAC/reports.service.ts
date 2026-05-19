@@ -128,6 +128,7 @@ export class ReportService {
             // Añadimos -Xmx256m para limitar el uso de memoria de Java y evitar errores de paginación
             const jasperProcess = spawn('java', [
                 '-Xmx256m',
+                '-Dnet.sf.jasperreports.awt.ignore.missing.font=true',
                 '-cp',
                 classpath,
                 'JasperRenderer',
