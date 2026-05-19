@@ -1,6 +1,6 @@
 <form [formGroup]="form">
     <div class="max-w-full mx-auto bg-white border border-gray-300 shadow-sm rounded-lg p-3 space-y-2 text-sm">
-        <h2 class="text-grande font-medium text-gray-800 text-center">Actividades</h2>
+        <p class="text-grande font-medium text-gray-800 text-center">Actividades</p>
         <div formArrayName="checks" class="space-y-2">
             @for (opcion of subopciones; track opcion; let i = $index) {
             <label class="flex items-center space-x-2 mx-1 p-1"

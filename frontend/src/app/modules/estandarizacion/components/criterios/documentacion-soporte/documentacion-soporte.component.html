@@ -3,7 +3,7 @@
     <h6 class="text-azul-oscuro">1. Documento de soporte</h6>
 </div>
 @if (mostrarReglamentoBase()) {
-<div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2">
+<div class="bg-white/80 border border-gray-300 rounded-lg p-3 m-2">
     <div class="flex flex-col lg:flex-row gap-4 lg:items-start">
         <div class="flex flex-col gap-3">
             <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-end lg:flex-none">
@@ -57,7 +57,7 @@
 
 <!-- Formulario / Tabla DAAC -->
 @if (reglamentoBaseCompletado()) {
-<div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2">
+<div class="bg-white/80 border border-gray-300 rounded-lg p-3 m-2">
     @if (mostrarFormularioDAAC()) {
     <div class="w-full">
         <app-formreutilizable [titulo]="this.datosService.DescripcionCaracterizacion"
@@ -87,7 +87,7 @@
 }
 <!-- Diagrama de Flujo -->
 @if (reglamentoBaseCompletado() && formularioDAACCompletado()) {
-<div class="bg-white/80 border-1 border-gray-300 rounded-lg p-3 m-2 gap-4 ">
+<div class="bg-white/80 border border-gray-300 rounded-lg p-3 m-2 gap-4 ">
     <app-diagrama-de-flujo [procedimiento]="nombreProcedimiento()" [documentoId]="documentoId()!"
         (diagramaEnviado)="verificarActividadesDocumentoSoporte()" (cancelarDiagrama)="cancelarDiagrama()">
     </app-diagrama-de-flujo>

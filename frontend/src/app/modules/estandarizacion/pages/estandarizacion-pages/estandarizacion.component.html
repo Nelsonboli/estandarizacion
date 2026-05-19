@@ -17,14 +17,14 @@
                         <!-- Botón -->
                         <button
                             class="w-full h-24 flex flex-wrap items-center justify-center rounded-xl 
-                        transition-all duration-200 ease-in-out m-2 border-b-4 border-r-1 border-l-1 border-t-1 border-gray-400"
+                        transition-all duration-200 ease-in-out m-2 border border-b-4 border-gray-400"
                             [ngClass]="{
                             'border-b-4 border-gray-600 bg-white text-gray-800 hover:border-gray-500': !criteriosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
                             'border-b-4 border-gray-400 bg-white text-gray-800 hover:border-gray-500': !criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
                             'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900 hover:border-b-4 hover:border-gray-400 ': criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() !==i,
                             'bg-gradient-to-r from-green-700 to-green-800 text-white border-b-4 border-green-900  shadow-sm translate-y-1': criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() ===i || criteriosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i || criteriosCompletados()[i] && buttonIndex() === i && hoverIndex() !==i, 
                             ' bg-white  border-b-4': !criteriosCompletados()[i] && buttonIndex() === i && hoverIndex() !== i || !criteriosCompletados()[i] && buttonIndex() === i && hoverIndex() === i,
-                            'hover:translate-y-1 border-b-1 border-gray-400': hoverIndex() !== i && buttonIndex() !== i
+                            'hover:translate-y-1 border-b border-gray-400': hoverIndex() !== i && buttonIndex() !== i
                         }" (click)="onButtonClick(i)" (mouseenter)="onHoverState(i)"
                             (mouseleave)="hoverIndex.set(null)">
                             <h6 class="leading-tight text-center mt-1">{{ i + 1 }}. {{ estado }} </h6>
@@ -54,7 +54,7 @@
                     }
                 </div>
                 <!-- Sección dinámica-->
-                <div class="bg-white/80 border-1 border-gray-300 rounded-lg  m-2">
+                <div class="bg-white/80 border border-gray-300 rounded-lg  m-2">
 
                     @switch (buttonIndex()) {
                     @case (0) {
