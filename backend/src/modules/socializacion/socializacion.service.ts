@@ -10,6 +10,7 @@ import { PDFDocument } from 'pdf-lib';
 import * as fs from 'fs-extra';
 import { ReportService } from '../estandarizacion/reportes/reporte-DAAC/reports.service';
 import { FormatoEstandarizacionService } from '../estandarizacion/reportes/formato-estandarizacion/formato-estandarizacion.service';
+import { StorageService } from '../storage/storage.service';
 
 @Injectable()
 export class SocializacionService {
@@ -20,7 +21,8 @@ export class SocializacionService {
     private procedimientoRepository: Repository<Procedimiento>,
     @InjectRepository(Reglamento)
     private reglamentoRepository: Repository<Reglamento>,
-    private formatoEstandarizacionService: FormatoEstandarizacionService
+    private formatoEstandarizacionService: FormatoEstandarizacionService,
+    private readonly storageService: StorageService
   ) { }
 
   async unirPdfsPorProcedimiento(procedimientoId: number): Promise<Buffer> {
@@ -37,8 +39,17 @@ export class SocializacionService {
     }
 
     try {
-      if (!await fs.pathExists(formato_daac_subido)) {
-        throw new HttpException('No se encontro el archivo DAAC firmado en almacenamiento', HttpStatus.NOT_FOUND);
+      let pdfDaacBytes: Buffer;
+      const parts = formato_daac_subido.split('reglamentos/');
+      if (parts.length > 1) {
+        const storagePath = parts[1];
+        pdfDaacBytes = await this.storageService.descargarArchivo('reglamentos', storagePath);
+      } else {
+        if (await fs.pathExists(formato_daac_subido)) {
+          pdfDaacBytes = await fs.readFile(formato_daac_subido);
+        } else {
+          throw new HttpException('No se encontro el archivo DAAC firmado en almacenamiento', HttpStatus.NOT_FOUND);
+        }
       }
 
       const rutaReporteEstandarizacion = await this.formatoEstandarizacionService.generarReporteEstandarizacion(procedimientoId);
@@ -46,10 +57,7 @@ export class SocializacionService {
         throw new HttpException('No se pudo generar el reporte de estandarizacion', HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
-      const [pdfEstandarizacionBytes, pdfDaacBytes] = await Promise.all([
-        fs.readFile(rutaReporteEstandarizacion),
-        fs.readFile(formato_daac_subido)
-      ]);
+      const pdfEstandarizacionBytes = await fs.readFile(rutaReporteEstandarizacion);
 
       return this.unirpdfs(pdfEstandarizacionBytes, pdfDaacBytes);
     } catch (error) {
