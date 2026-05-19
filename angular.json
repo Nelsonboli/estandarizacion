@@ -46,12 +46,6 @@
                     },
                     "configurations": {
                         "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "frontend/src/environments/environment.ts",
-                                    "with": "frontend/src/environments/environment.production.ts"
-                                }
-                            ],
                             "optimization": {
                                 "scripts": true,
                                 "styles": {
@@ -75,6 +69,12 @@
                             "outputHashing": "all"
                         },
                         "development": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "frontend/src/environments/environment.ts",
+                                    "with": "frontend/src/environments/environment.development.ts"
+                                }
+                            ],
                             "optimization": false,
                             "extractLicenses": false,
                             "sourceMap": true
