@@ -13,6 +13,8 @@ import java.util.Map;
 public class JasperRenderer {
 
         public static void main(String[] args) throws Exception {
+                // Ignorar fuentes faltantes (ej: Arial) y usar la tipografía sans-serif fallback del sistema
+                System.setProperty("net.sf.jasperreports.awt.ignore.missing.font", "true");
 
                 if (args.length < 4) {
                         System.err.println("Uso:");
