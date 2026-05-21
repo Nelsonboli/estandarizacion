@@ -15,12 +15,12 @@
       </tr>
       <tr>
         @for (col of columnas(); track col.key) {
-        <th class="bg-white p-1 text-center tracking-wider border border-gray-600 font-medium text-black w-[150px]">
+        <th class="bg-white p-1 text-center tracking-wider border border-gray-300 font-medium text-black w-[150px]">
           {{ col.label | titlecase }}
         </th>
         }
         @if (mostrarOpciones()) {
-        <th class="bg-white p-1 text-center tracking-wider border border-gray-600 font-medium text-black w-[120px]">
+        <th class="bg-white p-1 text-center tracking-wider border border-gray-300 font-medium text-black w-[120px]">
           Opciones
         </th>
         }

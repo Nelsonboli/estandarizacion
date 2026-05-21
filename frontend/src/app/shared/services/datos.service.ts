@@ -74,7 +74,7 @@ export class DatosService {
     },
     {
       key: 'categoria',
-      label: 'categoría',
+      label: 'Categoría',
       Tooltip: 'Seleccione la categoría a la cual pertenece el procedimiento.',
       required: true,
       type: 'select' as const,
