@@ -8,10 +8,10 @@
                 </div>
                 <!-- Titulo -->
                 <div class="text-center py-20 px-10">
-                    <h2 class="text-lg font-semibold mb-12 upperlower">Facultad de Ingeniería</h2>
-                    <h2 class="text-lg font-bold leading-tight uppercase max-w-2xl mx-auto">
+                    <h6 class="text-md font-semibold mb-12 upperlower">Facultad de Ingeniería</h6>
+                    <h6 class="text-md font-bold leading-tight uppercase max-w-2xl mx-auto">
                         Estandarización de Procedimientos de la Facultad de Ingeniería de la Universidad de Nariño
-                    </h2>
+                    </h6>
                 </div>
                 <!-- Proceso y año -->
                 <div class="text-center mt-20">
@@ -35,9 +35,9 @@
                             src="assets/images/encabezado_facultad.png" />
                     </div>
                 </div>
-                <h2 class="text-sm font-black mb-10 text-center uppercase leading-tight">
+                <h6 class="text-md font-black mb-10 text-center uppercase leading-tight">
                     Contenido
-                </h2>
+                </h6>
                 <ul class="toc-list w-full">
                     @for (entry of tocEntries; track $index) {
                     <li class="toc-item" (click)="scrollToSection(entry.id)">
@@ -93,20 +93,20 @@
         style="visibility: hidden; position: absolute; top: 0; left: -9999px; width: 170mm; height: auto; overflow: visible; pointer-events: none; z-index:-10;">
         <!-- Block 1: Intro Title -->
         <div class="mb-2">
-            <h2 class="text-sm font-black mb-2 text-center uppercase leading-tight">
+            <p class="text-md font-black mb-2 text-center uppercase leading-tight">
                 ESTANDARIZACIÓN DEL PROCEDIMIENTO {{procedimientosSeleccionado?.procedimiento}}
-            </h2>
-            <h2 class="text-sm font-black mb-2 text-center uppercase leading-tight">
+            </p>
+            <h6 class="text-md font-black mb-2 text-center uppercase leading-tight">
                 FACULTAD DE INGENIERÍA
-            </h2>
+            </h6>
         </div>
 
         <!-- Block 2: Method Title -->
         <div class="pl-4 mb-2">
-            <h2 data-section-id="1" data-section-title="1. METODOLOGÍA PARA LA ESTANDARIZACIÓN DE PROCEDIMIENTOS"
-                class="text-sm font-semibold mb-2 uppercase leading-tight">
+            <h6 data-section-id="1" data-section-title="1. METODOLOGÍA PARA LA ESTANDARIZACIÓN DE PROCEDIMIENTOS"
+                class="text-md font-semibold mb-2 uppercase leading-tight">
                 1. METODOLOGÍA PARA LA ESTANDARIZACIÓN DE PROCEDIMIENTOS
-            </h2>
+            </h6>
         </div>
         <!-- Block 3: Method Text -->
         <div class="arial mb-2">
@@ -123,17 +123,17 @@
         <div class="border-t mt-2 mb-2 border-black w-1/2">
         </div>
         <div>
-            <p class="text-justify text-sm"><sup>1</sup> Facultad de Ingeniería. Guía Metodológica para la
+            <p class="text-justify text-md"><sup>1</sup> Facultad de Ingeniería. Guía Metodológica para la
                 estandarización de procedimientos de las facultades de la Universidad de Nariño. Pasto. 2021, p. 17.
             </p>
         </div>
 
         <!-- Block 5: Ficha Title -->
         <div class="pl-4 mb-4">
-            <h2 data-section-id="1.1" data-section-title="1.1. FICHA TÉCNICA DEL PROCEDIMIENTO"
+            <h1 data-section-id="1.1" data-section-title="1.1. FICHA TÉCNICA DEL PROCEDIMIENTO"
                 class="text-sm font-black mb-4 uppercase leading-tight">
                 1.1. FICHA TÉCNICA DEL PROCEDIMIENTO {{procedimientosSeleccionado?.procedimiento}}
-            </h2>
+            </h1>
         </div>
         <!-- Block 6: Ficha Text -->
         <div class="mb-2 mt-2">
@@ -214,20 +214,20 @@
         </div>
         <!-- Block 8: Estado Actual Title -->
         <div class="mt-2 mb-2">
-            <h2 data-section-id="1.2" data-section-title="1.2. ESTADO ACTUAL DEL PROCEDIMIENTO"
-                class="pl-4 text-sm font-black uppercase mb-2 mt-2">1.2. ESTADO ACTUAL DEL PROCEDIMIENTO</h2>
+            <h6 data-section-id="1.2" data-section-title="1.2. ESTADO ACTUAL DEL PROCEDIMIENTO"
+                class="pl-4 text-sm font-black uppercase mb-2 mt-2">1.2. ESTADO ACTUAL DEL PROCEDIMIENTO</h6>
             <p class="text-[11px] text-justify leading-relaxed arial">
                 {{estadoProcedimiento()}}
             </p>
         </div>
         <!-- Block 9: Soportes Documentales -->
         <div class="pl-4 mb-2 mt-2">
-            <h2 data-section-id="1.2.1" data-section-title="1.2.1. SOPORTES DOCUMENTALES"
-                class="text-sm font-black uppercase mb-2">1.2.1. SOPORTES DOCUMENTALES</h2>
+            <h6 data-section-id="1.2.1" data-section-title="1.2.1. SOPORTES DOCUMENTALES"
+                class="text-md font-black uppercase mb-2">1.2.1. SOPORTES DOCUMENTALES</h6>
             <div class="pl-4">
-                <h2 data-section-id="1.2.1.1" data-section-title="1.2.1.1. DOCUMENTOS QUE SE DEBEN PRODUCIR"
+                <h6 data-section-id="1.2.1.1" data-section-title="1.2.1.1. DOCUMENTOS QUE SE DEBEN PRODUCIR"
                     class="text-xs font-black uppercase mb-2">1.2.1.1. DOCUMENTOS QUE SE DEBEN PRODUCIR
-                </h2>
+                </h6>
                 <ul class="pl-5 space-y-1 arial">
                     <li class="flex items-start gap-2"><span>•</span><span>Procedimiento según formato entregado por el
                             Sistema Integrado de Gestión de
@@ -238,8 +238,8 @@
             </div>
         </div>
         <div class="pl-4 mb-2 mt-2">
-            <h2 data-section-id="1.2.1.2" data-section-title="1.2.1.2. REGLAMENTO BASE"
-                class="pl-4 text-xs font-black uppercase mb-2">1.2.1.2. REGLAMENTO BASE</h2>
+            <h6 data-section-id="1.2.1.2" data-section-title="1.2.1.2. REGLAMENTO BASE"
+                class="pl-4 text-sm font-black uppercase mb-2">1.2.1.2. REGLAMENTO BASE</h6>
             <ul class="pl-4">
                 @for (doc of documentosBase; track $index) {
                 <li class="flex items-start gap-2"><span>•</span><span>{{doc.documento}}</span></li>
@@ -250,7 +250,7 @@
         </div>
         <div class="pl-4 mb-2 mt-2">
             <h2 data-section-id="1.2.1.3" data-section-title="1.2.1.3. PROCEDIMIENTO"
-                class="pl-4 text-xs font-black uppercase mb-2">1.2.1.3. PROCEDIMIENTO</h2>
+                class="pl-4 text-sm font-black uppercase mb-2">1.2.1.3. PROCEDIMIENTO</h2>
             <p class="text-justify leading-relaxed arial">
                 Anexo a este documento, se presenta la descripción del procedimiento Anexo No. 1, según
                 formato del Sistema de Gestión de Calidad.
@@ -258,8 +258,8 @@
 
         <!-- Block 10: Sistema Computacional -->
         <div class="mb-2 mt-2">
-            <h2 data-section-id="1.2.2" data-section-title="1.2.2. SISTEMA COMPUTACIONAL DE SOPORTE"
-                class="pl-4 text-xs font-black uppercase mb-2">1.2.2. SISTEMA COMPUTACIONAL DE SOPORTE</h2>
+            <h6 data-section-id="1.2.2" data-section-title="1.2.2. SISTEMA COMPUTACIONAL DE SOPORTE"
+                class="pl-4 text-sm font-black uppercase mb-2">1.2.2. SISTEMA COMPUTACIONAL DE SOPORTE</h6>
             <p class="arial text-justify leading-relaxed">
                 El proceso de {{procedimientosSeleccionado?.procedimiento}} actualmente cuenta con un soporte
                 computacional
@@ -269,8 +269,8 @@
         </div>
         <!-- Block 11: Reglamentación -->
         <div class="mb-2 mt-2">
-            <h2 data-section-id="1.2.3" data-section-title="1.2.3. REGLAMENTACIÓN DEL PROCEDIMIENTO"
-                class="pl-4 text-xs font-black uppercase mb-2">1.2.3. REGLAMENTACIÓN DEL PROCEDIMIENTO</h2>
+            <h6 data-section-id="1.2.3" data-section-title="1.2.3. REGLAMENTACIÓN DEL PROCEDIMIENTO"
+                class="pl-4 text-sm font-black uppercase mb-2">1.2.3. REGLAMENTACIÓN DEL PROCEDIMIENTO</h6>
             <p class="arial text-justify leading-relaxed">
                 Para la reglamentación, se entrega el procedimiento a la División de Autoevaluación,
                 Acreditación y Certificación de la Universidad de Nariño para su revisión y visto bueno,
@@ -280,10 +280,10 @@
         </div>
         <!-- Block 12: Socialización -->
         <div class="mb-2 mt-2">
-            <h2 data-section-id="1.3"
+            <h6 data-section-id="1.3"
                 data-section-title="1.3. SOCIALIZACIÓN DE PROCEDIMIENTO ESTANDARIZADO EN LA FACULTAD"
-                class="pl-4 text-xs font-black uppercase mb-2">1.3 SOCIALIZACIÓN DE PROCEDIMIENTO ESTANDARIZADO EN LA
-                FACULTAD </h2>
+                class="pl-4 text-md font-black uppercase mb-2">1.3 SOCIALIZACIÓN DE PROCEDIMIENTO ESTANDARIZADO EN LA
+                FACULTAD </h6>
             <p class="arial text-justify leading-relaxed">
                 De acuerdo con la descripción del procedimiento, los roles involucrados en su desarrollo son:
                 {{procedimientosSeleccionado?.roles}}.
