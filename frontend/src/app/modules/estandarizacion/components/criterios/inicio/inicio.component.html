@@ -70,15 +70,15 @@
             </p>
         </div>
 
-        <div class="flex justify-end gap-3 mt-4">
+        <div class="flex flex-col sm:flex-row justify-end gap-3 mt-4">
             <button (click)="eliminarRecoleccion()"
-                class="flex items-center gap-2 m-1 bg-gray-100  hover:bg-gray-200 border border-gray-300 text-gray-800 px-5 py-2 rounded rounded-lg transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0">
+                class="flex items-center justify-center gap-2 m-1 w-full sm:w-auto bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800 px-5 py-2 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0">
                 <span class="font-medium">Eliminar información</span>
                 <img src="assets/elementos/eliminar.svg" alt="Eliminar" class="w-4 h-4" />
             </button>
             <button (click)="editarRecoleccion()"
-                class="flex items-center gap-2 m-1 bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800 px-5 py-2 rounded rounded-lg transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0">
-                <span class="font-medium">Editar recolección </span>
+                class="flex items-center justify-center gap-2 m-1 w-full sm:w-auto bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-800 px-5 py-2 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5 active:translate-y-0">
+                <span class="font-medium">Editar recolección</span>
                 <img src="assets/elementos/editar.svg" alt="Editar" class="w-4 h-4" />
             </button>
         </div>
