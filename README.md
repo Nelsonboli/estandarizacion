@@ -52,7 +52,7 @@ npm install
 cd ..
 ```
 
-## 4) Configuración de base de datos (MySQL)
+## 4. Configuración de base de datos (MySQL)
 La conexión del backend está definida en el archivo:
 - `backend/src/app.module.ts`
 **Credenciales por defecto**:
@@ -69,7 +69,7 @@ CREATE DATABASE estandarizacion_de_procedimientos;
 ```
 **Nota:** El proyecto tiene activa la propiedad synchronize: true en TypeORM, lo que significa que las tablas y relaciones se generarán automáticamente en la base de datos al arrancar el backend por primera vez.
 
-## 5) Configuración especial para reportes (Jasper + Java)
+## 5. Configuración especial para reportes (Jasper + Java)
 El backend genera reportes PDF usando Java/Jasper. Verifique que `java` esté en `PATH`:
 
 ```bash
@@ -80,7 +80,7 @@ java -version
 **Ruta de Imágenes para Diagramas de Flujo:** existe una ruta estática configurada para la lectura de los recursos visuales de los reportes. Si requiere modificar la ruta de almacenamiento de las imágenes de los diagramas, puede hacerlo en el archivo:
 - `backend/src/modules/estandarizacion/reportes/reporte-DAAC/reports.service.ts`
 
-## 6) Ejecutar el backend
+## 6. Ejecutar el backend
 Navegue al directorio del backend (si no se encuentra en él):
 ```bash
 cd backend
@@ -92,7 +92,7 @@ npm run start:dev
 El backend estará disponible y escuchando peticiones en:
 - `http://localhost:3000`
 
-## 7) Ejecutar el frontend
+## 7. Ejecutar el frontend
 Desde la raíz del repositorio, ejecute el siguiente comando::
 ```bash
 npm start
@@ -104,7 +104,7 @@ El frontend compilará la aplicación y abrirá el servidor de desarrollo en:
 - El backend permite CORS para `http://localhost:4200`.
 - Los servicios del frontend están configurados con URLs de backend en `http://localhost:3000`.
 
-## 8) Flujo recomendado de ejecución (para jurado)
+## 8. Flujo recomendado de ejecución (para jurado)
 
 1. Iniciar MySQL.
 2. Crear base de datos `estandarizacion_de_procedimientos`.
@@ -112,7 +112,7 @@ El frontend compilará la aplicación y abrirá el servidor de desarrollo en:
 4. Ejecutar frontend (`npm start` en la raíz).
 5. Abrir `http://localhost:4200`.
 
-## 9) Verificación rápida
+## 9. Verificación rápida
 
 - Backend responde sin errores de conexión a MySQL.
 - Frontend carga menú principal.
