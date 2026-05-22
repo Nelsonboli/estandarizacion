@@ -14,7 +14,7 @@ export class NavegacionComponent {
   private router = inject(Router);
   rutaAnterior = input<string>();
   rutaSiguiente = input<string>();
-  posicion = signal<'primera' | 'ultima' | 'intermedia'>('intermedia');
+  posicion = signal<'ultima' | 'intermedia'>('intermedia');
   siguiente = output<void>();
   anterior = output<void>();
 
@@ -32,8 +32,7 @@ export class NavegacionComponent {
     const indice = this.rutasOrdenadas.indexOf(rutaActual);
 
     if (indice === 0) {
-      this.posicion.set('primera');
-    } else if (indice === this.rutasOrdenadas.length - 1) {
+    } if (indice === this.rutasOrdenadas.length - 1) {
       this.posicion.set('ultima');
     } else {
       this.posicion.set('intermedia');

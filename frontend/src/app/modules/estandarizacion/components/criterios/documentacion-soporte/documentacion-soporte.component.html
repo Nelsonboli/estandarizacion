@@ -69,7 +69,8 @@
     @else if (formularioDAACCompletado()) {
     <div>
         <app-tabla-datos [data]="dataFormularioDAAC()" [columnas]="datosService.columnasDAAC"
-            encabezadoGeneral="Tabla caracterización" [accionesTemplate]="accionesPersonalizadas">
+            encabezadoGeneral="Tabla caracterización" [accionesTemplate]="accionesPersonalizadas"
+            [mostrarpaginado]="false">
         </app-tabla-datos>
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex items-center justify-center space-x-1">

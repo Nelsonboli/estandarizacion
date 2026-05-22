@@ -41,7 +41,8 @@
 
         <!-- Tabla -->
         <app-tabla-datos [data]="datosTablaProcedimiento()" [columnas]="datosService.columnasFormularioFTP"
-            encabezadoGeneral="Lista de procedimientos" [accionesTemplate]="accionesPersonalizadas">
+            encabezadoGeneral="Lista de procedimientos" [accionesTemplate]="accionesPersonalizadas"
+            [mostrarpaginado]="true">
         </app-tabla-datos>
 
         <!-- Botones personalizados de la tabla -->

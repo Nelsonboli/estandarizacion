@@ -1,6 +1,5 @@
 <div class="flex w-full mt-6 mx-auto items-center justify-center gap-6">
 
-  @if (posicion() !== 'primera') {
   <!-- Botón Anterior -->
   <button type="button"
     class="flex gap-2 px-4 py-2 bg-white text-gray-600 text-base rounded-lg transition-all hover:scale-105 hover:brightness-110"
@@ -9,7 +8,6 @@
       class="w-6 h-6 transition-colors duration-300 hover:brightness-120" />
     Anterior
   </button>
-  }
 
   @if (posicion() !== 'ultima') {
   <!-- Botón Siguiente -->
