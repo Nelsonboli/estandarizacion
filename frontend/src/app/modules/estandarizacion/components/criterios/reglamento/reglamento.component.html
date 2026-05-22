@@ -1,9 +1,9 @@
-<div class=" text-med bg-gray-100 font-medium text-black p-2  border rounded-md text-center">
+<div class=" text-md bg-gray-100 font-medium text-black p-2 border border-gray-300 rounded-md text-center">
     <h6 class="text-azul-oscuro">3. Reglamento</h6>
 </div>
 <div class="sm:grid-cols-1 grid-cols-2 justify-center items-center gap-4 m-4">
 
-    <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4 m-2">
+    <div class="col-span-1 flex flex-col items-center gap-2 border border-gray-300 rounded-lg py-4 m-2">
         <ng-container>
             <div
                 class="flex flex-col justify-center items-center text-center text-grande space-y-4 p-2 bg-gray-100/20 w-full max-w-md">
@@ -33,7 +33,7 @@
 
         @if (estadoReglamento().descarga_daac_completada && subidaActiva !== 'subirProcedimiento') {
         <button
-            class="flex text-grande items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-500 px-4 py-2 rounded min-w-70 group"
+            class="flex text-md items-center justify-center bg-gray-100/50 hover:bg-gray-200 transition-all text-black border border-gray-300 px-4 py-2 rounded min-w-70 group"
             (click)="subidaActiva = 'subirProcedimiento'">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"
                 class="w-6 h-6 mr-2 fill-gray-500 group-hover:fill-gray-600 transition-colors duration-300">
@@ -73,7 +73,7 @@
         }
     </div>
     <!-- 🔹 Formato de Estandarización -->
-    <div class="col-span-1 flex flex-col items-center gap-2 border rounded-lg py-4 m-2">
+    <div class="col-span-1 flex flex-col items-center gap-2 border border-gray-300 rounded-lg py-4 m-2">
         @if ( estadoReglamento().subida_daac_completada) {
         <ng-container>
             <app-formato-estandarizacion #formatoRefEstandarizacion
@@ -82,7 +82,7 @@
                 class="flex flex-col justify-center items-center text-center space-y-2 p-2  bg-gray-100/20 w-full max-w-md">
 
                 <div class="flex flex-col items-center text-center space-y-3">
-                    <p class="text-grande m-2 pt-2 mb-4">
+                    <p class="text-md m-2 pt-2 mb-4">
                         A continuación puede descargar el Formato de Estandarización para su revisión y aprobación.
                     </p>
                     <button (click)="descargarFormatoEstandarizacion()"

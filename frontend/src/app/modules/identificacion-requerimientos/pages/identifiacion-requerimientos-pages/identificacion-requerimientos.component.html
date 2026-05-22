@@ -13,14 +13,14 @@
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 <!-- Botón -->
                 <button (click)="abrirFormulario()"
-                    class="flex items-center justify-center bg-verde-btn text-white text-xs px-3 py-2 rounded hover:bg-verde-btn/90 transition w-full sm:w-auto">
+                    class="flex items-center justify-center bg-verde-btn text-white text-sm px-3 py-2 rounded hover:bg-verde-btn/90 transition w-full sm:w-auto">
                     Agregar procedimiento
                 </button>
                 <!-- Input con icono lupa -->
                 <div class="flex items-center relative w-full sm:w-60">
                     <input type="search" name="Buscar" (input)="buscarProcedimientos($event)"
                         placeholder="Buscar procedimiento"
-                        class="pl-3 pr-8 py-1.5 text-black bg-white rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-200 w-full hover:bg-gray-100" />
+                        class="pl-3 pr-8 py-1.5 text-gray-800 bg-white rounded-md text-sm border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-200 w-full hover:bg-gray-100" />
                     <!-- Icono lupa -->
                     <svg xmlns="http://www.w3.org/2000/svg"
                         class="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-500" fill="none"
@@ -48,7 +48,7 @@
         <ng-template #accionesPersonalizadas let-dato>
             <div class="flex flex-wrap justify-center space-x-1 gap-2">
                 <button [routerLink]="['/identificacionrequerimientos/estandarizar', dato.id]"
-                    class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-peq rounded flex items-center justify-center gap-1"
+                    class="bg-verde-btn hover:bg-verde-btn/90 text-white py-1 px-2 text-sm rounded flex items-center justify-center gap-1"
                     (click)="abrirFormularioRecoleccionInformacion()">
 
                     <span class="hidden md:inline">Estandarizar</span>

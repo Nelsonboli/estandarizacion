@@ -86,7 +86,6 @@ export class ReglamentoService {
 
     // Subir el archivo directo a Supabase
     const publicUrl = await this.storageService.subirArchivo(bucketName, storagePath, file.buffer, file.mimetype);
-
     // Eliminar archivo anterior si existe
     if (reglamento.formato_daac_subido) {
       try {

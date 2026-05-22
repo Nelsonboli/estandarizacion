@@ -1,5 +1,5 @@
 <!-- Reglamento Base -->
-<div class=" text-med bg-gray-100 font-medium text-black p-2  border rounded-md text-center">
+<div class=" text-med bg-gray-100 font-medium text-black p-2 border border-gray-300 rounded-md text-center">
     <h6 class="text-azul-oscuro">1. Documento de soporte</h6>
 </div>
 @if (mostrarReglamentoBase()) {
@@ -14,7 +14,7 @@
                     </label>
                     <input [ngModel]="nuevoDato()" (ngModelChange)="nuevoDato.set($event)"
                         (keyup.enter)="agregarReglamentoBase(); $event.preventDefault()"
-                        class="w-full p-2 border rounded placeholder-gray-400 disabled:bg-gray-100"
+                        class="w-full p-2 border border-gray-300 rounded placeholder-gray-400 disabled:bg-gray-100"
                         placeholder="Escribe el nombre del documento" />
                 </div>
                 <!-- Botón agregar -->
@@ -28,7 +28,7 @@
             </div>
             <div class="flex flex-row px-5 py-2 justify-center md:justify-start">
                 <button (click)="NotieneReglamentoBase()" [disabled]="deshabilitarNotiene()"
-                    class="bg-encabezado-tabla text-white px-3 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-50 disabled:bg-gray-300 disabled:text-black">
+                    class="bg-encabezado-tabla text-md px-4 py-2 rounded hover:brightness-110 transition-colors text-white min-w-50 disabled:bg-gray-300 disabled:text-gray-500">
                     No tiene Reglamento Base
                 </button>
             </div>

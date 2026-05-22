@@ -16,12 +16,6 @@ export class Reglamento {
     @Column({ type: 'varchar', length: 255, nullable: true })
     formato_daac_subido: string | null;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    formato_estandarizacion_descargado: string | null;
-
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    formato_estandarizacion_subido: string | null;
-
     @Column({ type: 'json', nullable: true })
     actividades_completadas: {
         descarga_daac_completada: boolean;

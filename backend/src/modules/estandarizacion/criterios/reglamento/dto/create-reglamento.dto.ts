@@ -7,10 +7,6 @@ export class CreateReglamentoDto {
     formato_daac_descargado: string;
     @IsString()
     formato_daac_subido: string;
-    @IsString()
-    formato_estandarizacion_descargado: string;
-    @IsString()
-    formato_estandarizacion_subido: string;
 
     @IsObject()
     actividades_completadas: {
