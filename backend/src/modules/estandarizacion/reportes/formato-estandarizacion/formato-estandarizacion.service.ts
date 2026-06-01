@@ -88,19 +88,11 @@ export class FormatoEstandarizacionService {
     const queryRecoleccion = await this.dataSource.query(`SELECT * FROM recoleccion_informacion WHERE procedimiento_id = ?`, [id]);
     const recoleccion: any = queryRecoleccion[0];
     let recoleccionStr = '';
-    if (recoleccion) {
-      const mecanismos: string[] = [];
-      if (recoleccion.revision_documental) mecanismos.push('revisión documental');
-      if (recoleccion.consulta) mecanismos.push('consulta');
-      if (recoleccion.observacion_directa) mecanismos.push('observación directa');
-
-      if (mecanismos.length > 0) {
-        let mecanismosText = mecanismos.join(', ');
-        if (mecanismos.length > 1) {
-          mecanismosText = mecanismosText.replace(/, ([^,]*)$/, ' y $1');
-        }
-        recoleccionStr = `Para la recoleccion de información del ${pNombre} se utilizaron los siguientes mecanismos ${mecanismosText}.`;
-      }
+    if (recoleccion.encuesta) {
+      recoleccionStr = recoleccion.encuesta;
+    }
+    else {
+      recoleccionStr = 'El procedimiento no cuenta con encuesta';
     }
     processedData['recoleccion_informacion'] = recoleccionStr;
 
