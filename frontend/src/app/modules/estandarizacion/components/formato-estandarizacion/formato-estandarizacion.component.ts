@@ -13,6 +13,8 @@ import html2canvas from 'html2canvas';
 import { ProcedimientoService } from '../../../identificacion-requerimientos/services/procedimiento.service';
 import { DiagramaFlujoService } from '../../services/diagrama-flujo.service';
 
+import { RecoleccionInformacionService } from '../../services/recoleccion-informacion.service';
+
 @Component({
   selector: 'app-formato-estandarizacion',
   imports: [CommonModule, TitleCasePipe],
@@ -30,6 +32,7 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
   formularioDAAC: any = {};
   soporteComputacional: any = null;
   procedimientosSeleccionado: any = null;
+  recoleccionInformacion: any = null;
   idProcedimiento: string | null = null;
 
   // Pages array to hold the distributed content
@@ -46,6 +49,7 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
   private reglamentoBaseService = inject(ReglamentoBaseService);
   private soporteComputacionalService = inject(SoporteComputacionalService);
   private diagramaFlujoService = inject(DiagramaFlujoService);
+  private recoleccionInformacionService = inject(RecoleccionInformacionService);
   private datosService = inject(DatosService);
   @Inject(PLATFORM_ID) private platformId = inject(PLATFORM_ID);
 
@@ -168,6 +172,17 @@ export class FormatoEstandarizacionComponent implements AfterViewInit {
 
     // 3. Obtener soporte computacional
     this.cargarSoporteComputacional(procedimientoId);
+
+    // 4. Obtener recolección de información
+    this.recoleccionInformacionService.getPorProcedimiento(procedimientoId).subscribe({
+      next: (data) => {
+        this.recoleccionInformacion = data;
+      },
+      error: (err) => {
+        console.error('Error al obtener recolección de información:', err);
+        this.recoleccionInformacion = null;
+      }
+    });
   }
 
   // Cargar formulario DAAC

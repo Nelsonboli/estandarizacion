@@ -5,7 +5,7 @@
         </div>
         <div class="bg-white/80 border border-gray-200 rounded-lg">
             <div class="border-b border-gray-200 px-4 py-2 mb-2 glass-card">
-                <h4 class="text-center font-normal"> <strong class="font-semibold"> Procedimiento: </strong>
+                <h4 class="text-center font-normal"> <strong class="font-medium"> Procedimiento: </strong>
                     {{nombreProcedimiento() | titlecase}}</h4>
             </div>
             <div class="border-b border-gray-200 px-4 py-2 mb-2 glass-card">
@@ -13,7 +13,7 @@
                     class="grid sm:grid-cols-1 md:grid-cols-3 gap-3 bg-white/80 border border-gray-300 rounded-lg p-3 m-2">
                     @for (estado of datosService.criterios; track estado; let i = $index) {
                     <div class="flex flex-col items-center gap-2 group transition-transform hover:scale-102">
-                        <button class="w-full h-24 flex flex-wrap items-center justify-center rounded rounded-lg 
+                        <button class="w-full h-24 flex flex-wrap items-center justify-center rounded-lg 
                         transition-all duration-200 ease-in-out m-2 border border-b-4 border-gray-400" [ngClass]="{
                             'border-b-4 border-gray-600 bg-white text-gray-800 hover:border-gray-500': !criteriosCompletados()[i] && hoverIndex() !== i && buttonIndex() !== i,
                             'border-b-4 border-gray-400 bg-white text-gray-800 hover:border-gray-500': !criteriosCompletados()[i] && hoverIndex() === i && buttonIndex() !== i,
