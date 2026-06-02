@@ -81,8 +81,10 @@ export class ModalRecoleccionInformacionComponent implements OnInit {
 
 
   Guardar() {
-    if (this.formularioRecoleccion.invalid) return;
-
+    if (this.formularioRecoleccion.value.encuesta.trim() === '') {
+      this.alertService.error('La encuesta no puede estar vacía');
+      return;
+    }
     const values = this.formularioRecoleccion.value;
 
     if (this.recoleccionId) {
