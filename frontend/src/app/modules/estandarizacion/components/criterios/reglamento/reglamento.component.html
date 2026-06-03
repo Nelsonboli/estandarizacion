@@ -76,6 +76,7 @@
     <!-- 🔹 Formato de Estandarización -->
     <div class="col-span-1 flex flex-col items-center gap-2 border border-gray-300 rounded-lg py-4 m-2">
         @if ( estadoReglamento().subida_daac_completada) {
+        <strong class="text-azul-fondo text-lg font-medium"> Formato de Estandarización</strong>
         <ng-container>
             <app-formato-estandarizacion #formatoRefEstandarizacion
                 [procedimientoId]="procedimientoId()!"></app-formato-estandarizacion>
@@ -84,18 +85,13 @@
 
                 <div class="flex flex-col items-center text-center space-y-3">
                     <p class="text-md m-2 pt-2 mb-4">
-                        A continuación puede descargar el Formato de Estandarización para su revisión y aprobación.
+                        A continuación puede descargar el formato de estandarización para su revisión.
                     </p>
                     <button (click)="descargarFormatoEstandarizacion()"
                         class="flex items-center text-grande justify-center gap-2 bg-azul-fondo text-white px-4 py-2 rounded hover:brightness-110 transition-colors duration-300 min-w-70">
                         <img src="assets/elementos/descargarDocumento.svg" alt="Descargar Formato" class="w-6 h-6" />
                         {{ formatoEstandarizacion }}
                     </button>
-                    <p class="text-grande m-2 pt-2">
-                        Luego de recibir la aprobación por la Dependencia, deberá subir el
-                        Formato de Estandarización para continuar con la Socialización del
-                        procedimiento.
-                    </p>
                 </div>
             </div>
         </ng-container>

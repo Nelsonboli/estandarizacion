@@ -8,7 +8,7 @@
   @if (procedimientoSeleccionado) {
   <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white animate-fade-in">
     <div class="border-b border-gray-200 px-4 py-2 mb-3 glass-card">
-      <h4 class="font-normal text-center"> <strong>Procedimiento: </strong>
+      <h4 class="font-normal text-center"> <strong class="text-azul-fondo font-medium">Procedimiento: </strong>
         {{procedimientoSeleccionado.procedimiento | titlecase}}
       </h4>
     </div>
@@ -71,7 +71,7 @@
       <!-- Mostrar Diagrama de flujo -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
         <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
-          <h5 class="text-lg font-medium text-azul-fondo text-center">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Diagrama de Flujo
           </h5>
         </div>
@@ -90,11 +90,10 @@
           }
         </div>
       </div>
-
       <!-- Soporte computacional -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
         <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
-          <h5 class="text-lg font-medium text-azul-fondo text-center">
+          <h5 class="text-md font-medium text-azul-fondo text-center">
             Soporte Computacional
           </h5>
         </div>
@@ -128,7 +127,6 @@
           }
         </div>
       </div>
-
       <!-- Formato de Estandarización -->
       <div class="max-w-screen mx-auto mb-2 border border-gray-200 rounded-md overflow-hidden bg-white glass-card">
         <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 glass-card">
@@ -138,7 +136,7 @@
         </div>
         <div class="p-4 text-center ">
           <Button class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200
-             text-gray-700 px-4 py-2 px-2 text-md rounded hover:bg-gray-200 premium-btn"
+             text-gray-700 px-4 py-2 text-md rounded hover:bg-gray-200 premium-btn"
             (click)="descargarDocumentoCompletado()">
             Descargar procedimiento
           </Button>
@@ -192,11 +190,11 @@
           } @else {
           <div class="bg-white border border-gray-200 rounded-lg p-4  max-w-2xl mx-auto flex flex-col items-center">
             <div class="flex items-center gap-2  text-azul-fondo">
-              <h2 class="text-lg font-bold flex text-center gap-4">Registro de socialización del procedimiento<br>
+              <h2 class="text-lg font-medium flex text-center gap-4">Registro de socialización del procedimiento<br>
                 "{{procedimientoSeleccionado.procedimiento | titlecase}}"</h2>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 w-full text-center mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 py-2 w-full text-center mb-4">
               <div>
                 <p class="text-gray-500 text-sm uppercase tracking-wider font-semibold">Fecha</p>
                 <p class="text-lg font-medium text-gray-800">{{ fechaSignal() | date:'dd/MM/yyyy' }}</p>
